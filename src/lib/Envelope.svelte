@@ -1,20 +1,31 @@
 <script>
   import Card from "./Card.svelte";
   import Transaction from "./Transaction.svelte";
-  export let expense;
+  export let envelope;
+  export let allExpanded;
+
+  $: expanded = allExpanded;
 </script>
 
 <Card>
-  <div class="envelope">
-    <div class="heading">
-      <h3>{expense.envelope}</h3>
+  <div class="envelope {expanded ? 'expanded' : ''}">
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="heading" on:click={() => expanded = !expanded}>
+      <h3>
+        {envelope.envelope}
+        <i class="fa-solid fa-chevron-right"></i>
+      </h3>
       <span class="amount-total"></span>
     </div>
-    <!-- Need a conditional here -->
-    <p>{expense.description}</p>
-    {#each expense.transactions as transaction}
-      <Transaction {transaction}/>
-    {/each}
+    <div class="envelope-body">
+      {#if envelope.description}
+        <p>{envelope.description}</p>
+      {/if}
+      {#each envelope.transactions as transaction}
+        <Transaction {transaction}/>
+      {/each}
+    </div>
   </div>
 </Card>
 
@@ -23,9 +34,32 @@
     .heading {
       display: grid;
       grid-template-columns: 1fr 125px;
+      padding: 20px;
+      h3 {
+        margin: 0;
+        i {
+          margin-left: 5px;
+          transition: 200ms;
+        }
+      }
+      &:hover {
+        background-color: var(--grey-500);
+      }
     }
-    h3 {
-      margin: 0;
+    .envelope-body {
+      display: none;
+      padding: 0 20px 20px;
+      p {
+        margin-top: 0;
+      }
+    }
+    &.expanded {
+      .heading i {
+        transform: rotate(90deg);
+      }
+      .envelope-body {
+        display: block;
+      }
     }
   }
 </style>

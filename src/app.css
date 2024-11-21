@@ -1,8 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 
 :root {
-  --lgray: #dadcdd;
-  --dgray: #020202;
+  --grey-100: #020202;
+  --grey-500: #b4b7b9;
+  --grey-600: #dadcdd;
   --accent: #0173b9;
 }
 
@@ -13,8 +14,8 @@
 }
 
 body {
-  background-color: var(--lgray);
-  color: var(--dgray);
+  background-color: var(--grey-600);
+  color: var(--grey-100);
   margin: 0;
   padding-block: 50px;
   font-family: "open sans";
@@ -23,4 +24,21 @@ body {
 main {
   max-width: 800px;
   margin-inline: auto;
+}
+
+button {
+  background-color: #fff;
+  padding: 10px;
+  font-size: 1.3rem;
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  transition: 200ms;
+  &:hover {
+    color: var(--accent);
+    transform: scale(1.1);
+  }
+  &:active {
+    transition: 100ms;
+    transform: scale(0.9);
+  }
 }
