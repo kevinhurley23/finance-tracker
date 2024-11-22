@@ -19,11 +19,17 @@ body {
   margin: 0;
   padding-block: 50px;
   font-family: "open sans";
+  font-size: 1.3rem;
 }
 
 main {
   max-width: 800px;
   margin-inline: auto;
+}
+
+h1 {
+  font-size: 2em;
+  text-align: center;
 }
 
 button {

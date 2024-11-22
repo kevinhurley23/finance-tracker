@@ -3,6 +3,7 @@
   import Transaction from "./Transaction.svelte";
   export let envelope;
   export let allExpanded;
+  export let currencyFormat;
 
   $: expanded = allExpanded;
 </script>
@@ -23,7 +24,7 @@
         <p>{envelope.description}</p>
       {/if}
       {#each envelope.transactions as transaction}
-        <Transaction {transaction}/>
+        <Transaction {transaction} {currencyFormat}/>
       {/each}
     </div>
   </div>

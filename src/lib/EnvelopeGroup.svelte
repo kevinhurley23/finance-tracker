@@ -2,6 +2,7 @@
   import Envelope from './Envelope.svelte';
   export let heading;
   export let envelopes;
+  export let currencyFormat;
 
   let allExpanded = true;
 </script>
@@ -15,7 +16,7 @@
     </div>
   </div>
   {#each envelopes as envelope}
-    <Envelope {envelope} {allExpanded}/>
+    <Envelope {envelope} {allExpanded} {currencyFormat}/>
   {/each}
 </div>
 
