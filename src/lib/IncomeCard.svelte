@@ -12,14 +12,14 @@
   <h2>Income</h2>
   <div class="row body">
     {#if startingBalance}
-      <div>
-        <p>Starting Balance:</p>
-        <p class="currency">{startingBalance}</p>
+      <div class="starting-balance">
+        <p style="margin-block: 9px; text-align: right;">Starting Balance:</p>
+        <input class="amount" type="text" size="13" value={startingBalance}>
       </div>
     {/if}
     <div>
-      <p class="row">Bryant: <span class="currency">{bryant}</span></p>
-      <p class="row">Takeda: <span class="currency">{takeda}</span></p>
+      <p>Bryant: <input class="amount" type="text" size="7" value={bryant}></p>
+      <p>Takeda: <input class="amount" type="text" size="7" value={takeda}></p>
     </div>
   </div>
 </Card>
@@ -32,6 +32,9 @@
   .row {
     display: flex;
     gap: 15px;
+    &:not(:has(.starting-balance)) {
+      justify-content: center;
+    }
   }
   .body {
     gap: 40px;
@@ -40,9 +43,5 @@
   }
   p {
     margin-block: 5px;
-  }
-  .currency {
-    width: 100%;
-    text-align: right;
   }
 </style>

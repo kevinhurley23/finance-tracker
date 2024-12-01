@@ -2,8 +2,8 @@
 
 :root {
   --grey-100: #020202;
-  --grey-500: #b4b7b9;
-  --grey-600: #dadcdd;
+  --grey-500: #c8cccf;
+  --grey-600: #e1e9ed;
   --accent: #0173b9;
 }
 
@@ -19,7 +19,7 @@ body {
   margin: 0;
   padding-block: 50px;
   font-family: "open sans";
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 
 main {
@@ -35,7 +35,7 @@ h1 {
 button {
   background-color: #fff;
   padding: 10px;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   border: 2px solid var(--accent);
   border-radius: 10px;
   transition: 200ms;
@@ -47,4 +47,19 @@ button {
     transition: 100ms;
     transform: scale(0.9);
   }
+}
+
+input {
+  display: inline;
+  font-size: inherit;
+  font-family: inherit;
+  border: none;
+  padding: 4px;
+  &:focus {
+    outline-color: var(--accent);
+    background-color: var(--grey-600);
+  }
+}
+.amount {
+  text-align: right;
 }

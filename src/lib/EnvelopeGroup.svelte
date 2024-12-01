@@ -1,22 +1,23 @@
 <script>
   import Envelope from './Envelope.svelte';
-  export let heading;
-  export let envelopes;
-  export let currencyFormat;
+  // export let heading;
+  // export let envelopes;
+  // export let currencyFormat;
+  let { heading, envelopes, currencyFormat, highestTransactionID, setHighestTransactionID } = $props();
 
-  let allExpanded = true;
+  let allExpanded = $state(true);
 </script>
 
 <div class="envelope-group">
   <div class="heading-button-row">
     <h2>{heading}</h2>
     <div class="buttons">
-      <button on:click={() => allExpanded = true}>Open All</button>
-      <button on:click={() => allExpanded = false}>Close All</button>
+      <button onclick={() => allExpanded = true}>Open All</button>
+      <button onclick={() => allExpanded = false}>Close All</button>
     </div>
   </div>
   {#each envelopes as envelope}
-    <Envelope {envelope} {allExpanded} {currencyFormat}/>
+    <Envelope {envelope} {allExpanded} {currencyFormat} {highestTransactionID} {setHighestTransactionID}/>
   {/each}
 </div>
 

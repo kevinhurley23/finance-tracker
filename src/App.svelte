@@ -2,7 +2,7 @@
   // import viteLogo from '/vite.svg' // assets in 'public' folder can be imported like this
   import IncomeCard from './lib/IncomeCard.svelte';
   import EnvelopeGroup from './lib/EnvelopeGroup.svelte';
-  import { budget, checkingAccount } from './lib/placeholderData';
+  import { data } from './lib/placeholderData.svelte.js';
 
   function currencyFormat(amount) {
     if (amount == undefined) {
@@ -26,10 +26,31 @@
     }
   }
 
+  let budget = data.budget;
+  let checkingAccount = data.checkingAccount;
   let budgetIncome = budget.find(item => item.envelope === "Income").transactions;
   let budgetExpenses = budget.filter((item) => item.envelope !== "Income");
   let checkingIncome = checkingAccount.find(item => item.envelope === "Income").transactions;
   let checkingExpenses = checkingAccount.filter((item) => item.envelope !== "Income");
+
+  for (const [key, value] of Object.entries(data)) {
+    for (const envelope in value) {
+      console.log(envelope)
+    }
+  }
+
+  let highestTransactionID = 0;
+  for (const envelope of checkingAccount) { 
+    for (const transaction of envelope.transactions) { 
+      if (transaction.transactionID > highestTransactionID) { 
+        highestTransactionID = transaction.transactionID;
+      }
+    }
+  }
+  
+  function setHighestTransactionID(newID) {
+    highestTransactionID = newID;
+  }
 
   let sectionDisplayed = "checking-account";
 </script>
@@ -43,12 +64,12 @@
   <section class="budget" style={sectionDisplayed == "budget" ? "" : "display: none;"}>
     <h1>Budget</h1>
     <IncomeCard income={budgetIncome} {currencyFormat} />
-    <EnvelopeGroup heading={"Expenses"} envelopes={budgetExpenses} {currencyFormat} />
+    <EnvelopeGroup heading={"Expenses"} envelopes={budgetExpenses} {currencyFormat} {highestTransactionID} {setHighestTransactionID} />
   </section>
   <section id="checking-account" style={sectionDisplayed == "checking-account" ? "" : "display: none;"}>
     <h1>Checking Account</h1>
     <IncomeCard income={checkingIncome} {currencyFormat} />
-    <EnvelopeGroup heading={"Expenses"} envelopes={checkingExpenses} {currencyFormat} />
+    <EnvelopeGroup heading={"Expenses"} envelopes={checkingExpenses} {currencyFormat} {highestTransactionID} {setHighestTransactionID} />
   </section>
   <section class="savings-account" style={sectionDisplayed == "savings-account" ? "" : "display: none;"}>
     Savings section coming soon!

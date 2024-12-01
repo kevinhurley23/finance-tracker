@@ -1,6 +1,10 @@
 <script>
-  export let transaction;
-  export let currencyFormat;
+  // import { createEventDispatcher } from "svelte";
+  // export let transaction;
+  // export let currencyFormat;
+  let { transaction, currencyFormat, deleteTransaction } = $props()
+
+  // const dispatch = createEventDispatcher()
 
   function reformatDate(dateString) {
     // Split the date string into an array [YYYY, MM, DD]
@@ -8,23 +12,50 @@
 
     // Return the reformatted date string
     return `${month}/${day}/${year}`;
-}
+  }
 </script>
 
-<div class="transaction" data-amount={transaction.amount}>
-  <span class="description">{transaction.description}</span>
-  <span class="date">{transaction.date ? reformatDate(transaction.date) : ''}</span>
-  <span class="amount">{currencyFormat(transaction.amount)}</span>
+<div class="transaction {transaction.repeating ? 'repeating' : ''}" data-transactionID={transaction.transactionID}>
+  <input class="description" type="text" value={transaction.description}>
+  <i class="fa-solid fa-trash delete-transaction" title="delete transaction" onclick={() => deleteTransaction(transaction.transactionID)}></i>
+  <i class="fa-solid fa-repeat toggle-repeating" title="turn repeat on or off for this transaction"></i>
+  <input class="date" type="date" value={transaction.date}>
+  <input class="amount" type="text" value={currencyFormat(transaction.amount)}>
 </div>
 
 <style>
   .transaction {
     display: grid;
-    grid-template-columns: 1fr 125px 125px;
-    padding: 8px 0;
+    grid-template-columns: 1fr 40px 40px 140px 125px;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 0;
     border-bottom: 2px solid var(--accent);
-    .amount {
-      text-align: right;
+    i {
+      text-align: center;
+      cursor: pointer;
+      color: var(--grey-500);
+      opacity: 0;
+      transition: 200ms;
+      &:hover {
+        transform: scale(1.2);
+      }
+      &:active {
+        transition: 100ms;
+        transform: scale(0.8);
+        color: var(--grey-100);
+      }
+    }
+    &:hover {
+      i {
+        opacity: 1;
+      }
+    }
+    &.repeating {
+      .toggle-repeating {
+        color: var(--grey-100);
+        opacity: 1;
+      }
     }
   }
 </style>

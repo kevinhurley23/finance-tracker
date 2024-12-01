@@ -5,10 +5,9 @@
 <style>
   .card {
     background-color: #fff;
-    margin-block: 30px;
+    margin-block: 40px;
     border: 2px solid var(--accent);
     border-radius: 10px;
-    overflow: hidden;
     &:not(:has(.envelope)) {
       width: fit-content;
       min-width: 300px;
