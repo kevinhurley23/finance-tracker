@@ -4,6 +4,9 @@
   import EnvelopeGroup from './lib/EnvelopeGroup.svelte';
   import { data } from './lib/placeholderData.svelte.js';
 
+  fetch('./php/read.php')
+    .then(response => console.log(response));
+
   function currencyFormat(amount) {
     if (amount == undefined) {
       return;
@@ -33,11 +36,11 @@
   let checkingIncome = checkingAccount.find(item => item.envelope === "Income").transactions;
   let checkingExpenses = checkingAccount.filter((item) => item.envelope !== "Income");
 
-  for (const [key, value] of Object.entries(data)) {
-    for (const envelope in value) {
-      console.log(envelope)
-    }
-  }
+  // for (const [key, value] of Object.entries(data)) {
+  //   for (const envelope in value) {
+  //     console.log(envelope)
+  //   }
+  // }
 
   let highestTransactionID = 0;
   for (const envelope of checkingAccount) { 
