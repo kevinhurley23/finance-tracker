@@ -1,8 +1,5 @@
 <script>
   import Envelope from './Envelope.svelte';
-  // export let heading;
-  // export let envelopes;
-  // export let currencyFormat;
   let { heading, envelopes, currencyFormat, highestTransactionID, setHighestTransactionID } = $props();
 
   let allExpanded = $state(true);

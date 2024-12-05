@@ -2,10 +2,18 @@
   // import viteLogo from '/vite.svg' // assets in 'public' folder can be imported like this
   import IncomeCard from './lib/IncomeCard.svelte';
   import EnvelopeGroup from './lib/EnvelopeGroup.svelte';
-  import { data } from './lib/placeholderData.svelte.js';
+  // import { data } from './lib/placeholderData.svelte.js';
 
-  fetch('./php/read.php')
-    .then(response => console.log(response));
+  let data = $state();
+  let dataReady = $state(false);
+  let sectionDisplayed = $state("checking-account");
+
+  async function fetchData() {
+    const response = await fetch('../php/read.php');
+    data = await response.json();
+    dataReady = true;
+  }
+  fetchData();
 
   function currencyFormat(amount) {
     if (amount == undefined) {
@@ -28,55 +36,64 @@
       return formattedAmount;
     }
   }
-
-  let budget = data.budget;
-  let checkingAccount = data.checkingAccount;
-  let budgetIncome = budget.find(item => item.envelope === "Income").transactions;
-  let budgetExpenses = budget.filter((item) => item.envelope !== "Income");
-  let checkingIncome = checkingAccount.find(item => item.envelope === "Income").transactions;
-  let checkingExpenses = checkingAccount.filter((item) => item.envelope !== "Income");
-
-  // for (const [key, value] of Object.entries(data)) {
-  //   for (const envelope in value) {
-  //     console.log(envelope)
-  //   }
-  // }
-
-  let highestTransactionID = 0;
-  for (const envelope of checkingAccount) { 
-    for (const transaction of envelope.transactions) { 
-      if (transaction.transactionID > highestTransactionID) { 
-        highestTransactionID = transaction.transactionID;
-      }
-    }
-  }
   
   function setHighestTransactionID(newID) {
-    highestTransactionID = newID;
+    data.highestTransactionID = newID;
   }
 
-  let sectionDisplayed = "checking-account";
+  function deleteTransaction(accountTitle, envelopeID, transaction) {
+    const account = data[accountTitle];
+    const envelope = account.find(item => item.envelopeID == envelopeID);
+    console.log(account)
+    console.log(envelope)
+
+    // data[account][envelope].transactions = data[account][envelope].transactions.filter(item => item.transactionID !== transaction);
+  }
 </script>
 
 <div class="section-buttons">
-  <button on:click={() => sectionDisplayed = "budget"}>Budget</button>
-  <button on:click={() => sectionDisplayed = "checking-account"}>Checking Account</button>
-  <button on:click={() => sectionDisplayed = "savings-account"}>Savings Account</button>
+  <button onclick={() => sectionDisplayed = "budget"}>Budget</button>
+  <button onclick={() => sectionDisplayed = "checking-account"}>Checking Account</button>
+  <button onclick={() => sectionDisplayed = "savings-account"}>Savings Account</button>
+  <button onclick={() => deleteTransaction('budget', 2, 4)}>Delete</button>
 </div>
 <main>
-  <section class="budget" style={sectionDisplayed == "budget" ? "" : "display: none;"}>
-    <h1>Budget</h1>
-    <IncomeCard income={budgetIncome} {currencyFormat} />
-    <EnvelopeGroup heading={"Expenses"} envelopes={budgetExpenses} {currencyFormat} {highestTransactionID} {setHighestTransactionID} />
-  </section>
-  <section id="checking-account" style={sectionDisplayed == "checking-account" ? "" : "display: none;"}>
-    <h1>Checking Account</h1>
-    <IncomeCard income={checkingIncome} {currencyFormat} />
-    <EnvelopeGroup heading={"Expenses"} envelopes={checkingExpenses} {currencyFormat} {highestTransactionID} {setHighestTransactionID} />
-  </section>
-  <section class="savings-account" style={sectionDisplayed == "savings-account" ? "" : "display: none;"}>
-    Savings section coming soon!
-  </section>
+  {#if !dataReady}
+    <p>Data is loading</p>
+  {:else}
+    <section class="budget" style={sectionDisplayed == "budget" ? "" : "display: none;"}>
+      <h1>Budget</h1>
+      <IncomeCard
+        income={data.budget.find(item => item.envelopeTitle === "Income").transactions}
+        {currencyFormat}
+      />
+      <EnvelopeGroup
+        heading={"Expenses"}
+        envelopes={data.budget.filter((item) => item.envelopeTitle !== "Income")}
+        {currencyFormat}
+      />
+    </section>
+    <section id="checking-account" style={sectionDisplayed == "checking-account" ? "" : "display: none;"}>
+      <h1>Checking Account</h1>
+      <IncomeCard
+        income={data.checking.find(item => item.envelopeTitle === "Income").transactions}
+        {currencyFormat}
+      />
+      <EnvelopeGroup
+        heading={"Expenses"}
+        envelopes={data.checking.filter((item) => item.envelopeTitle !== "Income")}
+        {currencyFormat}
+      />
+    </section>
+    <section class="savings-account" style={sectionDisplayed == "savings-account" ? "" : "display: none;"}>
+      <h1>Savings Account</h1>
+      <EnvelopeGroup
+        heading={"Envelopes"}
+        envelopes={data.savings.filter((item) => item.envelopeTitle !== "Income")}
+        {currencyFormat}
+      />
+    </section>
+  {/if}
 </main>
 
 <style>

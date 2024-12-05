@@ -3,9 +3,9 @@
   export let income;
   export let currencyFormat;
 
-  let startingBalance = currencyFormat(income.find(item => item.description === "Starting Balance")?.amount);
-  let bryant = currencyFormat(income.find(item => item.description === "Bryant")?.amount);
-  let takeda = currencyFormat(income.find(item => item.description === "Takeda")?.amount);
+  let startingBalance = currencyFormat(income.find(item => item.transactionDescription === "Starting Balance")?.amount);
+  let bryant = currencyFormat(income.find(item => item.transactionDescription === "Bryant")?.amount);
+  let takeda = currencyFormat(income.find(item => item.transactionDescription === "Takeda")?.amount);
 </script>
 
 <Card>

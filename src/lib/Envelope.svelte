@@ -1,10 +1,7 @@
 <script>
   import Card from "./Card.svelte";
   import Transaction from "./Transaction.svelte";
-  // export let envelope;
   let { envelope, allExpanded, currencyFormat, highestTransactionID, setHighestTransactionID } = $props();
-  // export let allExpanded;
-  // export let currencyFormat;
 
   // $: expanded = allExpanded;
   let expanded = $state(allExpanded);
@@ -38,18 +35,22 @@
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="heading" onclick={() => expanded = !expanded}>
       <h3>
-        {envelope.envelope}
+        {envelope.envelopeTitle}
         <i class="fa-solid fa-chevron-right"></i>
       </h3>
       <span class="amount amount-total">{currencyFormat(totalAmount)}</span>
     </div>
     <div class="envelope-body">
-      {#if envelope.description}
-        <p>{envelope.description}</p>
+      {#if envelope.envelopeDescription}
+        <p>{envelope.envelopeDescription}</p>
       {/if}
-      {#each transactions as transaction (transaction.transactionID)}
-        <Transaction {transaction} {currencyFormat} {deleteTransaction}/>
-      {/each}
+      {#if envelope.transactions.length}
+        {#each transactions as transaction (transaction.transactionID)}
+          <Transaction {transaction} {currencyFormat} {deleteTransaction}/>
+        {/each}
+      {:else}
+        <p style="text-align: center; font-style: italic;">There are no transactions in this envelope</p>
+      {/if}
     </div>
     <button class="add-transaction" onclick={addTransaction}>+ Add Transaction</button>
   </div>
