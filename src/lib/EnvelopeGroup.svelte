@@ -1,6 +1,6 @@
 <script>
   import Envelope from './Envelope.svelte';
-  let { heading, envelopes, currencyFormat, highestTransactionID, setHighestTransactionID } = $props();
+  let { heading, accountTitle, envelopes, currencyFormat, addTransaction, deleteTransaction } = $props();
 
   let allExpanded = $state(true);
 </script>
@@ -14,7 +14,14 @@
     </div>
   </div>
   {#each envelopes as envelope}
-    <Envelope {envelope} {allExpanded} {currencyFormat} {highestTransactionID} {setHighestTransactionID}/>
+    <Envelope
+      {envelope}
+      {accountTitle}
+      {allExpanded}
+      {currencyFormat}
+      {addTransaction}
+      {deleteTransaction}
+    />
   {/each}
 </div>
 

@@ -1,7 +1,8 @@
 <script>
   import Card from "./Card.svelte";
   import Transaction from "./Transaction.svelte";
-  let { envelope, allExpanded, currencyFormat, highestTransactionID, setHighestTransactionID } = $props();
+  let { envelope, accountTitle, allExpanded, currencyFormat, addTransaction, deleteTransaction } = $props();
+  let envelopeID = envelope.envelopeID;
 
   // $: expanded = allExpanded;
   let expanded = $state(allExpanded);
@@ -11,22 +12,6 @@
   let totalAmount = transactions.reduce((accumulator, item) => {
     return accumulator + item.amount;
   }, 0)
-
-  function addTransaction() {
-    const newHighestTransactionID = highestTransactionID + 1;
-    const newTransaction = {
-      transactionID: newHighestTransactionID,
-      description: '',
-      date: '',
-      amount: 0,
-    }
-    transactions.push(newTransaction);
-    setHighestTransactionID(newHighestTransactionID);
-  }
-
-  function deleteTransaction(ID) {
-    transactions = transactions.filter((item) => item.transactionID != ID);
-  }
 </script>
 
 <Card>
@@ -46,7 +31,13 @@
       {/if}
       {#if envelope.transactions.length}
         {#each transactions as transaction (transaction.transactionID)}
-          <Transaction {transaction} {currencyFormat} {deleteTransaction}/>
+          <Transaction
+            {accountTitle} 
+            {envelopeID}
+            {transaction}
+            {currencyFormat}
+            {deleteTransaction}
+          />
         {/each}
       {:else}
         <p style="text-align: center; font-style: italic;">There are no transactions in this envelope</p>

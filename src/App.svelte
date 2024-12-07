@@ -2,7 +2,9 @@
   // import viteLogo from '/vite.svg' // assets in 'public' folder can be imported like this
   import IncomeCard from './lib/IncomeCard.svelte';
   import EnvelopeGroup from './lib/EnvelopeGroup.svelte';
-  // import { data } from './lib/placeholderData.svelte.js';
+
+  // import { placeholderData } from './lib/placeholderData.svelte.js';
+  // let data = $state(placeholderData);
 
   let data = $state();
   let dataReady = $state(false);
@@ -41,13 +43,23 @@
     data.highestTransactionID = newID;
   }
 
-  function deleteTransaction(accountTitle, envelopeID, transaction) {
-    const account = data[accountTitle];
-    const envelope = account.find(item => item.envelopeID == envelopeID);
-    console.log(account)
-    console.log(envelope)
+  function addTransaction() {
+    // const newHighestTransactionID = highestTransactionID + 1;
+    // const newTransaction = {
+    //   transactionID: newHighestTransactionID,
+    //   description: '',
+    //   date: '',
+    //   amount: 0,
+    // }
+    // transactions.push(newTransaction);
+    // setHighestTransactionID(newHighestTransactionID);
+  }
 
-    // data[account][envelope].transactions = data[account][envelope].transactions.filter(item => item.transactionID !== transaction);
+  function deleteTransaction(accountTitle, envelopeID, transactionID) {
+    const account = data[accountTitle];
+    const envelopeIndex = account.indexOf(account.find(item => item.envelopeID == envelopeID));
+    const transactionIndex = account[envelopeIndex].transactions.indexOf(account[envelopeIndex].transactions.find(item => item.transactionID == transactionID));
+    data[accountTitle][envelopeIndex].transactions.splice(transactionIndex, 1);
   }
 </script>
 
@@ -55,7 +67,6 @@
   <button onclick={() => sectionDisplayed = "budget"}>Budget</button>
   <button onclick={() => sectionDisplayed = "checking-account"}>Checking Account</button>
   <button onclick={() => sectionDisplayed = "savings-account"}>Savings Account</button>
-  <button onclick={() => deleteTransaction('budget', 2, 4)}>Delete</button>
 </div>
 <main>
   {#if !dataReady}
@@ -69,8 +80,11 @@
       />
       <EnvelopeGroup
         heading={"Expenses"}
+        accountTitle={"budget"}
         envelopes={data.budget.filter((item) => item.envelopeTitle !== "Income")}
         {currencyFormat}
+        {addTransaction}
+        {deleteTransaction}
       />
     </section>
     <section id="checking-account" style={sectionDisplayed == "checking-account" ? "" : "display: none;"}>
@@ -81,16 +95,22 @@
       />
       <EnvelopeGroup
         heading={"Expenses"}
+        accountTitle={"checking"}
         envelopes={data.checking.filter((item) => item.envelopeTitle !== "Income")}
         {currencyFormat}
+        {addTransaction}
+        {deleteTransaction}
       />
     </section>
     <section class="savings-account" style={sectionDisplayed == "savings-account" ? "" : "display: none;"}>
       <h1>Savings Account</h1>
       <EnvelopeGroup
         heading={"Envelopes"}
+        accountTitle={"savings"}
         envelopes={data.savings.filter((item) => item.envelopeTitle !== "Income")}
         {currencyFormat}
+        {addTransaction}
+        {deleteTransaction}
       />
     </section>
   {/if}

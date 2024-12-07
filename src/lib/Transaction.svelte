@@ -1,5 +1,6 @@
 <script>
-  let { transaction, currencyFormat, deleteTransaction } = $props()
+  let { accountTitle, envelopeID, transaction, currencyFormat, deleteTransaction } = $props()
+  let transactionID = transaction.transactionID;
 
   function reformatDate(dateString) {
     // Split the date string into an array [YYYY, MM, DD]
@@ -10,9 +11,11 @@
   }
 </script>
 
-<div class="transaction {transaction.repeating ? 'repeating' : ''}" data-transactionID={transaction.transactionID}>
+<div class="transaction {transaction.repeating ? 'repeating' : ''}">
   <input class="description" type="text" value={transaction.transactionDescription}>
-  <i class="fa-solid fa-trash delete-transaction" title="delete transaction" onclick={() => deleteTransaction(transaction.transactionID)}></i>
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <i class="fa-solid fa-trash delete-transaction" title="delete transaction" onclick={() => deleteTransaction(accountTitle, envelopeID, transactionID)}></i>
   <i class="fa-solid fa-repeat toggle-repeating" title="turn repeat on or off for this transaction"></i>
   <input class="date" type="date" value={transaction.date}>
   <input class="amount" type="text" value={currencyFormat(transaction.amount)}>
