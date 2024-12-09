@@ -299,7 +299,7 @@ export const placeholderData = {
           envelopeID: 14,
           transactionDescription: "World Vision",
           date: "2024-12-12",
-          amount: 450,
+          amount: 45,
           repeating: true,
         },
       ],

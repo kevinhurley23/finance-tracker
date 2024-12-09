@@ -3,41 +3,38 @@
   import IncomeCard from './lib/IncomeCard.svelte';
   import EnvelopeGroup from './lib/EnvelopeGroup.svelte';
 
-  // import { placeholderData } from './lib/placeholderData.svelte.js';
-  // let data = $state(placeholderData);
+  import { placeholderData } from './lib/placeholderData.svelte.js';
+  let data = $state(placeholderData);
+  let dataReady = $state(true);
 
-  let data = $state();
-  let dataReady = $state(false);
+  // let data = $state();
+  // let dataReady = $state(false);
   let sectionDisplayed = $state("checking-account");
 
-  async function fetchData() {
-    const response = await fetch('../php/read.php');
-    data = await response.json();
-    dataReady = true;
-  }
-  fetchData();
+  // async function fetchData() {
+  //   const response = await fetch('../php/read.php');
+  //   data = await response.json();
+  //   dataReady = true;
+  // }
+  // fetchData();
 
   function currencyFormat(amount) {
     if (amount == undefined) {
       return;
     } else {
-      // Convert the amount to a string and split it into integer and decimal parts
-      let [integerPart, decimalPart] = amount.toString().split('.');
-
-      // Add commas to the integer part
-      integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-      // If there's no decimal part, add ".00"
-      if (!decimalPart) {
-          decimalPart = '00';
-      }
-
-      // Combine the integer and decimal parts with a dollar sign
-      const formattedAmount = `$${integerPart}.${decimalPart}`;
-
-      return formattedAmount;
+      let USDollar = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      });
+      return USDollar.format(amount);
     }
   }
+
+  function numberFormat(string) {
+  const cleanedString = string.replace(/[$,]/g, '');
+  const numberValue = parseFloat(cleanedString);
+  return numberValue;
+}
   
   function setHighestTransactionID(newID) {
     data.highestTransactionID = newID;
@@ -83,6 +80,7 @@
         accountTitle={"budget"}
         envelopes={data.budget.filter((item) => item.envelopeTitle !== "Income")}
         {currencyFormat}
+        {numberFormat}
         {addTransaction}
         {deleteTransaction}
       />
@@ -98,6 +96,7 @@
         accountTitle={"checking"}
         envelopes={data.checking.filter((item) => item.envelopeTitle !== "Income")}
         {currencyFormat}
+        {numberFormat}
         {addTransaction}
         {deleteTransaction}
       />
@@ -109,6 +108,7 @@
         accountTitle={"savings"}
         envelopes={data.savings.filter((item) => item.envelopeTitle !== "Income")}
         {currencyFormat}
+        {numberFormat}
         {addTransaction}
         {deleteTransaction}
       />

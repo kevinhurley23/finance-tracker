@@ -1,6 +1,6 @@
 <script>
   import Envelope from './Envelope.svelte';
-  let { heading, accountTitle, envelopes, currencyFormat, addTransaction, deleteTransaction } = $props();
+  let { heading, accountTitle, envelopes, currencyFormat, numberFormat, addTransaction, deleteTransaction } = $props();
 
   let allExpanded = $state(true);
 </script>
@@ -19,6 +19,7 @@
       {accountTitle}
       {allExpanded}
       {currencyFormat}
+      {numberFormat}
       {addTransaction}
       {deleteTransaction}
     />

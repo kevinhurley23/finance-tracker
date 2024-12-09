@@ -1,6 +1,7 @@
 <script>
-  let { accountTitle, envelopeID, transaction, currencyFormat, deleteTransaction } = $props()
+  let { accountTitle, envelopeID, transaction, currencyFormat, numberFormat, deleteTransaction } = $props()
   let transactionID = transaction.transactionID;
+  let amountStr = $state(currencyFormat(transaction.amount));
 
   function reformatDate(dateString) {
     // Split the date string into an array [YYYY, MM, DD]
@@ -8,6 +9,12 @@
 
     // Return the reformatted date string
     return `${month}/${day}/${year}`;
+  }
+
+  function updateAmountStr(event) {
+    const num = numberFormat(this.value)
+    amountStr = currencyFormat(num);
+    console.log(amountStr)
   }
 </script>
 
@@ -18,7 +25,7 @@
   <i class="fa-solid fa-trash delete-transaction" title="delete transaction" onclick={() => deleteTransaction(accountTitle, envelopeID, transactionID)}></i>
   <i class="fa-solid fa-repeat toggle-repeating" title="turn repeat on or off for this transaction"></i>
   <input class="date" type="date" value={transaction.date}>
-  <input class="amount" type="text" value={currencyFormat(transaction.amount)}>
+  <input class="amount" type="text" size={amountStr.length - 1} bind:value={amountStr} onblur={updateAmountStr}>
 </div>
 
 <style>
@@ -43,6 +50,9 @@
         transform: scale(0.8);
         color: var(--grey-100);
       }
+    }
+    .amount {
+      justify-self: end;
     }
     &:hover {
       i {
