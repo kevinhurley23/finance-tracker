@@ -31,8 +31,8 @@
   }
 
   function numberFormat(string) {
-  const cleanedString = string.replace(/[$,]/g, '');
-  const numberValue = parseFloat(cleanedString);
+    const cleanedString = string.replace(/[$,]/g, '');
+    const numberValue = parseFloat(cleanedString);
   return numberValue;
 }
   
@@ -50,6 +50,14 @@
     // }
     // transactions.push(newTransaction);
     // setHighestTransactionID(newHighestTransactionID);
+  }
+
+  function updateTransaction(accountTitle, envelopeID, transactionID, property, value) {
+    const account = data[accountTitle];
+    const envelopeIndex = account.indexOf(account.find(item => item.envelopeID == envelopeID));
+    const transactionIndex = account[envelopeIndex].transactions.indexOf(account[envelopeIndex].transactions.find(item => item.transactionID == transactionID));
+    data[accountTitle][envelopeIndex].transactions[transactionIndex][property] = value;
+    console.log(data[accountTitle][envelopeIndex].transactions[transactionIndex])
   }
 
   function deleteTransaction(accountTitle, envelopeID, transactionID) {
@@ -82,6 +90,7 @@
         {currencyFormat}
         {numberFormat}
         {addTransaction}
+        {updateTransaction}
         {deleteTransaction}
       />
     </section>
@@ -98,6 +107,7 @@
         {currencyFormat}
         {numberFormat}
         {addTransaction}
+        {updateTransaction}
         {deleteTransaction}
       />
     </section>
@@ -110,6 +120,7 @@
         {currencyFormat}
         {numberFormat}
         {addTransaction}
+        {updateTransaction}
         {deleteTransaction}
       />
     </section>

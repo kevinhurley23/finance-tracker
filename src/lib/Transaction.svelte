@@ -1,5 +1,5 @@
 <script>
-  let { accountTitle, envelopeID, transaction, currencyFormat, numberFormat, deleteTransaction } = $props()
+  let { accountTitle, envelopeID, transaction, currencyFormat, numberFormat, updateTransaction, deleteTransaction } = $props()
   let transactionID = transaction.transactionID;
   let amountStr = $state(currencyFormat(transaction.amount));
 
@@ -11,19 +11,26 @@
     return `${month}/${day}/${year}`;
   }
 
+  function updateDescription(event) {
+    updateTransaction(accountTitle, envelopeID, transactionID, 'transactionDescription', this.value)
+  }
+
+  const toggleRepeat = (event) => updateTransaction(accountTitle, envelopeID, transactionID, 'repeating', !transaction.repeating)
+  
   function updateAmountStr(event) {
     const num = numberFormat(this.value)
-    amountStr = currencyFormat(num);
-    console.log(amountStr)
+    updateTransaction(accountTitle, envelopeID, transactionID, 'amount', num)
   }
 </script>
 
 <div class="transaction {transaction.repeating ? 'repeating' : ''}">
-  <input class="description" type="text" value={transaction.transactionDescription}>
+  <input class="description" type="text" value={transaction.transactionDescription} onblur={updateDescription}>
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <i class="fa-solid fa-trash delete-transaction" title="delete transaction" onclick={() => deleteTransaction(accountTitle, envelopeID, transactionID)}></i>
-  <i class="fa-solid fa-repeat toggle-repeating" title="turn repeat on or off for this transaction"></i>
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <i class="fa-solid fa-repeat toggle-repeating" title="turn repeat on or off for this transaction" onclick={toggleRepeat}></i>
   <input class="date" type="date" value={transaction.date}>
   <input class="amount" type="text" size={amountStr.length - 1} bind:value={amountStr} onblur={updateAmountStr}>
 </div>

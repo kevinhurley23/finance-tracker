@@ -1,7 +1,7 @@
 <script>
   import Card from "./Card.svelte";
   import Transaction from "./Transaction.svelte";
-  let { envelope, accountTitle, allExpanded, currencyFormat, numberFormat, addTransaction, deleteTransaction } = $props();
+  let { envelope, accountTitle, allExpanded, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
   let envelopeID = envelope.envelopeID;
 
   // $: expanded = allExpanded;
@@ -37,6 +37,7 @@
             {transaction}
             {currencyFormat}
             {numberFormat}
+            {updateTransaction}
             {deleteTransaction}
           />
         {/each}
