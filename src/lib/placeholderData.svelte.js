@@ -427,6 +427,21 @@ export const placeholderData = {
   ],
   savings: [
     {
+      envelopeID: 32,
+      envelopeTitle: "Income",
+      envelopeDescription: null,
+      transactions: [
+        {
+          transactionID: 41,
+          envelopeID: 32,
+          transactionDescription: "Balance",
+          date: "2024-12-01",
+          amount: 28000,
+          repeating: false,
+        },
+      ],
+    },
+    {
       envelopeID: 25,
       envelopeTitle: "Home",
       envelopeDescription: "Condo insurance and home repair/improvement",
@@ -536,5 +551,5 @@ export const placeholderData = {
       ],
     },
   ],
-  highestTransactionID: 40,
+  highestTransactionID: 41,
 };

@@ -9,7 +9,8 @@
 
   // let data = $state();
   // let dataReady = $state(false);
-  let sectionDisplayed = $state("checking-account");
+  const accountNames = ["budget", "checking", "savings"];
+  let sectionDisplayed = $state("checking");
 
   // async function fetchData() {
   //   const response = await fetch('../php/read.php');
@@ -32,9 +33,14 @@
 
   function numberFormat(string) {
     const cleanedString = string.replace(/[$,]/g, '');
-    const numberValue = parseFloat(cleanedString);
-  return numberValue;
-}
+    // Check if the cleaned string contains only numbers, periods, and negative signs
+    if (/^[-?\d.]+$/.test(cleanedString)) {
+      const numberValue = parseFloat(cleanedString);
+      return numberValue;
+    } else {
+      return "NaN";
+    }
+  }
   
   function setHighestTransactionID(newID) {
     data.highestTransactionID = newID;
@@ -69,61 +75,35 @@
 </script>
 
 <div class="section-buttons">
-  <button onclick={() => sectionDisplayed = "budget"}>Budget</button>
-  <button onclick={() => sectionDisplayed = "checking-account"}>Checking Account</button>
-  <button onclick={() => sectionDisplayed = "savings-account"}>Savings Account</button>
+  {#each accountNames as account}
+    <button style={`--accent: var(--${account}-accent)`} onclick={() => sectionDisplayed = account}>{account}</button>
+  {/each}
 </div>
-<main>
+<main style={`--accent: var(--${sectionDisplayed}-accent)`}>
   {#if !dataReady}
     <p>Data is loading</p>
   {:else}
-    <section class="budget" style={sectionDisplayed == "budget" ? "" : "display: none;"}>
-      <h1>Budget</h1>
-      <IncomeCard
-        income={data.budget.find(item => item.envelopeTitle === "Income").transactions}
-        {currencyFormat}
-      />
-      <EnvelopeGroup
-        heading={"Expenses"}
-        accountTitle={"budget"}
-        envelopes={data.budget.filter((item) => item.envelopeTitle !== "Income")}
-        {currencyFormat}
-        {numberFormat}
-        {addTransaction}
-        {updateTransaction}
-        {deleteTransaction}
-      />
-    </section>
-    <section id="checking-account" style={sectionDisplayed == "checking-account" ? "" : "display: none;"}>
-      <h1>Checking Account</h1>
-      <IncomeCard
-        income={data.checking.find(item => item.envelopeTitle === "Income").transactions}
-        {currencyFormat}
-      />
-      <EnvelopeGroup
-        heading={"Expenses"}
-        accountTitle={"checking"}
-        envelopes={data.checking.filter((item) => item.envelopeTitle !== "Income")}
-        {currencyFormat}
-        {numberFormat}
-        {addTransaction}
-        {updateTransaction}
-        {deleteTransaction}
-      />
-    </section>
-    <section class="savings-account" style={sectionDisplayed == "savings-account" ? "" : "display: none;"}>
-      <h1>Savings Account</h1>
-      <EnvelopeGroup
-        heading={"Envelopes"}
-        accountTitle={"savings"}
-        envelopes={data.savings.filter((item) => item.envelopeTitle !== "Income")}
-        {currencyFormat}
-        {numberFormat}
-        {addTransaction}
-        {updateTransaction}
-        {deleteTransaction}
-      />
-    </section>
+    {#each accountNames as account}
+      <section id={account} style={sectionDisplayed == account ? "" : "display: none;"}>
+        <h1>{account}</h1>
+        <IncomeCard
+          accountTitle={account}
+          income={data[account].find(item => item.envelopeTitle === "Income")}
+          {currencyFormat}
+          {numberFormat}
+          {updateTransaction}
+        />
+        <EnvelopeGroup
+          accountTitle={account}
+          envelopes={data[account].filter((item) => item.envelopeTitle !== "Income")}
+          {currencyFormat}
+          {numberFormat}
+          {addTransaction}
+          {updateTransaction}
+          {deleteTransaction}
+        />
+      </section>
+    {/each}
   {/if}
 </main>
 
@@ -134,5 +114,11 @@
     gap: 15px 30px;
     flex-wrap: wrap;
     margin-bottom: 40px;
+    button {
+      text-transform: capitalize;
+    }
+  }
+  h1 {
+    text-transform: capitalize;
   }
 </style>

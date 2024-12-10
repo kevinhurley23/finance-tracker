@@ -3,23 +3,23 @@
   let transactionID = transaction.transactionID;
   let amountStr = $state(currencyFormat(transaction.amount));
 
-  function reformatDate(dateString) {
-    // Split the date string into an array [YYYY, MM, DD]
-    const [year, month, day] = dateString.split('-');
-
-    // Return the reformatted date string
-    return `${month}/${day}/${year}`;
-  }
-
-  function updateDescription(event) {
+  function updateDescription() {
     updateTransaction(accountTitle, envelopeID, transactionID, 'transactionDescription', this.value)
   }
 
-  const toggleRepeat = (event) => updateTransaction(accountTitle, envelopeID, transactionID, 'repeating', !transaction.repeating)
+  const toggleRepeat = () => updateTransaction(accountTitle, envelopeID, transactionID, 'repeating', !transaction.repeating)
+
+  function updateDate() {
+    updateTransaction(accountTitle, envelopeID, transactionID, 'date', this.value)
+  }
   
-  function updateAmountStr(event) {
+  function updateAmount() {
     const num = numberFormat(this.value)
-    updateTransaction(accountTitle, envelopeID, transactionID, 'amount', num)
+    if (num === "NaN") {
+      alert(`${this.value} is not a valid number`)
+    } else {
+      updateTransaction(accountTitle, envelopeID, transactionID, 'amount', num)
+    }
   }
 </script>
 
@@ -31,8 +31,8 @@
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <i class="fa-solid fa-repeat toggle-repeating" title="turn repeat on or off for this transaction" onclick={toggleRepeat}></i>
-  <input class="date" type="date" value={transaction.date}>
-  <input class="amount" type="text" size={amountStr.length - 1} bind:value={amountStr} onblur={updateAmountStr}>
+  <input class="date" type="date" value={transaction.date} oninput={updateDate}>
+  <input class="amount" type="text" size="8" value={amountStr} onblur={updateAmount}>
 </div>
 
 <style>

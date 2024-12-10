@@ -1,16 +1,16 @@
 <script>
   import Envelope from './Envelope.svelte';
-  let { heading, accountTitle, envelopes, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
+  let { accountTitle, envelopes, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
 
   let allExpanded = $state(true);
 </script>
 
 <div class="envelope-group">
   <div class="heading-button-row">
-    <h2>{heading}</h2>
+    <h2>Transactions</h2>
     <div class="buttons">
-      <button onclick={() => allExpanded = true}>Open All</button>
-      <button onclick={() => allExpanded = false}>Close All</button>
+      <!-- <button onclick={() => allExpanded = true}>Open All</button>
+      <button onclick={() => allExpanded = false}>Close All</button> -->
     </div>
   </div>
   {#each envelopes as envelope}

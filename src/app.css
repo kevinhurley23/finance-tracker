@@ -4,7 +4,9 @@
   --grey-100: #020202;
   --grey-500: #c8cccf;
   --grey-600: #e1e9ed;
-  --accent: #0173b9;
+  --budget-accent: #138813;
+  --checking-accent: #0173b9;
+  --savings-accent: #cf7a0b;
 }
 
 *,

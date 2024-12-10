@@ -1,26 +1,27 @@
 <script>
   import Card from "./Card.svelte";
-  export let income;
-  export let currencyFormat;
+  let { accountTitle, income, currencyFormat, numberFormat, updateTransaction } = $props();
+  let envelopeID = income.envelopeID;
+  let transactions = income.transactions;
 
-  let startingBalance = currencyFormat(income.find(item => item.transactionDescription === "Starting Balance")?.amount);
-  let bryant = currencyFormat(income.find(item => item.transactionDescription === "Bryant")?.amount);
-  let takeda = currencyFormat(income.find(item => item.transactionDescription === "Takeda")?.amount);
+  function updateAmount(transactionID) {
+    // need to figure out how to pass "this" into the function
+    const num = numberFormat(this.value)
+    if (num === "NaN") {
+      alert(`${this.value} is not a valid number`)
+    } else {
+      updateTransaction(accountTitle, envelopeID, transactionID, 'amount', num)
+    }
+  }
 </script>
 
 <Card>
   <h2>Income</h2>
-  <div class="row body">
-    {#if startingBalance}
-      <div class="starting-balance">
-        <p style="margin-block: 9px; text-align: right;">Starting Balance:</p>
-        <input class="amount" type="text" size="13" value={startingBalance}>
-      </div>
-    {/if}
-    <div>
-      <p>Bryant: <input class="amount" type="text" size="7" value={bryant}></p>
-      <p>Takeda: <input class="amount" type="text" size="7" value={takeda}></p>
-    </div>
+  <div class="body">
+    {#each transactions as item}
+      <p>{item.transactionDescription}:</p>
+      <input class="amount" type="text" size="9" value={currencyFormat(item.amount)} onblur={() => updateAmount(item.transactionID)}>
+    {/each}
   </div>
 </Card>
 
@@ -29,19 +30,17 @@
     text-align: center;
     margin-bottom: 0;
   }
-  .row {
-    display: flex;
-    gap: 15px;
-    &:not(:has(.starting-balance)) {
-      justify-content: center;
-    }
-  }
   .body {
-    gap: 40px;
+    display: grid;
+    grid-template-columns: 180px 120px;
+    align-items: center;
     padding: 20px 30px;
     font-weight: 500;
   }
   p {
-    margin-block: 5px;
+    margin: 0;
+  }
+  input {
+    margin-block: 2px;
   }
 </style>

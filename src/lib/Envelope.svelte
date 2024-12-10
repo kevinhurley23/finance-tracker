@@ -4,14 +4,13 @@
   let { envelope, accountTitle, allExpanded, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
   let envelopeID = envelope.envelopeID;
 
-  // $: expanded = allExpanded;
   let expanded = $state(allExpanded);
 
-  let transactions = $state(envelope.transactions);
+  let transactions = $derived(envelope.transactions);
 
-  let totalAmount = transactions.reduce((accumulator, item) => {
+  let totalAmount = $derived.by(() => transactions.reduce((accumulator, item) => {
     return accumulator + item.amount;
-  }, 0)
+  }, 0))
 </script>
 
 <Card>
