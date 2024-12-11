@@ -10,7 +10,6 @@
     border-radius: 10px;
     &:not(:has(.envelope)) {
       width: fit-content;
-      min-width: 300px;
       margin-inline: auto;
     }
   }

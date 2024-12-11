@@ -4,13 +4,12 @@
   let envelopeID = income.envelopeID;
   let transactions = income.transactions;
 
-  function updateAmount(transactionID) {
-    // need to figure out how to pass "this" into the function
+  function updateAmount() {
     const num = numberFormat(this.value)
     if (num === "NaN") {
       alert(`${this.value} is not a valid number`)
     } else {
-      updateTransaction(accountTitle, envelopeID, transactionID, 'amount', num)
+      updateTransaction(accountTitle, envelopeID, this.id, 'amount', num)
     }
   }
 </script>
@@ -18,9 +17,9 @@
 <Card>
   <h2>Income</h2>
   <div class="body">
-    {#each transactions as item}
-      <p>{item.transactionDescription}:</p>
-      <input class="amount" type="text" size="9" value={currencyFormat(item.amount)} onblur={() => updateAmount(item.transactionID)}>
+    {#each transactions as transaction}
+      <p>{transaction.transactionDescription}:</p>
+      <input id={transaction.transactionID} class="amount" type="text" size="9" value={currencyFormat(transaction.amount)} onblur={updateAmount}>
     {/each}
   </div>
 </Card>
@@ -32,7 +31,8 @@
   }
   .body {
     display: grid;
-    grid-template-columns: 180px 120px;
+    grid-template-columns: 1fr 120px;
+    gap: 10px;
     align-items: center;
     padding: 20px 30px;
     font-weight: 500;

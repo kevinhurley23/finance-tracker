@@ -30,7 +30,11 @@
   <i class="fa-solid fa-trash delete-transaction" title="delete transaction" onclick={() => deleteTransaction(accountTitle, envelopeID, transactionID)}></i>
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <i class="fa-solid fa-repeat toggle-repeating" title="turn repeat on or off for this transaction" onclick={toggleRepeat}></i>
+  {#if accountTitle != 'budget'}
+    <i class="fa-solid fa-repeat toggle-repeating" title="turn repeat on or off for this transaction" onclick={toggleRepeat}></i>
+  {:else}
+    <div></div>
+  {/if}
   <input class="date" type="date" value={transaction.date} oninput={updateDate}>
   <input class="amount" type="text" size="8" value={amountStr} onblur={updateAmount}>
 </div>

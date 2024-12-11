@@ -63,7 +63,6 @@
     const envelopeIndex = account.indexOf(account.find(item => item.envelopeID == envelopeID));
     const transactionIndex = account[envelopeIndex].transactions.indexOf(account[envelopeIndex].transactions.find(item => item.transactionID == transactionID));
     data[accountTitle][envelopeIndex].transactions[transactionIndex][property] = value;
-    console.log(data[accountTitle][envelopeIndex].transactions[transactionIndex])
   }
 
   function deleteTransaction(accountTitle, envelopeID, transactionID) {

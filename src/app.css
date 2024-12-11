@@ -65,3 +65,6 @@ input {
 .amount {
   text-align: right;
 }
+#budget .toggle-repeating {
+  display: none;
+}
