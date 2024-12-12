@@ -1,5 +1,6 @@
 <script>
   import Card from "./Card.svelte";
+  import Modal from "./Modal.svelte";
   import Transaction from "./Transaction.svelte";
   let { envelope, accountTitle, allExpanded, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
   let envelopeID = envelope.envelopeID;
@@ -11,12 +12,29 @@
   let totalAmount = $derived.by(() => transactions.reduce((accumulator, item) => {
     return accumulator + item.amount;
   }, 0))
+
+  let showModal = $state(false);
+
+  // svelte-ignore non_reactive_update
+  let [newTransactionDescription, newTransactionAmount] = '';
+  // svelte-ignore non_reactive_update
+  let newTransactionDate = new Date().toISOString().split('T')[0];
+  // svelte-ignore non_reactive_update
+  let newTransactionRepeating = false;
+
+  function newTransaction(event) {
+    event.preventDefault();
+    addTransaction(accountTitle, envelopeID, newTransactionDescription, newTransactionDate, newTransactionAmount, newTransactionRepeating)
+    newTransactionDescription = '';
+    newTransactionAmount = '';
+    newTransactionRepeating = false;
+    showModal = false;
+  }
 </script>
 
 <Card>
   <div class="envelope {expanded ? 'expanded' : ''}">
-    <!-- svelte-ignore a11y_click_events_have_key_events -->
-    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
     <div class="heading" onclick={() => expanded = !expanded}>
       <h3>
         {envelope.envelopeTitle}
@@ -44,9 +62,40 @@
         <p style="text-align: center; font-style: italic;">There are no transactions in this envelope</p>
       {/if}
     </div>
-    <button class="add-transaction" onclick={addTransaction}>+ Add Transaction</button>
+    <button class="add-transaction" onclick={() => (showModal = true)}>+ Add Transaction</button>
   </div>
 </Card>
+
+{#if showModal}
+  <Modal bind:showModal>
+    {#snippet body()}
+      <p style="text-align: center;">New Transaction</p>
+      <form class="new-transaction-form" onsubmit={newTransaction}>
+        <label>
+          Description:
+          <input required type="text" bind:value={newTransactionDescription}>
+        </label>
+        <label>
+          Date:
+          <input required type="date" bind:value={newTransactionDate}>
+        </label>
+        <label>
+          Amount:
+          <input required type="number" bind:value={newTransactionAmount}>
+        </label>
+        <label>
+          Repeating:
+          <input type="checkbox" bind:checked={newTransactionRepeating}>
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+    {/snippet}
+    <!-- {#snippet confirmBtn()}
+      <button>Create Transaction</button>
+    {/snippet} -->
+  </Modal>
+{/if}
+
 
 <style>
   .envelope {
@@ -100,5 +149,14 @@
         display: block;
       }
     }
+  }
+  .new-transaction-form {
+    input {
+      border: 2px solid var(--grey-100);
+    }
+  }
+  label {
+    display: block;
+    margin-block: 10px;
   }
 </style>

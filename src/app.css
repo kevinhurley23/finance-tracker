@@ -65,6 +65,9 @@ input {
 .amount {
   text-align: right;
 }
-#budget .toggle-repeating {
-  display: none;
+
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
 }

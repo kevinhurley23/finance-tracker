@@ -1,7 +1,10 @@
 <script>
+  import Modal from "./Modal.svelte";
   let { accountTitle, envelopeID, transaction, currencyFormat, numberFormat, updateTransaction, deleteTransaction } = $props()
-  let transactionID = transaction.transactionID;
+  const transactionID = transaction.transactionID;
+  const canDelete = transaction.transactionDescription == "Starting Balance" ? false : true;
   let amountStr = $state(currencyFormat(transaction.amount));
+  let showModal = $state(false);
 
   function updateDescription() {
     updateTransaction(accountTitle, envelopeID, transactionID, 'transactionDescription', this.value)
@@ -25,11 +28,13 @@
 
 <div class="transaction {transaction.repeating ? 'repeating' : ''}">
   <input class="description" type="text" value={transaction.transactionDescription} onblur={updateDescription}>
-  <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <i class="fa-solid fa-trash delete-transaction" title="delete transaction" onclick={() => deleteTransaction(accountTitle, envelopeID, transactionID)}></i>
-  <!-- svelte-ignore a11y_click_events_have_key_events -->
-  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+  {#if canDelete}
+    <i class="fa-solid fa-trash delete-transaction" title="delete transaction" onclick={() => (showModal = true)}></i>
+  {:else}
+    <div></div>
+  {/if}
+  <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   {#if accountTitle != 'budget'}
     <i class="fa-solid fa-repeat toggle-repeating" title="turn repeat on or off for this transaction" onclick={toggleRepeat}></i>
   {:else}
@@ -38,6 +43,20 @@
   <input class="date" type="date" value={transaction.date} oninput={updateDate}>
   <input class="amount" type="text" size="8" value={amountStr} onblur={updateAmount}>
 </div>
+
+<Modal bind:showModal>
+  {#snippet body()}
+		<p>Are you sure you want to delete this transaction?</p>
+    <div class="row">
+      <span>{transaction.transactionDescription}</span>
+      <span>{transaction.date}</span>
+      <span>{amountStr}</span>
+    </div>
+	{/snippet}
+  {#snippet confirmBtn()}
+    <button onclick={() => deleteTransaction(accountTitle, envelopeID, transactionID)}>Delete</button>
+  {/snippet}
+</Modal>
 
 <style>
   .transaction {

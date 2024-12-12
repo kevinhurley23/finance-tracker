@@ -41,21 +41,20 @@
       return "NaN";
     }
   }
-  
-  function setHighestTransactionID(newID) {
-    data.highestTransactionID = newID;
-  }
 
-  function addTransaction() {
-    // const newHighestTransactionID = highestTransactionID + 1;
-    // const newTransaction = {
-    //   transactionID: newHighestTransactionID,
-    //   description: '',
-    //   date: '',
-    //   amount: 0,
-    // }
-    // transactions.push(newTransaction);
-    // setHighestTransactionID(newHighestTransactionID);
+  function addTransaction(accountTitle, envelopeID, description, date, amount, repeating) {
+    const account = data[accountTitle];
+    const envelopeIndex = account.indexOf(account.find(item => item.envelopeID == envelopeID));
+    const newTransaction = {
+      transactionID: data.highestTransactionID + 1,
+      transactionDescription: description,
+      date: date,
+      amount: amount,
+      repeating: repeating
+    }
+    data[accountTitle][envelopeIndex].transactions.push(newTransaction);
+    data.highestTransactionID++;
+    console.log(data);
   }
 
   function updateTransaction(accountTitle, envelopeID, transactionID, property, value) {
@@ -66,10 +65,14 @@
   }
 
   function deleteTransaction(accountTitle, envelopeID, transactionID) {
+    console.log('deleting transaction');
     const account = data[accountTitle];
     const envelopeIndex = account.indexOf(account.find(item => item.envelopeID == envelopeID));
     const transactionIndex = account[envelopeIndex].transactions.indexOf(account[envelopeIndex].transactions.find(item => item.transactionID == transactionID));
     data[accountTitle][envelopeIndex].transactions.splice(transactionIndex, 1);
+    if (transactionID === data.highestTransactionID) {
+      data.highestTransactionID--;
+    }
   }
 </script>
 
