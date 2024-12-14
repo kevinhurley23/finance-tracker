@@ -11,7 +11,6 @@
 <dialog
 	bind:this={dialog}
 	onclose={() => (showModal = false)}
-	onclick={(e) => { if (e.target === dialog) dialog.close(); }}
 >
   {@render body?.()}
   <div class="row">

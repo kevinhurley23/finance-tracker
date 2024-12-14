@@ -3,21 +3,26 @@
   import IncomeCard from './lib/IncomeCard.svelte';
   import EnvelopeGroup from './lib/EnvelopeGroup.svelte';
 
-  import { placeholderData } from './lib/placeholderData.svelte.js';
-  let data = $state(placeholderData);
-  let dataReady = $state(true);
-
-  // let data = $state();
-  // let dataReady = $state(false);
   const accountNames = ["budget", "checking", "savings"];
   let sectionDisplayed = $state("checking");
+  let date = new Date();
+  let year = date.getFullYear();
+  let month = String(date.getMonth() + 1).padStart(2, '0');
+  let day = String(date.getDate()).padStart(2, '0');
+  let today = `${year}-${month}-${day}`;
+  
+  // import { placeholderData } from './lib/placeholderData.svelte.js';
+  // let data = $state(placeholderData);
+  // let dataReady = $state(true);
 
-  // async function fetchData() {
-  //   const response = await fetch('../php/read.php');
-  //   data = await response.json();
-  //   dataReady = true;
-  // }
-  // fetchData();
+  let data = $state();
+  let dataReady = $state(false);
+  async function fetchData() {
+    const response = await fetch('../php/read.php');
+    data = await response.json();
+    dataReady = true;
+  }
+  fetchData();
 
   function currencyFormat(amount) {
     if (amount == undefined) {
@@ -42,38 +47,72 @@
     }
   }
 
-  function addTransaction(accountTitle, envelopeID, description, date, amount, repeating) {
-    const account = data[accountTitle];
-    const envelopeIndex = account.indexOf(account.find(item => item.envelopeID == envelopeID));
-    const newTransaction = {
-      transactionID: data.highestTransactionID + 1,
-      transactionDescription: description,
-      date: date,
-      amount: amount,
-      repeating: repeating
-    }
+  async function fetchRequest(url, body) {
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function findEnvelopeIndex(account, envelopeID) {
+  return account.indexOf(account.find(item => item.envelopeID == envelopeID));
+}
+
+async function addTransaction(accountTitle, envelopeID, description, date, amount, repeating) {
+  const account = data[accountTitle];
+  const envelopeIndex = findEnvelopeIndex(account, envelopeID);
+  const newTransaction = {
+    transactionDescription: description,
+    date: date,
+    amount: amount,
+    repeating: repeating,
+    envelopeID: envelopeID
+  };
+
+  const result = await fetchRequest('../php/create.php', newTransaction);
+  if (result) {
     data[accountTitle][envelopeIndex].transactions.push(newTransaction);
     data.highestTransactionID++;
-    console.log(data);
   }
+}
 
-  function updateTransaction(accountTitle, envelopeID, transactionID, property, value) {
-    const account = data[accountTitle];
-    const envelopeIndex = account.indexOf(account.find(item => item.envelopeID == envelopeID));
-    const transactionIndex = account[envelopeIndex].transactions.indexOf(account[envelopeIndex].transactions.find(item => item.transactionID == transactionID));
+async function updateTransaction(accountTitle, envelopeID, transactionID, property, value) {
+  const account = data[accountTitle];
+  const envelopeIndex = findEnvelopeIndex(account, envelopeID);
+  const transactionIndex = account[envelopeIndex].transactions.indexOf(account[envelopeIndex].transactions.find(item => item.transactionID == transactionID));
+  const updatedTransaction = {
+    transactionID: transactionID,
+    property: property,
+    value: value
+  };
+
+  const result = await fetchRequest('../php/update.php', updatedTransaction);
+  if (result) {
     data[accountTitle][envelopeIndex].transactions[transactionIndex][property] = value;
   }
+}
 
-  function deleteTransaction(accountTitle, envelopeID, transactionID) {
-    console.log('deleting transaction');
-    const account = data[accountTitle];
-    const envelopeIndex = account.indexOf(account.find(item => item.envelopeID == envelopeID));
-    const transactionIndex = account[envelopeIndex].transactions.indexOf(account[envelopeIndex].transactions.find(item => item.transactionID == transactionID));
+async function deleteTransaction(accountTitle, envelopeID, transactionID) {
+  const account = data[accountTitle];
+  const envelopeIndex = findEnvelopeIndex(account, envelopeID);
+  const transactionIndex = account[envelopeIndex].transactions.indexOf(account[envelopeIndex].transactions.find(item => item.transactionID == transactionID));
+
+  const result = await fetchRequest('../php/delete.php', { transactionID: transactionID });
+  if (result) {
     data[accountTitle][envelopeIndex].transactions.splice(transactionIndex, 1);
     if (transactionID === data.highestTransactionID) {
       data.highestTransactionID--;
     }
   }
+}
 </script>
 
 <div class="section-buttons">
@@ -98,6 +137,7 @@
         <EnvelopeGroup
           accountTitle={account}
           envelopes={data[account].filter((item) => item.envelopeTitle !== "Income")}
+          {today}
           {currencyFormat}
           {numberFormat}
           {addTransaction}

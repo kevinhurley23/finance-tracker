@@ -74,6 +74,7 @@
       transition: 200ms;
       &:hover {
         transform: scale(1.2);
+        color: var(--accent);
       }
       &:active {
         transition: 100ms;
@@ -89,11 +90,11 @@
         opacity: 1;
       }
     }
-    &.repeating {
-      .toggle-repeating {
-        color: var(--grey-100);
-        opacity: 1;
-      }
+  }
+  .repeating {
+    .toggle-repeating {
+      color: var(--grey-100);
+      opacity: 1;
     }
   }
 </style>
