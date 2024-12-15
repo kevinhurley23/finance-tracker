@@ -2,7 +2,7 @@
   import Card from "./Card.svelte";
   import Modal from "./Modal.svelte";
   import Transaction from "./Transaction.svelte";
-  let { envelope, accountTitle, allExpanded, today, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
+  let { envelope, accountTitle, allExpanded, todayStr, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
   let envelopeID = envelope.envelopeID;
 
   let expanded = $state(allExpanded);
@@ -18,7 +18,7 @@
   // svelte-ignore non_reactive_update
   let [newTransactionDescription, newTransactionAmount] = '';
   // svelte-ignore non_reactive_update
-  let newTransactionDate = today;
+  let newTransactionDate = todayStr;
   // svelte-ignore non_reactive_update
   let newTransactionRepeating = false;
 
@@ -104,6 +104,7 @@
       grid-template-columns: 1fr 125px;
       padding: 20px;
       border-radius: 10px;
+      cursor: pointer;
       h3 {
         margin: 0;
         i {
@@ -133,6 +134,7 @@
       font-size: 1.1rem;
       padding: 6px;
       display: none;
+      cursor: pointer;
     }
     &.expanded {
       .heading {
@@ -157,12 +159,10 @@
     p {
       margin: 0;
     }
-    input {
-      border: 2px solid var(--grey-100);
-    }
     input[type=checkbox] {
       width: 20px;
       height: 20px;
+      box-shadow: none;
     }
   }
 </style>

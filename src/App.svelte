@@ -1,15 +1,17 @@
 <script>
   // import viteLogo from '/vite.svg' // assets in 'public' folder can be imported like this
-  import IncomeCard from './lib/IncomeCard.svelte';
   import EnvelopeGroup from './lib/EnvelopeGroup.svelte';
+  import Switch from './lib/Switch.svelte';
 
   const accountNames = ["budget", "checking", "savings"];
   let sectionDisplayed = $state("checking");
-  let date = new Date();
-  let year = date.getFullYear();
-  let month = String(date.getMonth() + 1).padStart(2, '0');
-  let day = String(date.getDate()).padStart(2, '0');
-  let today = `${year}-${month}-${day}`;
+  let testingMode = $state(false);
+
+  let todayObj = new Date();
+  let year = todayObj.getFullYear();
+  let month = String(todayObj.getMonth() + 1).padStart(2, '0');
+  let day = String(todayObj.getDate()).padStart(2, '0');
+  let todayStr = `${year}-${month}-${day}`;
   
   // import { placeholderData } from './lib/placeholderData.svelte.js';
   // let data = $state(placeholderData);
@@ -62,94 +64,137 @@
   }
 }
 
-function findEnvelopeIndex(account, envelopeID) {
-  return account.indexOf(account.find(item => item.envelopeID == envelopeID));
-}
-
-async function addTransaction(accountTitle, envelopeID, description, date, amount, repeating) {
-  const account = data[accountTitle];
-  const envelopeIndex = findEnvelopeIndex(account, envelopeID);
-  const newTransaction = {
-    transactionDescription: description,
-    date: date,
-    amount: amount,
-    repeating: repeating,
-    envelopeID: envelopeID
-  };
-
-  const result = await fetchRequest('../php/create.php', newTransaction);
-  if (result) {
-    data[accountTitle][envelopeIndex].transactions.push(newTransaction);
-    data.highestTransactionID++;
+  function findEnvelopeIndex(account, envelopeID) {
+    return account.indexOf(account.find(item => item.envelopeID == envelopeID));
   }
-}
 
-async function updateTransaction(accountTitle, envelopeID, transactionID, property, value) {
-  const account = data[accountTitle];
-  const envelopeIndex = findEnvelopeIndex(account, envelopeID);
-  const transactionIndex = account[envelopeIndex].transactions.indexOf(account[envelopeIndex].transactions.find(item => item.transactionID == transactionID));
-  const updatedTransaction = {
-    transactionID: transactionID,
-    property: property,
-    value: value
-  };
+  async function addTransaction(accountTitle, envelopeID, description, date, amount, repeating) {
+    const account = data[accountTitle];
+    const envelopeIndex = findEnvelopeIndex(account, envelopeID);
+    const newTransaction = {
+      transactionDescription: description,
+      date: date,
+      amount: amount,
+      repeating: repeating,
+      envelopeID: envelopeID
+    };
+    function updateFrontEnd() {
+      data[accountTitle][envelopeIndex].transactions.push(newTransaction);
+      data.highestTransactionID++;
+    }
 
-  const result = await fetchRequest('../php/update.php', updatedTransaction);
-  if (result) {
-    data[accountTitle][envelopeIndex].transactions[transactionIndex][property] = value;
-  }
-}
-
-async function deleteTransaction(accountTitle, envelopeID, transactionID) {
-  const account = data[accountTitle];
-  const envelopeIndex = findEnvelopeIndex(account, envelopeID);
-  const transactionIndex = account[envelopeIndex].transactions.indexOf(account[envelopeIndex].transactions.find(item => item.transactionID == transactionID));
-
-  const result = await fetchRequest('../php/delete.php', { transactionID: transactionID });
-  if (result) {
-    data[accountTitle][envelopeIndex].transactions.splice(transactionIndex, 1);
-    if (transactionID === data.highestTransactionID) {
-      data.highestTransactionID--;
+    if (testingMode) {
+      updateFrontEnd();
+    } else {
+      const result = await fetchRequest('../php/create.php', newTransaction);
+      if (result) {
+        updateFrontEnd();
+      }
     }
   }
-}
+
+  async function updateTransaction(accountTitle, envelopeID, transactionID, property, value) {
+    const account = data[accountTitle];
+    const envelopeIndex = findEnvelopeIndex(account, envelopeID);
+    const transactionIndex = account[envelopeIndex].transactions.indexOf(account[envelopeIndex].transactions.find(item => item.transactionID == transactionID));
+    const updatedTransaction = {
+      transactionID: transactionID,
+      property: property,
+      value: value
+    };
+    function updateFrontEnd() {
+      data[accountTitle][envelopeIndex].transactions[transactionIndex][property] = value;
+    }
+
+    if (testingMode) {
+      updateFrontEnd();
+    } else {
+      const result = await fetchRequest('../php/update.php', updatedTransaction);
+      if (result) {
+        updateFrontEnd();
+      }
+    }
+  }
+
+  async function deleteTransaction(accountTitle, envelopeID, transactionID) {
+    const account = data[accountTitle];
+    const envelopeIndex = findEnvelopeIndex(account, envelopeID);
+    const transactionIndex = account[envelopeIndex].transactions.indexOf(account[envelopeIndex].transactions.find(item => item.transactionID == transactionID));
+    function updateFrontEnd() {
+      data[accountTitle][envelopeIndex].transactions.splice(transactionIndex, 1);
+      if (transactionID === data.highestTransactionID) {
+        data.highestTransactionID--;
+      }
+    }
+
+    if (testingMode) {
+      updateFrontEnd();
+    } else {
+      const result = await fetchRequest('../php/delete.php', { transactionID: transactionID });
+      if (result) {
+        updateFrontEnd();
+      }
+    }
+  }
 </script>
 
-<div class="section-buttons">
-  {#each accountNames as account}
-    <button style={`--accent: var(--${account}-accent)`} onclick={() => sectionDisplayed = account}>{account}</button>
-  {/each}
-</div>
-<main style={`--accent: var(--${sectionDisplayed}-accent)`}>
-  {#if !dataReady}
-    <p>Data is loading</p>
-  {:else}
+<div id="app-body" style={testingMode ? 'border-color: var(--testing-accent)' : ''}>
+  <div id="testing-mode-toggle" title="When testing mode is on, no changes will be written to the database">
+    <p>Testing Mode</p>
+    <Switch bind:state={testingMode} />
+  </div>
+  <div class="section-buttons">
     {#each accountNames as account}
-      <section id={account} style={sectionDisplayed == account ? "" : "display: none;"}>
-        <h1>{account}</h1>
-        <IncomeCard
-          accountTitle={account}
-          income={data[account].find(item => item.envelopeTitle === "Income")}
-          {currencyFormat}
-          {numberFormat}
-          {updateTransaction}
-        />
-        <EnvelopeGroup
-          accountTitle={account}
-          envelopes={data[account].filter((item) => item.envelopeTitle !== "Income")}
-          {today}
-          {currencyFormat}
-          {numberFormat}
-          {addTransaction}
-          {updateTransaction}
-          {deleteTransaction}
-        />
-      </section>
+      <button style={`--accent: var(--${account}-accent)`} onclick={() => sectionDisplayed = account}>{account}</button>
     {/each}
-  {/if}
-</main>
+  </div>
+  <main style={`--accent: var(--${sectionDisplayed}-accent)`}>
+    {#if !dataReady}
+      <p>Data is loading</p>
+    {:else}
+      {#each accountNames as account}
+        <section id={account} style={sectionDisplayed == account ? "" : "display: none;"}>
+          <h1>{account}</h1>
+          <EnvelopeGroup
+            accountTitle={account}
+            envelopes={data[account]}
+            {todayStr}
+            {currencyFormat}
+            {numberFormat}
+            {addTransaction}
+            {updateTransaction}
+            {deleteTransaction}
+          />
+        </section>
+      {/each}
+    {/if}
+  </main>
+</div>
 
 <style>
+  #app-body {
+    background-color: var(--grey-600);
+    color: var(--grey-100);
+    margin: 0;
+    padding-block: 50px;
+    font-family: "open sans";
+    font-size: 1.2rem;
+    position: relative;
+    border: 5px solid var(--grey-600);
+  }
+  #testing-mode-toggle {
+    position: sticky;
+    width: fit-content;
+    top: 20px;
+    left: 88%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    p {
+      margin: 0;
+    }
+  }
   .section-buttons {
     display: flex;
     justify-content: center;

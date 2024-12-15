@@ -1,11 +1,35 @@
 <script>
+  import IncomeCard from './IncomeCard.svelte';
   import Envelope from './Envelope.svelte';
-  let { accountTitle, envelopes, today, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
+  let { accountTitle, envelopes, todayStr, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
+
+  let assets = $derived.by(() => envelopes.find(item => item.envelopeTitle === "Income"));
+  let expenses = $derived.by(() => envelopes.filter((item) => item.envelopeTitle !== "Income"));
+  
+  let totalExpenses = $derived.by(() => {
+    let accountAccumulator = 0;
+    expenses.forEach((envelope) => {
+      let envelopeAccumulator = 0;
+      envelope.transactions.forEach(transaction => {
+        envelopeAccumulator += transaction.amount;
+      })
+      accountAccumulator += envelopeAccumulator;
+    })
+    return accountAccumulator;
+  })
 
   let allExpanded = $state(true);
 </script>
 
 <div class="envelope-group">
+  <IncomeCard
+    {accountTitle}
+    {assets}
+    {totalExpenses}
+    {currencyFormat}
+    {numberFormat}
+    {updateTransaction}
+  />
   <div class="heading-button-row">
     <h2>Transactions</h2>
     <div class="buttons">
@@ -13,12 +37,12 @@
       <button onclick={() => allExpanded = false}>Close All</button> -->
     </div>
   </div>
-  {#each envelopes as envelope}
+  {#each expenses as envelope}
     <Envelope
       {envelope}
       {accountTitle}
       {allExpanded}
-      {today}
+      {todayStr}
       {currencyFormat}
       {numberFormat}
       {addTransaction}
