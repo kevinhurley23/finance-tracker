@@ -2,16 +2,17 @@
   import Card from "./Card.svelte";
   import Modal from "./Modal.svelte";
   import Transaction from "./Transaction.svelte";
-  let { envelope, accountTitle, allExpanded, todayStr, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
+  import { scale, slide } from "svelte/transition";
+  let { envelope, budgetEnvelopeTotals, accountTitle, todayStr, toggleExpanded, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
   let envelopeID = envelope.envelopeID;
-
-  let expanded = $state(allExpanded);
 
   let transactions = $derived(envelope.transactions);
 
   let totalAmount = $derived.by(() => transactions.reduce((accumulator, item) => {
     return accumulator + item.amount;
   }, 0))
+
+  let thisEnvelopeBudget = $derived(budgetEnvelopeTotals[envelope.envelopeTitle]);
 
   let showModal = $state(false);
 
@@ -22,8 +23,7 @@
   // svelte-ignore non_reactive_update
   let newTransactionRepeating = false;
 
-  function newTransaction(event) {
-    event.preventDefault();
+  function newTransaction() {
     if (newTransactionDescription == undefined) {
       alert("Description cannot be empty")
     } else if (newTransactionAmount == undefined) {
@@ -39,42 +39,54 @@
 </script>
 
 <Card>
-  <div class="envelope {expanded ? 'expanded' : ''}">
+  <div class="envelope {envelope.expanded ? 'expanded' : ''}">
     <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-    <div class="heading" onclick={() => expanded = !expanded}>
+    <div class="heading" onclick={() => toggleExpanded(envelopeID)}>
       <h3>
         {envelope.envelopeTitle}
         <i class="fa-solid fa-chevron-right"></i>
       </h3>
-      <span class="amount amount-total">{currencyFormat(totalAmount)}</span>
+      <span class="amount">
+        {#if accountTitle==='checking'}
+          Budget: {currencyFormat(thisEnvelopeBudget)}
+        {/if}
+      </span>
+      <span
+        class="amount amount-total"
+        style={accountTitle === "checking" ? `color: var(--${totalAmount > thisEnvelopeBudget ? 'red' : 'green'});` : ""}
+      >
+        {currencyFormat(totalAmount)}
+      </span>
     </div>
-    <div class="envelope-body">
-      {#if envelope.envelopeDescription}
-        <p>{envelope.envelopeDescription}</p>
-      {/if}
-      {#if envelope.transactions.length}
-        {#each transactions as transaction (transaction.transactionID)}
-          <Transaction
-            {accountTitle} 
-            {envelopeID}
-            {transaction}
-            {currencyFormat}
-            {numberFormat}
-            {updateTransaction}
-            {deleteTransaction}
-          />
-        {/each}
-      {:else}
-        <p style="text-align: center; font-style: italic;">There are no transactions in this envelope</p>
-      {/if}
-    </div>
-    <button class="add-transaction" onclick={() => (showModal = true)}>+ Add Transaction</button>
+    {#if envelope.expanded}
+      <div class="envelope-body" transition:slide>
+        {#if envelope.envelopeDescription}
+          <p>{envelope.envelopeDescription}</p>
+        {/if}
+        {#if envelope.transactions.length}
+          {#each transactions as transaction (transaction.transactionID)}
+            <Transaction
+              {accountTitle} 
+              {envelopeID}
+              {transaction}
+              {currencyFormat}
+              {numberFormat}
+              {updateTransaction}
+              {deleteTransaction}
+            />
+          {/each}
+        {:else}
+          <p style="text-align: center; font-style: italic;">There are no transactions in this envelope</p>
+        {/if}
+      </div>
+      <button class="add-transaction" transition:scale onclick={() => (showModal = true)}>+ Add Transaction</button>
+    {/if}
   </div>
 </Card>
 
 {#if showModal}
   <Modal bind:showModal>
-    {#snippet body()}
+    {#snippet modalBody()}
       <p style="text-align: center;">New Transaction</p>
       <div class="new-transaction-form">
         <p>Description:</p>
@@ -89,8 +101,9 @@
         {/if}
       </div>
     {/snippet}
-    {#snippet confirmBtn()}
+    {#snippet modalButtons()}
       <button onclick={newTransaction}>Create Transaction</button>
+      <button onclick={() => showModal = false}>Cancel</button>
     {/snippet}
   </Modal>
 {/if}
@@ -101,7 +114,8 @@
     position: relative;
     .heading {
       display: grid;
-      grid-template-columns: 1fr 125px;
+      grid-template-columns: 1fr 190px 125px;
+      gap: 10px;
       padding: 20px;
       border-radius: 10px;
       cursor: pointer;
@@ -120,7 +134,6 @@
       }
     }
     .envelope-body {
-      display: none;
       padding: 0 20px 30px;
       p {
         margin-top: 10px;
@@ -133,7 +146,7 @@
       transform: translateX(-50%);
       font-size: 1.1rem;
       padding: 6px;
-      display: none;
+      /* display: none; */
       cursor: pointer;
     }
     &.expanded {
@@ -143,12 +156,12 @@
           transform: rotate(90deg);
         }
       }
-      .envelope-body {
+      /* .envelope-body {
         display: block;
       }
       .add-transaction {
         display: block;
-      }
+      } */
     }
   }
   .new-transaction-form {

@@ -14,17 +14,17 @@
     background-color: var(--grey-500);
     border: 2px solid var(--accent);
     border-radius: 100vw;
-    display: flex;
     padding: 3px;
     cursor: pointer;
-    &[data-active=true] {
-      justify-content: flex-end;
+    &[data-active=true] .handle {
+      transform: translateX(1.2em);
     }
     .handle {
       width: 1.2em;
       height: 1.2em;
       background-color: var(--accent);
       border-radius: 50%;
+      transition: 300ms;
     }
   }
 </style>

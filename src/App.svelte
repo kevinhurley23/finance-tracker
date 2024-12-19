@@ -2,29 +2,56 @@
   // import viteLogo from '/vite.svg' // assets in 'public' folder can be imported like this
   import EnvelopeGroup from './lib/EnvelopeGroup.svelte';
   import Switch from './lib/Switch.svelte';
+  import Modal from './lib/Modal.svelte';
+  import { placeholderData } from './lib/placeholderData.svelte.js';
 
   const accountNames = ["budget", "checking", "savings"];
   let sectionDisplayed = $state("checking");
   let testingMode = $state(false);
+  let canToggleTestingMode = $state(true);
+  let showModal = $state(false);
 
   let todayObj = new Date();
   let year = todayObj.getFullYear();
   let month = String(todayObj.getMonth() + 1).padStart(2, '0');
   let day = String(todayObj.getDate()).padStart(2, '0');
   let todayStr = `${year}-${month}-${day}`;
-  
-  // import { placeholderData } from './lib/placeholderData.svelte.js';
-  // let data = $state(placeholderData);
-  // let dataReady = $state(true);
 
   let data = $state();
   let dataReady = $state(false);
   async function fetchData() {
-    const response = await fetch('../php/read.php');
-    data = await response.json();
+    try {
+      const response = await fetch('../php/read.php');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      data = await response.json();
+    } catch (error) {
+      console.error('Fetch error:', error);
+      data = placeholderData;
+      showModal = true;
+      testingMode = true;
+      canToggleTestingMode = false;
+    }
     dataReady = true;
   }
   fetchData();
+
+  let budgetEnvelopeTotals = $state({});
+
+  $effect(() => {
+		if (dataReady) {
+      data.budget.forEach((envelope) => {
+        let envelopeAccumulator = 0;
+        envelope.transactions.forEach(transaction => {
+          envelopeAccumulator += transaction.amount;
+        })
+        budgetEnvelopeTotals[envelope.envelopeTitle] = envelopeAccumulator;
+      })
+    };
+	});
+
+  
 
   function currencyFormat(amount) {
     if (amount == undefined) {
@@ -72,6 +99,7 @@
     const account = data[accountTitle];
     const envelopeIndex = findEnvelopeIndex(account, envelopeID);
     const newTransaction = {
+      transactionID: data.highestTransactionID + 1,
       transactionDescription: description,
       date: date,
       amount: amount,
@@ -139,10 +167,12 @@
 </script>
 
 <div id="app-body" style={testingMode ? 'border-color: var(--testing-accent)' : ''}>
-  <div id="testing-mode-toggle" title="When testing mode is on, no changes will be written to the database">
-    <p>Testing Mode</p>
-    <Switch bind:state={testingMode} />
-  </div>
+  {#if canToggleTestingMode}
+    <div id="testing-mode-toggle" title="When testing mode is on, no changes will be written to the database">
+      <p>Testing Mode</p>
+      <Switch bind:state={testingMode} />
+    </div>
+  {/if}
   <div class="section-buttons">
     {#each accountNames as account}
       <button style={`--accent: var(--${account}-accent)`} onclick={() => sectionDisplayed = account}>{account}</button>
@@ -158,6 +188,7 @@
           <EnvelopeGroup
             accountTitle={account}
             envelopes={data[account]}
+            {budgetEnvelopeTotals}
             {todayStr}
             {currencyFormat}
             {numberFormat}
@@ -167,6 +198,16 @@
           />
         </section>
       {/each}
+    {/if}
+    {#if showModal}
+      <Modal bind:showModal>
+        {#snippet modalBody()}
+          <p>Could not connect to database. Placeholder Data loaded instead.</p>
+        {/snippet}
+        {#snippet modalButtons()}
+          <button onclick={() => showModal = false}>OK</button>
+        {/snippet}
+      </Modal>
     {/if}
   </main>
 </div>

@@ -63,14 +63,14 @@
     })}
     {#if totalIncome}
       {@render line({
-        label: "Income - Expenses",
+        label: "Income minus Expenses",
         value: totalIncome - totalExpenses,
         color: true
       })}
     {/if}
     {#if accountTitle === "checking"}
       {@render line({
-        label: "Assets - Expenses",
+        label: "Assets minus Expenses",
         value: totalAssets - totalExpenses,
         color: true
       })}

@@ -1,7 +1,9 @@
 <script>
   import IncomeCard from './IncomeCard.svelte';
   import Envelope from './Envelope.svelte';
-  let { accountTitle, envelopes, todayStr, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
+  let { accountTitle, envelopes, budgetEnvelopeTotals, todayStr, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
+
+  envelopes.forEach(item => item.expanded = true)
 
   let assets = $derived.by(() => envelopes.find(item => item.envelopeTitle === "Income"));
   let expenses = $derived.by(() => envelopes.filter((item) => item.envelopeTitle !== "Income"));
@@ -18,7 +20,16 @@
     return accountAccumulator;
   })
 
-  let allExpanded = $state(true);
+  function expandAll() {
+    envelopes.forEach(item => item.expanded = true)
+  }
+  function closeAll() {
+    envelopes.forEach(item => item.expanded = false)
+  }
+  function toggleExpanded(envelopeID) {
+    let envelope = envelopes.find(item => item.envelopeID === envelopeID);
+    envelope.expanded = !envelope.expanded;
+  }
 </script>
 
 <div class="envelope-group">
@@ -33,16 +44,17 @@
   <div class="heading-button-row">
     <h2>Transactions</h2>
     <div class="buttons">
-      <!-- <button onclick={() => allExpanded = true}>Open All</button>
-      <button onclick={() => allExpanded = false}>Close All</button> -->
+      <button class="open-envelopes" onclick={expandAll}>Open All</button>
+      <button class="close-envelopes" onclick={closeAll}>Close All</button>
     </div>
   </div>
-  {#each expenses as envelope}
+  {#each expenses as envelope (envelope.envelopeID)}
     <Envelope
       {envelope}
+      {budgetEnvelopeTotals}
       {accountTitle}
-      {allExpanded}
       {todayStr}
+      {toggleExpanded}
       {currencyFormat}
       {numberFormat}
       {addTransaction}

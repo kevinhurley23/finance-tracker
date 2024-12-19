@@ -1,5 +1,7 @@
 <script>
-  let { showModal = $bindable(), body, confirmBtn } = $props();
+	import {scale} from "svelte/transition";
+	import {quartInOut} from "svelte/easing";
+  let { showModal = $bindable(), modalBody, modalButtons } = $props();
 	let dialog = $state();
 
 	$effect(() => {
@@ -11,11 +13,11 @@
 <dialog
 	bind:this={dialog}
 	onclose={() => (showModal = false)}
+	transition:scale={{duration: 200, easing: quartInOut}}
 >
-  {@render body?.()}
+  {@render modalBody?.()}
   <div class="row">
-    {@render confirmBtn?.()}
-    <button onclick={() => dialog.close()}>Cancel</button>
+    {@render modalButtons?.()}
   </div>
 </dialog>
 
@@ -28,28 +30,7 @@
 	dialog::backdrop {
 		background: var(--grey-600);
     opacity: 0.5;
-	}
-	dialog[open] {
-		animation: zoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-	}
-	@keyframes zoom {
-		from {
-			transform: scale(0.95);
-		}
-		to {
-			transform: scale(1);
-		}
-	}
-	dialog[open]::backdrop {
-		animation: fade 0.2s ease-out;
-	}
-	@keyframes fade {
-		from {
-			opacity: 0;
-		}
-		to {
-			opacity: 0.5;
-		}
+		transition: 500ms;
 	}
   .row {
     margin-block: 16px;
