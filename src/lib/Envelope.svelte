@@ -6,7 +6,7 @@
   let { envelope, budgetEnvelopeTotals, accountTitle, todayStr, toggleExpanded, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
   let envelopeID = envelope.envelopeID;
 
-  let transactions = $derived(envelope.transactions);
+  let transactions = $derived(envelope.transactions.toSorted((a, b) =>  new Date(a.date).getTime() - new Date(b.date).getTime()));
 
   let totalAmount = $derived.by(() => transactions.reduce((accumulator, item) => {
     return accumulator + item.amount;
@@ -26,6 +26,8 @@
   function newTransaction() {
     if (newTransactionDescription == undefined) {
       alert("Description cannot be empty")
+    } else if (newTransactionDate == '') {
+      alert("Date cannot be empty")
     } else if (newTransactionAmount == undefined) {
       alert("Amount cannot be empty")
     } else {

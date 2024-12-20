@@ -32,6 +32,7 @@
       showModal = true;
       testingMode = true;
       canToggleTestingMode = false;
+      setTimeout(() => showModal = false, 2000);
     }
     dataReady = true;
   }
@@ -167,12 +168,15 @@
 </script>
 
 <div id="app-body" style={testingMode ? 'border-color: var(--testing-accent)' : ''}>
-  {#if canToggleTestingMode}
+  <!-- {#if canToggleTestingMode} -->
     <div id="testing-mode-toggle" title="When testing mode is on, no changes will be written to the database">
       <p>Testing Mode</p>
       <Switch bind:state={testingMode} />
+      {#if !canToggleTestingMode}
+        <div class="overlay" title="When using placeholder data, testing mode cannot be disabled"></div>
+      {/if}
     </div>
-  {/if}
+  <!-- {/if} -->
   <div class="section-buttons">
     {#each accountNames as account}
       <button style={`--accent: var(--${account}-accent)`} onclick={() => sectionDisplayed = account}>{account}</button>
@@ -217,17 +221,18 @@
     background-color: var(--grey-600);
     color: var(--grey-100);
     margin: 0;
-    padding-block: 50px;
+    padding-bottom: 30px;
     font-family: "open sans";
     font-size: 1.2rem;
     position: relative;
     border: 5px solid var(--grey-600);
   }
   #testing-mode-toggle {
-    position: sticky;
+    position: fixed;
     width: fit-content;
     top: 20px;
     left: 88%;
+    z-index: 20;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -235,13 +240,24 @@
     p {
       margin: 0;
     }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background-color: var(--grey-600);
+      opacity: 0.7;
+    }
   }
   .section-buttons {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    width: calc(100% - 10px);
     display: flex;
     justify-content: center;
     gap: 15px 30px;
     flex-wrap: wrap;
-    margin-bottom: 40px;
+    background-color: var(--grey-600);
+    padding: 25px;
     button {
       text-transform: capitalize;
     }
