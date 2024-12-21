@@ -11,11 +11,18 @@
   let canToggleTestingMode = $state(true);
   let showModal = $state(false);
 
+  const firstTransactionDate = new Date(2024, 11, 1);
   let todayObj = new Date();
   let year = todayObj.getFullYear();
   let month = String(todayObj.getMonth() + 1).padStart(2, '0');
   let day = String(todayObj.getDate()).padStart(2, '0');
   let todayStr = `${year}-${month}-${day}`;
+  let months = [];
+  let dateIterator = new Date(firstTransactionDate);
+  while (dateIterator <= todayObj) {
+    months.push(dateIterator.toISOString().slice(0, 7));
+    dateIterator.setMonth(dateIterator.getMonth() + 1);
+  }
 
   let data = $state();
   let dataReady = $state(false);
@@ -51,8 +58,6 @@
       })
     };
 	});
-
-  
 
   function currencyFormat(amount) {
     if (amount == undefined) {
@@ -168,15 +173,13 @@
 </script>
 
 <div id="app-body" style={testingMode ? 'border-color: var(--testing-accent)' : ''}>
-  <!-- {#if canToggleTestingMode} -->
-    <div id="testing-mode-toggle" title="When testing mode is on, no changes will be written to the database">
-      <p>Testing Mode</p>
-      <Switch bind:state={testingMode} />
-      {#if !canToggleTestingMode}
-        <div class="overlay" title="When using placeholder data, testing mode cannot be disabled"></div>
-      {/if}
-    </div>
-  <!-- {/if} -->
+  <div id="testing-mode-toggle" title="When testing mode is on, no changes will be written to the database">
+    <p>Testing Mode</p>
+    <Switch bind:state={testingMode} />
+    {#if !canToggleTestingMode}
+      <div class="overlay" title="When using placeholder data, testing mode cannot be disabled"></div>
+    {/if}
+  </div>
   <div class="section-buttons">
     {#each accountNames as account}
       <button style={`--accent: var(--${account}-accent)`} onclick={() => sectionDisplayed = account}>{account}</button>
@@ -193,12 +196,14 @@
             accountTitle={account}
             envelopes={data[account]}
             {budgetEnvelopeTotals}
+            {firstTransactionDate}
             {todayStr}
             {currencyFormat}
             {numberFormat}
             {addTransaction}
             {updateTransaction}
             {deleteTransaction}
+            {months}
           />
         </section>
       {/each}

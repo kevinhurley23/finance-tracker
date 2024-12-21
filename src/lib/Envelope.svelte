@@ -3,10 +3,19 @@
   import Modal from "./Modal.svelte";
   import Transaction from "./Transaction.svelte";
   import { scale, slide } from "svelte/transition";
-  let { envelope, budgetEnvelopeTotals, accountTitle, todayStr, toggleExpanded, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
+  let { envelope, budgetEnvelopeTotals, accountTitle, todayStr, dateRange, toggleExpanded, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
+
   let envelopeID = envelope.envelopeID;
 
-  let transactions = $derived(envelope.transactions.toSorted((a, b) =>  new Date(a.date).getTime() - new Date(b.date).getTime()));
+  let transactionsInRange = $derived.by(() => {
+    if (accountTitle === "checking") {
+      return envelope.transactions.filter(item => item.date >= dateRange[0] && item.date <= dateRange[1]);
+    } else {
+      return envelope.transactions;
+    }
+  });
+
+  let transactions = $derived(transactionsInRange.toSorted((a, b) =>  new Date(a.date).getTime() - new Date(b.date).getTime()));
 
   let totalAmount = $derived.by(() => transactions.reduce((accumulator, item) => {
     return accumulator + item.amount;
@@ -65,7 +74,7 @@
         {#if envelope.envelopeDescription}
           <p>{envelope.envelopeDescription}</p>
         {/if}
-        {#if envelope.transactions.length}
+        {#if transactions.length}
           {#each transactions as transaction (transaction.transactionID)}
             <Transaction
               {accountTitle} 
@@ -148,7 +157,6 @@
       transform: translateX(-50%);
       font-size: 1.1rem;
       padding: 6px;
-      /* display: none; */
       cursor: pointer;
     }
     &.expanded {
@@ -158,12 +166,6 @@
           transform: rotate(90deg);
         }
       }
-      /* .envelope-body {
-        display: block;
-      }
-      .add-transaction {
-        display: block;
-      } */
     }
   }
   .new-transaction-form {

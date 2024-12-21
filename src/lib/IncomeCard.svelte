@@ -1,14 +1,21 @@
 <script>
   import Card from "./Card.svelte";
-  let { accountTitle, assets, totalExpenses, currencyFormat, numberFormat, updateTransaction } = $props();
+  let { accountTitle, assets, dateRange, totalExpenses, currencyFormat, numberFormat, updateTransaction } = $props();
   let envelopeID = assets.envelopeID;
-  let transactions = assets.transactions;
 
-  let balance = transactions.find(item => item.transactionDescription == "Starting Balance" || item.transactionDescription == "Balance");
-  let bryant = transactions.find(item => item.transactionDescription == "Bryant");
-  let takeda = transactions.find(item => item.transactionDescription == "Takeda");
-  let totalIncome = bryant ? bryant.amount + takeda.amount : false;
-  let totalAssets = (balance && bryant) ? balance.amount + totalIncome : false;
+  let transactions = $derived.by(() => {
+    if (accountTitle === "checking") {
+      return assets.transactions.filter(item => item.date >= dateRange[0] && item.date <= dateRange[1]);
+    } else {
+      return assets.transactions;
+    }
+  });
+
+  let balance = $derived(transactions.find(item => item.transactionDescription == "Starting Balance" || item.transactionDescription == "Balance"));
+  let bryant = $derived(transactions.find(item => item.transactionDescription == "Bryant"));
+  let takeda = $derived(transactions.find(item => item.transactionDescription == "Takeda"));
+  let totalIncome = $derived(bryant ? bryant.amount + takeda.amount : false);
+  let totalAssets = $derived((balance && bryant) ? balance.amount + totalIncome : false);
   let totalExpensesLabel = accountTitle === "savings" ? "Envelopes Total" : "Total Expenses";
 
   function updateAmount() {
