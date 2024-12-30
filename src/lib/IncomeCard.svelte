@@ -4,7 +4,7 @@
   let envelopeID = assets.envelopeID;
 
   let transactions = $derived.by(() => {
-    if (accountTitle === "checking") {
+    if (dateRange) {
       return assets.transactions.filter(item => item.date >= dateRange[0] && item.date <= dateRange[1]);
     } else {
       return assets.transactions;

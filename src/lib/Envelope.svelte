@@ -6,6 +6,7 @@
   let { envelope, budgetEnvelopeTotals, accountTitle, todayStr, dateRange, toggleExpanded, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
 
   let envelopeID = envelope.envelopeID;
+  let totalAmount = $derived(envelope.totalAmount);
 
   let transactionsInRange = $derived.by(() => {
     if (accountTitle === "checking") {
@@ -16,10 +17,6 @@
   });
 
   let transactions = $derived(transactionsInRange.toSorted((a, b) =>  new Date(a.date).getTime() - new Date(b.date).getTime()));
-
-  let totalAmount = $derived.by(() => transactions.reduce((accumulator, item) => {
-    return accumulator + item.amount;
-  }, 0))
 
   let thisEnvelopeBudget = $derived(budgetEnvelopeTotals[envelope.envelopeTitle]);
 

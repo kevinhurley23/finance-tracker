@@ -170,6 +170,32 @@
       }
     }
   }
+
+  function copyTransactions(selectedMonth) {
+    const previousMonthEnd = new Date(selectedMonth);
+    const previousMonthStart = new Date(previousMonthEnd);
+    previousMonthStart.setDate(0);
+    previousMonthEnd.setDate(previousMonthEnd.getDate() - 1);
+    const startStr = previousMonthStart.toISOString().slice(0, 10);
+    const endStr = previousMonthEnd.toISOString().slice(0, 10);
+    accountNames.forEach((account) => {
+      data[account].forEach(envelope => {
+        envelope.transactions.forEach(transaction => {
+          if (transaction.date >= startStr && transaction.date <= endStr && transaction.repeating) {
+            const parts = transaction.date.split('-');
+            let year = parseInt(parts[0], 10);
+            let month = parseInt(parts[1], 10);
+            let day = parseInt(parts[2], 10);
+            month = month === 12 ? 1 : month + 1;
+            day = day > 28 ? 28 : day;
+            const newDate = `${String(year)}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+            addTransaction(account, envelope.envelopeID, transaction.transactionDescription, newDate, transaction.amount, true)
+          }
+        })
+      })
+    })
+  }
 </script>
 
 <div id="app-body" style={testingMode ? 'border-color: var(--testing-accent)' : ''}>
@@ -203,6 +229,7 @@
             {addTransaction}
             {updateTransaction}
             {deleteTransaction}
+            {copyTransactions}
             {months}
           />
         </section>
