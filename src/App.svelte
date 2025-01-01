@@ -9,7 +9,8 @@
   let sectionDisplayed = $state("checking");
   let testingMode = $state(false);
   let canToggleTestingMode = $state(true);
-  let showModal = $state(false);
+  let showConnectErrorModal = $state(false);
+  let showCopyingTransactionsModal = $state(false);
 
   const firstTransactionDate = new Date(2024, 11, 1);
   let todayObj = new Date();
@@ -36,10 +37,10 @@
     } catch (error) {
       console.error('Fetch error:', error);
       data = placeholderData;
-      showModal = true;
+      showConnectErrorModal = true;
       testingMode = true;
       canToggleTestingMode = false;
-      setTimeout(() => showModal = false, 2000);
+      setTimeout(() => showConnectErrorModal = false, 2000);
     }
     dataReady = true;
   }
@@ -171,30 +172,37 @@
     }
   }
 
-  function copyTransactions(selectedMonth) {
+  async function copyTransactions(selectedMonth) {
+    showCopyingTransactionsModal = true;
     const previousMonthEnd = new Date(selectedMonth);
     const previousMonthStart = new Date(previousMonthEnd);
     previousMonthStart.setDate(0);
     previousMonthEnd.setDate(previousMonthEnd.getDate() - 1);
     const startStr = previousMonthStart.toISOString().slice(0, 10);
     const endStr = previousMonthEnd.toISOString().slice(0, 10);
-    accountNames.forEach((account) => {
-      data[account].forEach(envelope => {
-        envelope.transactions.forEach(transaction => {
+    for (const account of accountNames) {
+      for (const envelope of data[account]) {
+        for (const transaction of envelope.transactions) {
           if (transaction.date >= startStr && transaction.date <= endStr && transaction.repeating) {
             const parts = transaction.date.split('-');
             let year = parseInt(parts[0], 10);
             let month = parseInt(parts[1], 10);
             let day = parseInt(parts[2], 10);
-            month = month === 12 ? 1 : month + 1;
+            if (month === 12) {
+              month = 1;
+              year++;
+            } else {
+              month++;
+            }
             day = day > 28 ? 28 : day;
             const newDate = `${String(year)}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 
-            addTransaction(account, envelope.envelopeID, transaction.transactionDescription, newDate, transaction.amount, true)
+            await addTransaction(account, envelope.envelopeID, transaction.transactionDescription, newDate, transaction.amount, true);
           }
-        })
-      })
-    })
+        }
+      }
+    }
+    showCopyingTransactionsModal = false;
   }
 </script>
 
@@ -235,13 +243,23 @@
         </section>
       {/each}
     {/if}
-    {#if showModal}
-      <Modal bind:showModal>
+    {#if showConnectErrorModal}
+      <Modal bind:showModal={showConnectErrorModal}>
         {#snippet modalBody()}
           <p>Could not connect to database. Placeholder Data loaded instead.</p>
         {/snippet}
         {#snippet modalButtons()}
-          <button onclick={() => showModal = false}>OK</button>
+          <button onclick={() => showConnectErrorModal = false}>OK</button>
+        {/snippet}
+      </Modal>
+    {/if}
+    {#if showCopyingTransactionsModal}
+      <Modal bind:showModal={showCopyingTransactionsModal}>
+        {#snippet modalBody()}
+          <p>Transactions copying, please wait...</p>
+          <div class="row">
+            <div class="spinner"></div>
+          </div>
         {/snippet}
       </Modal>
     {/if}

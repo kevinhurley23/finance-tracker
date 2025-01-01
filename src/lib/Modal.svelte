@@ -1,7 +1,7 @@
 <script>
 	import {scale} from "svelte/transition";
 	import {quartInOut} from "svelte/easing";
-  let { showModal = $bindable(), modalBody, modalButtons } = $props();
+  let { showModal = $bindable(), modalBody, modalButtons = undefined } = $props();
 	let dialog = $state();
 
 	$effect(() => {
@@ -16,9 +16,11 @@
 	transition:scale={{duration: 200, easing: quartInOut}}
 >
   {@render modalBody?.()}
-  <div class="row">
-    {@render modalButtons?.()}
-  </div>
+  {#if modalButtons}
+		<div class="row">
+			{@render modalButtons?.()}
+		</div>
+	{/if}
 </dialog>
 
 <style>
