@@ -272,6 +272,7 @@
     color: var(--grey-100);
     margin: 0;
     padding-bottom: 30px;
+    padding-inline: 25px;
     font-family: "open sans";
     font-size: 1.2rem;
     position: relative;
@@ -281,7 +282,6 @@
     position: fixed;
     width: fit-content;
     top: 20px;
-    left: 88%;
     z-index: 20;
     display: flex;
     flex-direction: column;

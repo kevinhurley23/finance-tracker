@@ -10,7 +10,7 @@ export const placeholderData = {
           envelopeID: 1,
           transactionDescription: "Bryant",
           date: "2024-12-01",
-          amount: 4231,
+          amount: 4616.52,
           repeating: false,
         },
         {
@@ -47,29 +47,13 @@ export const placeholderData = {
         {
           transactionID: 5,
           envelopeID: 3,
-          transactionDescription: "Dog",
-          date: "2024-12-01",
-          amount: 200,
-          repeating: false,
-        },
-        {
-          transactionID: 6,
-          envelopeID: 3,
           transactionDescription: "Utilities",
           date: "2024-12-01",
           amount: 229,
           repeating: false,
         },
         {
-          transactionID: 7,
-          envelopeID: 3,
-          transactionDescription: "Phone",
-          date: "2024-12-01",
-          amount: 58,
-          repeating: false,
-        },
-        {
-          transactionID: 8,
+          transactionID: 6,
           envelopeID: 3,
           transactionDescription: "Travel",
           date: "2024-12-01",
@@ -77,7 +61,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 9,
+          transactionID: 7,
           envelopeID: 3,
           transactionDescription: "Emergency",
           date: "2024-12-01",
@@ -92,7 +76,7 @@ export const placeholderData = {
       envelopeDescription: "Mortgages and HOA",
       transactions: [
         {
-          transactionID: 10,
+          transactionID: 8,
           envelopeID: 4,
           transactionDescription: "Mortgage",
           date: "2024-12-01",
@@ -100,7 +84,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 11,
+          transactionID: 9,
           envelopeID: 4,
           transactionDescription: "HOA",
           date: "2024-12-14",
@@ -115,7 +99,7 @@ export const placeholderData = {
       envelopeDescription: null,
       transactions: [
         {
-          transactionID: 12,
+          transactionID: 10,
           envelopeID: 5,
           transactionDescription: "Tesla Lease",
           date: "2024-12-01",
@@ -123,7 +107,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 13,
+          transactionID: 11,
           envelopeID: 5,
           transactionDescription: "Honda Loan",
           date: "2024-12-13",
@@ -131,7 +115,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 14,
+          transactionID: 12,
           envelopeID: 5,
           transactionDescription: "Gas",
           date: "2024-12-13",
@@ -147,7 +131,7 @@ export const placeholderData = {
         "Utilities that are billed monthly and are pretty regular (electric, phone, internet)",
       transactions: [
         {
-          transactionID: 15,
+          transactionID: 13,
           envelopeID: 6,
           transactionDescription: "Internet",
           date: "2024-12-01",
@@ -155,7 +139,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 16,
+          transactionID: 14,
           envelopeID: 6,
           transactionDescription: "T-Mobile",
           date: "2024-12-01",
@@ -163,7 +147,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 17,
+          transactionID: 15,
           envelopeID: 6,
           transactionDescription: "Electric",
           date: "2024-12-05",
@@ -179,11 +163,19 @@ export const placeholderData = {
         "Include items purchased for the home from Amazon, etc.",
       transactions: [
         {
-          transactionID: 18,
+          transactionID: 16,
           envelopeID: 7,
           transactionDescription: "Grocery Stores",
           date: "2024-12-01",
-          amount: 1200,
+          amount: 1000,
+          repeating: false,
+        },
+        {
+          transactionID: 17,
+          envelopeID: 7,
+          transactionDescription: "Amazon",
+          date: "2024-12-01",
+          amount: 200,
           repeating: false,
         },
       ],
@@ -194,7 +186,7 @@ export const placeholderData = {
       envelopeDescription: "Gym, doctors, chiropractor",
       transactions: [
         {
-          transactionID: 19,
+          transactionID: 18,
           envelopeID: 8,
           transactionDescription: "Planet Fitness",
           date: "2024-12-17",
@@ -202,7 +194,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 20,
+          transactionID: 19,
           envelopeID: 8,
           transactionDescription: "Chiropractor",
           date: "2024-12-01",
@@ -217,7 +209,7 @@ export const placeholderData = {
       envelopeDescription: null,
       transactions: [
         {
-          transactionID: 21,
+          transactionID: 20,
           envelopeID: 11,
           transactionDescription: "Youtube Premium",
           date: "2024-12-03",
@@ -225,7 +217,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 22,
+          transactionID: 21,
           envelopeID: 11,
           transactionDescription: "Netflix",
           date: "2024-12-08",
@@ -233,9 +225,9 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 23,
+          transactionID: 22,
           envelopeID: 11,
-          transactionDescription: "Spotify - Kevin",
+          transactionDescription: "Spotify",
           date: "2024-12-28",
           amount: 12.75,
           repeating: false,
@@ -250,7 +242,7 @@ export const placeholderData = {
       envelopeDescription: null,
       transactions: [
         {
-          transactionID: 24,
+          transactionID: 23,
           envelopeID: 13,
           transactionDescription: "Starting Balance",
           date: "2024-12-01",
@@ -258,15 +250,15 @@ export const placeholderData = {
           repeating: true,
         },
         {
-          transactionID: 25,
+          transactionID: 24,
           envelopeID: 13,
           transactionDescription: "Bryant",
           date: "2024-12-01",
-          amount: 4231.61,
+          amount: 4616.52,
           repeating: true,
         },
         {
-          transactionID: 26,
+          transactionID: 25,
           envelopeID: 13,
           transactionDescription: "Takeda",
           date: "2024-12-01",
@@ -281,7 +273,7 @@ export const placeholderData = {
       envelopeDescription: null,
       transactions: [
         {
-          transactionID: 27,
+          transactionID: 26,
           envelopeID: 3,
           transactionDescription: "Home",
           date: "2024-12-01",
@@ -289,7 +281,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 28,
+          transactionID: 27,
           envelopeID: 3,
           transactionDescription: "Car",
           date: "2024-12-01",
@@ -297,15 +289,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 29,
-          envelopeID: 3,
-          transactionDescription: "Dog",
-          date: "2024-12-01",
-          amount: 200,
-          repeating: false,
-        },
-        {
-          transactionID: 30,
+          transactionID: 28,
           envelopeID: 3,
           transactionDescription: "Utilities",
           date: "2024-12-01",
@@ -313,15 +297,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 31,
-          envelopeID: 3,
-          transactionDescription: "Phone",
-          date: "2024-12-01",
-          amount: 58,
-          repeating: false,
-        },
-        {
-          transactionID: 32,
+          transactionID: 29,
           envelopeID: 3,
           transactionDescription: "Travel",
           date: "2024-12-01",
@@ -329,21 +305,13 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 33,
+          transactionID: 30,
           envelopeID: 3,
           transactionDescription: "Emergency",
           date: "2024-12-01",
           amount: 250,
           repeating: false,
         },
-        // {
-        //   transactionID: 59,
-        //   envelopeID: 3,
-        //   transactionDescription: "test",
-        //   date: "2025-01-01",
-        //   amount: 250,
-        //   repeating: false,
-        // },
       ],
     },
     {
@@ -352,7 +320,7 @@ export const placeholderData = {
       envelopeDescription: "Mortgages and HOA",
       transactions: [
         {
-          transactionID: 34,
+          transactionID: 31,
           envelopeID: 16,
           transactionDescription: "Mortgage",
           date: "2024-12-01",
@@ -360,7 +328,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 35,
+          transactionID: 32,
           envelopeID: 16,
           transactionDescription: "HOA",
           date: "2024-12-14",
@@ -375,7 +343,7 @@ export const placeholderData = {
       envelopeDescription: null,
       transactions: [
         {
-          transactionID: 36,
+          transactionID: 33,
           envelopeID: 17,
           transactionDescription: "Tesla Lease",
           date: "2024-12-05",
@@ -383,7 +351,7 @@ export const placeholderData = {
           repeating: true,
         },
         {
-          transactionID: 37,
+          transactionID: 34,
           envelopeID: 17,
           transactionDescription: "Honda Loan",
           date: "2024-12-08",
@@ -391,7 +359,7 @@ export const placeholderData = {
           repeating: true,
         },
         {
-          transactionID: 38,
+          transactionID: 35,
           envelopeID: 17,
           transactionDescription: "Gas",
           date: "2024-12-05",
@@ -407,7 +375,7 @@ export const placeholderData = {
         "Utilities that are billed monthly and are pretty regular (electric, phone, internet)",
       transactions: [
         {
-          transactionID: 39,
+          transactionID: 36,
           envelopeID: 18,
           transactionDescription: "Electric",
           date: "2024-12-05",
@@ -415,7 +383,7 @@ export const placeholderData = {
           repeating: true,
         },
         {
-          transactionID: 40,
+          transactionID: 37,
           envelopeID: 18,
           transactionDescription: "T-Mobile",
           date: "2024-12-01",
@@ -423,7 +391,7 @@ export const placeholderData = {
           repeating: true,
         },
         {
-          transactionID: 41,
+          transactionID: 38,
           envelopeID: 18,
           transactionDescription: "Internet",
           date: "2024-12-02",
@@ -439,11 +407,27 @@ export const placeholderData = {
         "Include items purchased for the home from Amazon, etc.",
       transactions: [
         {
-          transactionID: 42,
+          transactionID: 39,
           envelopeID: 19,
-          transactionDescription: "Aldi, Stop n Shop",
-          date: "2024-12-01",
+          transactionDescription: "Aldi",
+          date: "2024-12-03",
           amount: 190.11,
+          repeating: false,
+        },
+        {
+          transactionID: 40,
+          envelopeID: 19,
+          transactionDescription: "Stop and Shop",
+          date: "2024-12-09",
+          amount: 100.25,
+          repeating: false,
+        },
+        {
+          transactionID: 41,
+          envelopeID: 19,
+          transactionDescription: "Walmart",
+          date: "2024-12-17",
+          amount: 83.46,
           repeating: false,
         },
       ],
@@ -454,7 +438,7 @@ export const placeholderData = {
       envelopeDescription: "Gym, doctors, chiropractor",
       transactions: [
         {
-          transactionID: 43,
+          transactionID: 42,
           envelopeID: 20,
           transactionDescription: "Chiropractor",
           date: "2024-12-04",
@@ -462,7 +446,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 44,
+          transactionID: 43,
           envelopeID: 20,
           transactionDescription: "Chiropractor",
           date: "2024-12-19",
@@ -470,7 +454,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 45,
+          transactionID: 44,
           envelopeID: 20,
           transactionDescription: "Planet Fitness",
           date: "2024-12-17",
@@ -485,7 +469,7 @@ export const placeholderData = {
       envelopeDescription: null,
       transactions: [
         {
-          transactionID: 46,
+          transactionID: 45,
           envelopeID: 23,
           transactionDescription: "Netflix",
           date: "2024-12-08",
@@ -493,7 +477,7 @@ export const placeholderData = {
           repeating: true,
         },
         {
-          transactionID: 47,
+          transactionID: 46,
           envelopeID: 23,
           transactionDescription: "Youtube Premium",
           date: "2024-12-03",
@@ -501,9 +485,9 @@ export const placeholderData = {
           repeating: true,
         },
         {
-          transactionID: 48,
+          transactionID: 47,
           envelopeID: 23,
-          transactionDescription: "Spotify - Kevin",
+          transactionDescription: "Spotify",
           date: "2024-12-28",
           amount: 12.75,
           repeating: true,
@@ -518,12 +502,20 @@ export const placeholderData = {
       envelopeDescription: "Condo insurance and home repair/improvement",
       transactions: [
         {
-          transactionID: 49,
+          transactionID: 48,
           envelopeID: 25,
           transactionDescription: "Starting Balance",
           date: "2024-12-01",
           amount: 9500,
           repeating: false,
+        },
+        {
+          transactionID: 49,
+          envelopeID: 25,
+          transactionDescription: "Deposit",
+          date: "2025-01-01",
+          amount: 500,
+          repeating: true,
         },
       ],
     },
@@ -541,21 +533,21 @@ export const placeholderData = {
           amount: 4176,
           repeating: false,
         },
-      ],
-    },
-    {
-      envelopeID: 27,
-      envelopeTitle: "Dog",
-      envelopeDescription:
-        "Doggo health insurance and copays for large expenses",
-      transactions: [
         {
           transactionID: 51,
-          envelopeID: 27,
-          transactionDescription: "Starting Balance",
-          date: "2024-12-01",
-          amount: 2600,
+          envelopeID: 25,
+          transactionDescription: "Oil Change",
+          date: "2024-12-10",
+          amount: -79.55,
           repeating: false,
+        },
+        {
+          transactionID: 52,
+          envelopeID: 25,
+          transactionDescription: "Deposit",
+          date: "2025-01-01",
+          amount: 392,
+          repeating: true,
         },
       ],
     },
@@ -566,7 +558,7 @@ export const placeholderData = {
         "Billed less than monthly (e.g. sewer tax bill) or amounts vary significantly (e.g. propane)",
       transactions: [
         {
-          transactionID: 52,
+          transactionID: 53,
           envelopeID: 28,
           transactionDescription: "Starting Balance",
           date: "2024-12-01",
@@ -574,7 +566,7 @@ export const placeholderData = {
           repeating: false,
         },
         {
-          transactionID: 53,
+          transactionID: 54,
           envelopeID: 28,
           transactionDescription: "Propane",
           date: "2024-12-20",
@@ -582,28 +574,20 @@ export const placeholderData = {
           repeating: true,
         },
         {
-          transactionID: 54,
+          transactionID: 55,
           envelopeID: 28,
-          transactionDescription: "Willimantic Waste",
+          transactionDescription: "Garbage",
           date: "2024-12-16",
           amount: -141.27,
           repeating: false,
         },
-      ],
-    },
-    {
-      envelopeID: 29,
-      envelopeTitle: "Phones",
-      envelopeDescription:
-        "Yearly Mint Mobile bill, savings to buy/repair phones",
-      transactions: [
         {
-          transactionID: 55,
-          envelopeID: 29,
-          transactionDescription: "Starting Balance",
-          date: "2024-12-01",
-          amount: 574,
-          repeating: false,
+          transactionID: 56,
+          envelopeID: 25,
+          transactionDescription: "Deposit",
+          date: "2025-01-01",
+          amount: 229,
+          repeating: true,
         },
       ],
     },
@@ -613,12 +597,28 @@ export const placeholderData = {
       envelopeDescription: null,
       transactions: [
         {
-          transactionID: 56,
+          transactionID: 57,
           envelopeID: 30,
           transactionDescription: "Starting Balance",
           date: "2024-12-01",
           amount: 5204,
           repeating: false,
+        },
+        {
+          transactionID: 58,
+          envelopeID: 25,
+          transactionDescription: "Christmas Flights",
+          date: "2024-12-02",
+          amount: -453.78,
+          repeating: false,
+        },
+        {
+          transactionID: 59,
+          envelopeID: 25,
+          transactionDescription: "Deposit",
+          date: "2025-01-01",
+          amount: 250,
+          repeating: true,
         },
       ],
     },
@@ -628,12 +628,20 @@ export const placeholderData = {
       envelopeDescription: null,
       transactions: [
         {
-          transactionID: 57,
+          transactionID: 60,
           envelopeID: 31,
           transactionDescription: "Starting Balance",
           date: "2024-12-01",
           amount: 6750,
           repeating: false,
+        },
+        {
+          transactionID: 61,
+          envelopeID: 25,
+          transactionDescription: "Deposit",
+          date: "2025-01-01",
+          amount: 250,
+          repeating: true,
         },
       ],
     },
@@ -643,15 +651,15 @@ export const placeholderData = {
       envelopeDescription: null,
       transactions: [
         {
-          transactionID: 58,
+          transactionID: 62,
           envelopeID: 32,
           transactionDescription: "Balance",
           date: "2024-12-01",
-          amount: 32359.51,
+          amount: 30359.51,
           repeating: false,
         },
       ],
     },
   ],
-  highestTransactionID: 59,
+  highestTransactionID: 62,
 };
