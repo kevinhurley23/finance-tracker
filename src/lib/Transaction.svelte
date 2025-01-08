@@ -7,6 +7,18 @@
   let amountStr = $state(currencyFormat(transaction.amount));
   let showModal = $state(false);
 
+  let dayOfMonth = transaction.date.split("-")[2];
+  if (dayOfMonth == "01") {
+    dayOfMonth = "1st";
+  } else if (dayOfMonth == "02") {
+    dayOfMonth = "2nd";
+  } else if (dayOfMonth == "03") {
+    dayOfMonth = "3rd";
+  } else {
+    dayOfMonth = dayOfMonth.replace(/^0+/, '');
+    dayOfMonth = dayOfMonth + "th";
+  }
+
   function updateDescription() {
     updateTransaction(accountTitle, envelopeID, transactionID, 'transactionDescription', this.value)
   }
@@ -41,7 +53,11 @@
   {:else}
     <div></div>
   {/if}
-  <input class="date" type="date" value={transaction.date} oninput={updateDate}>
+  {#if accountTitle == 'budget'}
+    <span>{dayOfMonth}</span>
+  {:else}
+    <input class="date" type="date" value={transaction.date} oninput={updateDate}>
+  {/if}
   <input class="amount" type="text" size="8" value={amountStr} onblur={updateAmount}>
 </div>
 

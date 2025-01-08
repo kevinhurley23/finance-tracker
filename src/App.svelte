@@ -12,7 +12,7 @@
   let showConnectErrorModal = $state(false);
   let showCopyingTransactionsModal = $state(false);
 
-  const firstTransactionDate = new Date(2024, 11, 1);
+  const firstTransactionDate = new Date(2025, 0, 1);
   let todayObj = new Date();
   let year = todayObj.getFullYear();
   let month = String(todayObj.getMonth() + 1).padStart(2, '0');

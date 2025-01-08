@@ -54,11 +54,13 @@
         {envelope.envelopeTitle}
         <i class="fa-solid fa-chevron-right"></i>
       </h3>
-      <span class="amount">
-        {#if accountTitle==='checking'}
-          Budget: {currencyFormat(thisEnvelopeBudget)}
-        {/if}
-      </span>
+      {#if accountTitle==='budget'}
+        <span>Day of month:</span>
+      {:else if accountTitle==='checking'}
+        <span class="amount">Budget: {currencyFormat(thisEnvelopeBudget)}</span>
+      {:else}
+        <span></span>
+      {/if}
       <span
         class="amount amount-total"
         style={accountTitle === "checking" ? `color: var(--${totalAmount > thisEnvelopeBudget ? 'red' : 'green'});` : ""}
