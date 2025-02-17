@@ -4,6 +4,7 @@
   import Switch from './lib/Switch.svelte';
   import Modal from './lib/Modal.svelte';
   import { placeholderData } from './lib/placeholderData.svelte.js';
+  import { todayObj, todayStr } from './lib/dates.js';
 
   const accountNames = ["budget", "checking", "savings"];
   let sectionDisplayed = $state("checking");
@@ -12,18 +13,7 @@
   let showConnectErrorModal = $state(false);
   let showCopyingTransactionsModal = $state(false);
 
-  const firstTransactionDate = new Date(2025, 0, 1);
-  let todayObj = new Date();
-  let year = todayObj.getFullYear();
-  let month = String(todayObj.getMonth() + 1).padStart(2, '0');
-  let day = String(todayObj.getDate()).padStart(2, '0');
-  let todayStr = `${year}-${month}-${day}`;
-  let months = [];
-  let dateIterator = new Date(firstTransactionDate);
-  while (dateIterator <= todayObj) {
-    months.push(dateIterator.toISOString().slice(0, 7));
-    dateIterator.setMonth(dateIterator.getMonth() + 1);
-  }
+  let months = $state([]);
 
   let data = $state();
   let dataReady = $state(false);
@@ -43,8 +33,17 @@
       setTimeout(() => showConnectErrorModal = false, 2000);
     }
     dataReady = true;
+    populateMonths();
   }
   fetchData();
+
+  function populateMonths() {
+    let dateIterator = new Date(data.firstTransactionDate);
+    while (dateIterator <= todayObj) {
+      months.push(dateIterator.toISOString().slice(0, 7));
+      dateIterator.setMonth(dateIterator.getMonth() + 1);
+    }
+  }
 
   let budgetEnvelopeTotals = $state({});
 
@@ -230,7 +229,7 @@
             accountTitle={account}
             envelopes={data[account]}
             {budgetEnvelopeTotals}
-            {firstTransactionDate}
+            firstTransactionDate={data.firstTransactionDate}
             {todayStr}
             {currencyFormat}
             {numberFormat}
