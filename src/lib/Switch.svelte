@@ -1,10 +1,10 @@
 <script>
-   let { state = $bindable() } = $props();
+   let { state = $bindable(), color = 'grey-100' } = $props();
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="switch" data-active={state} onclick={() => {state = !state}} style="--accent: {state ? 'var(--testing-accent)' : '#fff'}">
+<div class="switch" data-active={state} onclick={() => {state = !state}} style="--accent: {state ? `var(--${color})` : '#fff'}">
   <div class="handle"></div>
 </div>
 
@@ -24,7 +24,7 @@
       height: 1.2em;
       background-color: var(--accent);
       border-radius: 50%;
-      transition: 300ms;
+      transition: transform 300ms;
     }
   }
 </style>

@@ -41,54 +41,56 @@
   {/if}
 {/snippet}
 
-<Card>
-  <h2>Summary</h2>
-  <div class="body">
-    {#each transactions as transaction}
+<Card cardClass={'income-card'}>
+  {#snippet cardBody()}
+    <h2>Summary</h2>
+    <div class="body">
+      {#each transactions as transaction}
+        {@render line({
+          label: transaction.transactionDescription,
+          ID: transaction.transactionID,
+          value: transaction.amount,
+          editable: true
+        })}
+      {/each}
+      {#if totalIncome}
+        {@render line({
+          label: "Total Income",
+          value: totalIncome
+        })}
+      {/if}
+      {#if totalAssets}
+        {@render line({
+          label: "Total Assets",
+          value: totalAssets
+        })}
+      {/if}
       {@render line({
-        label: transaction.transactionDescription,
-        ID: transaction.transactionID,
-        value: transaction.amount,
-        editable: true
+        label: totalExpensesLabel,
+        value: totalExpenses
       })}
-    {/each}
-    {#if totalIncome}
-      {@render line({
-        label: "Total Income",
-        value: totalIncome
-      })}
-    {/if}
-    {#if totalAssets}
-      {@render line({
-        label: "Total Assets",
-        value: totalAssets
-      })}
-    {/if}
-    {@render line({
-      label: totalExpensesLabel,
-      value: totalExpenses
-    })}
-    {#if totalIncome}
-      {@render line({
-        label: "Income minus Expenses",
-        value: totalIncome - totalExpenses,
-        color: true
-      })}
-    {/if}
-    {#if accountTitle === "checking"}
-      {@render line({
-        label: "Assets minus Expenses",
-        value: totalAssets - totalExpenses,
-        color: true
-      })}
-    {:else if accountTitle === "savings"}
-      {@render line({
-        label: "Extra in savings",
-        value: balance.amount - totalExpenses,
-        color: true
-      })}
-    {/if}
-  </div>
+      {#if totalIncome}
+        {@render line({
+          label: "Income minus Expenses",
+          value: totalIncome - totalExpenses,
+          color: true
+        })}
+      {/if}
+      {#if accountTitle === "checking"}
+        {@render line({
+          label: "Assets minus Expenses",
+          value: totalAssets - totalExpenses,
+          color: true
+        })}
+      {:else if accountTitle === "savings"}
+        {@render line({
+          label: "Extra in savings",
+          value: balance.amount - totalExpenses,
+          color: true
+        })}
+      {/if}
+    </div>
+  {/snippet}
 </Card>
 
 <style>

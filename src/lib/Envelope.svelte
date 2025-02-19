@@ -46,52 +46,54 @@
   }
 </script>
 
-<Card>
-  <div class="envelope {envelope.expanded ? 'expanded' : ''}">
-    <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-    <div class="heading" onclick={() => toggleExpanded(envelopeID)}>
-      <h3>
-        {envelope.envelopeTitle}
-        <i class="fa-solid fa-chevron-right"></i>
-      </h3>
-      {#if accountTitle==='budget'}
-        <span>Day of month:</span>
-      {:else if accountTitle==='checking'}
-        <span class="amount">Budget: {currencyFormat(thisEnvelopeBudget)}</span>
-      {:else}
-        <span></span>
-      {/if}
-      <span
-        class="amount amount-total"
-        style={accountTitle === "checking" ? `color: var(--${totalAmount > thisEnvelopeBudget ? 'red' : 'green'});` : ""}
-      >
-        {currencyFormat(totalAmount)}
-      </span>
-    </div>
-    {#if envelope.expanded}
-      <div class="envelope-body" transition:slide>
-        {#if envelope.envelopeDescription}
-          <p>{envelope.envelopeDescription}</p>
-        {/if}
-        {#if transactions.length}
-          {#each transactions as transaction (transaction.transactionID)}
-            <Transaction
-              {accountTitle} 
-              {envelopeID}
-              {transaction}
-              {currencyFormat}
-              {numberFormat}
-              {updateTransaction}
-              {deleteTransaction}
-            />
-          {/each}
+<Card cardClass={'envelope'}>
+  {#snippet cardBody()}
+    <div class="envelope {envelope.expanded ? 'expanded' : ''}">
+      <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+      <div class="heading" onclick={() => toggleExpanded(envelopeID)}>
+        <h3>
+          {envelope.envelopeTitle}
+          <i class="fa-solid fa-chevron-right"></i>
+        </h3>
+        {#if accountTitle==='budget'}
+          <span>Day of month:</span>
+        {:else if accountTitle==='checking'}
+          <span class="amount">Budget: {currencyFormat(thisEnvelopeBudget)}</span>
         {:else}
-          <p style="text-align: center; font-style: italic;">There are no transactions in this envelope</p>
+          <span></span>
         {/if}
+        <span
+          class="amount amount-total"
+          style={accountTitle === "checking" ? `color: var(--${totalAmount > thisEnvelopeBudget ? 'red' : 'green'});` : ""}
+        >
+          {currencyFormat(totalAmount)}
+        </span>
       </div>
-      <button class="add-transaction" transition:scale onclick={() => (showModal = true)}>+ Add Transaction</button>
-    {/if}
-  </div>
+      {#if envelope.expanded}
+        <div class="envelope-body" transition:slide>
+          {#if envelope.envelopeDescription}
+            <p>{envelope.envelopeDescription}</p>
+          {/if}
+          {#if transactions.length}
+            {#each transactions as transaction (transaction.transactionID)}
+              <Transaction
+                {accountTitle} 
+                {envelopeID}
+                {transaction}
+                {currencyFormat}
+                {numberFormat}
+                {updateTransaction}
+                {deleteTransaction}
+              />
+            {/each}
+          {:else}
+            <p style="text-align: center; font-style: italic;">There are no transactions in this envelope</p>
+          {/if}
+        </div>
+        <button class="add-transaction" transition:scale onclick={() => (showModal = true)}>+ Add Transaction</button>
+      {/if}
+    </div>
+  {/snippet}
 </Card>
 
 {#if showModal}
@@ -124,7 +126,7 @@
     position: relative;
     .heading {
       display: grid;
-      grid-template-columns: 1fr 190px 125px;
+      grid-template-columns: 1fr 170px 125px;
       gap: 10px;
       padding: 20px;
       border-radius: 10px;

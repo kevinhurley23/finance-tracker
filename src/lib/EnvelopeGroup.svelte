@@ -75,7 +75,7 @@
   })
 </script>
 
-<div class="envelope-group">
+<!-- <div class="envelope-group"> -->
   {#if transactionCount === 0}
     <div class="copy-transactions-dialog">
       <p>There are no transactions this month. Would you like to copy all of the repeating transactions from the previous month?</p>
@@ -117,22 +117,24 @@
       <button class="close-envelopes" onclick={closeAll}>Close All</button>
     </div>
   </div>
-  {#each expenses as envelope (envelope.envelopeID)}
-    <Envelope
-      {envelope}
-      {budgetEnvelopeTotals}
-      {accountTitle}
-      {todayStr}
-      {dateRange}
-      {toggleExpanded}
-      {currencyFormat}
-      {numberFormat}
-      {addTransaction}
-      {updateTransaction}
-      {deleteTransaction}
-    />
-  {/each}
-</div>
+  <div class="transaction-envelopes">
+    {#each expenses as envelope (envelope.envelopeID)}
+      <Envelope
+        {envelope}
+        {budgetEnvelopeTotals}
+        {accountTitle}
+        {todayStr}
+        {dateRange}
+        {toggleExpanded}
+        {currencyFormat}
+        {numberFormat}
+        {addTransaction}
+        {updateTransaction}
+        {deleteTransaction}
+      />
+    {/each}
+  </div>
+<!-- </div> -->
 
 <style>
   .heading-button-row {
@@ -140,10 +142,12 @@
     justify-content: space-between;
     align-items: end;
     gap: 25px;
+    margin-inline: auto;
     h2 {
-      margin-bottom: 0;
+      margin: 0;
     }
     .month-selector {
+      text-align: center;
       select {
         font-size: 1.1rem;
         padding: 5px;
@@ -162,5 +166,13 @@
       display: flex;
       gap: 20px;
     }
+  }
+  .transaction-envelopes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 750px);
+    grid-template-rows: masonry;
+    grid-row: span 90;
+    justify-content: center;
+    gap: 30px;
   }
 </style>

@@ -7,9 +7,10 @@
   import { todayObj, todayStr } from './lib/dates.js';
 
   const accountNames = ["budget", "checking", "savings"];
-  let sectionDisplayed = $state("checking");
+  let sectionDisplayed = $state(["checking"]);
   let testingMode = $state(false);
   let canToggleTestingMode = $state(true);
+  let oneSectionAtATime = $state(true);
   let showConnectErrorModal = $state(false);
   let showCopyingTransactionsModal = $state(false);
 
@@ -17,6 +18,7 @@
 
   let data = $state();
   let dataReady = $state(false);
+  let maxEnvelopes = $state(0);
   async function fetchData() {
     try {
       const response = await fetch('../php/read.php');
@@ -33,6 +35,7 @@
       setTimeout(() => showConnectErrorModal = false, 2000);
     }
     dataReady = true;
+    maxEnvelopes = data.checking.length;
     populateMonths();
   }
   fetchData();
@@ -46,7 +49,6 @@
   }
 
   let budgetEnvelopeTotals = $state({});
-
   $effect(() => {
 		if (dataReady) {
       data.budget.forEach((envelope) => {
@@ -203,27 +205,45 @@
     }
     showCopyingTransactionsModal = false;
   }
+
+  function toggleSection(section) {
+    if (oneSectionAtATime) {
+      sectionDisplayed = [section];
+    } else {
+      if (sectionDisplayed.includes(section)) {
+        sectionDisplayed = sectionDisplayed.filter(s => s !== section);
+      } else {
+        sectionDisplayed = [...sectionDisplayed, section];
+      }
+    }
+  }
 </script>
 
-<div id="app-body" style={testingMode ? 'border-color: var(--testing-accent)' : ''}>
-  <div id="testing-mode-toggle" title="When testing mode is on, no changes will be written to the database">
-    <p>Testing Mode</p>
-    <Switch bind:state={testingMode} />
-    {#if !canToggleTestingMode}
-      <div class="overlay" title="When using placeholder data, testing mode cannot be disabled"></div>
-    {/if}
-  </div>
-  <div class="section-buttons">
-    {#each accountNames as account}
-      <button style={`--accent: var(--${account}-accent)`} onclick={() => sectionDisplayed = account}>{account}</button>
-    {/each}
-  </div>
-  <main style={`--accent: var(--${sectionDisplayed}-accent)`}>
+<div id="app-body" class={testingMode ? "testing-mode" : ""}>
+  <header>
+    <div id="testing-mode-toggle" class="toggle" title="When testing mode is on, no changes will be written to the database">
+      <p>Testing Mode</p>
+      <Switch bind:state={testingMode} color={'testing-accent'} />
+      {#if !canToggleTestingMode}
+        <div class="overlay" title="When using placeholder data, testing mode cannot be disabled"></div>
+      {/if}
+    </div>
+    <div class="section-buttons">
+      {#each accountNames as account}
+        <button class={`account-selector ${sectionDisplayed.includes(account) ? "" : "inactive"}`} style={`--accent: var(--${account}-accent)`} onclick={() => toggleSection(account)}>{account}</button>
+      {/each}
+    </div>
+    <div id="one-section" class="toggle" title="When enabled, only one section will be displayed at a time">
+      <p>One At A Time</p>
+      <Switch bind:state={oneSectionAtATime} color={`${sectionDisplayed[0]}-accent`} />
+    </div>
+  </header>
+  <main class={sectionDisplayed.length > 1 ? 'multiple-accounts' : ''} style={`--grid-rows: ${maxEnvelopes + 2}`}>
     {#if !dataReady}
       <p>Data is loading</p>
     {:else}
       {#each accountNames as account}
-        <section id={account} style={sectionDisplayed == account ? "" : "display: none;"}>
+        <section id={account} class="account-section" style={`--accent: var(--${account}-accent); ${sectionDisplayed.includes(account) ? "" : "display: none;"}`}>
           <h1>{account}</h1>
           <EnvelopeGroup
             accountTitle={account}
@@ -267,51 +287,73 @@
 
 <style>
   #app-body {
-    background-color: var(--grey-600);
     color: var(--grey-100);
     margin: 0;
-    padding-bottom: 30px;
-    padding-inline: 25px;
     font-family: "open sans";
     font-size: 1.2rem;
     position: relative;
     border: 5px solid var(--grey-600);
-  }
-  #testing-mode-toggle {
-    position: fixed;
-    width: fit-content;
-    top: 20px;
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    p {
-      margin: 0;
-    }
-    .overlay {
-      position: absolute;
-      inset: 0;
-      background-color: var(--grey-600);
-      opacity: 0.7;
+    border-right-width: 0;
+    height: 100vh;
+    overflow-y: auto;
+    &.testing-mode {
+      border-color: var(--testing-accent);
+      border-right-width: 5px;
     }
   }
-  .section-buttons {
+  header {
     position: sticky;
     top: 0;
+    left: 0;
     z-index: 10;
-    width: calc(100% - 10px);
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     gap: 15px 30px;
-    flex-wrap: wrap;
     background-color: var(--grey-600);
-    padding: 25px;
-    button {
-      text-transform: capitalize;
+    padding: 10px;
+    box-shadow: 0 0 15px 0 var(--grey-500);
+    .toggle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      p {
+        margin: 0;
+      }
+      .overlay {
+        position: absolute;
+        inset: 0;
+        background-color: var(--grey-600);
+        opacity: 0.7;
+      }
     }
+    .section-buttons {
+      display: flex;
+      align-items: center;
+      gap: 15px 30px;
+      flex-wrap: wrap;
+      .account-selector {
+        text-transform: capitalize;
+        &.inactive {
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+  main {
+    margin-inline: auto;
+    padding: 10px 25px 40px;
+    display: grid;
+    grid-auto-flow: column;
+    gap: 30px 50px;
+  }
+  .account-section {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span var(--grid-rows);
   }
   h1 {
     text-transform: capitalize;
+    margin: 0;
   }
 </style>

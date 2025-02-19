@@ -20,11 +20,8 @@
 
 body {
   margin: 0;
-}
-
-main {
-  max-width: 800px;
-  margin-inline: auto;
+  background-color: var(--grey-600);
+  overflow: hidden;
 }
 
 h1 {
@@ -70,6 +67,14 @@ input {
   display: flex;
   justify-content: center;
   gap: 30px;
+}
+
+main.multiple-accounts {
+  width: fit-content;
+  justify-content: center;
+  .transaction-envelopes {
+    grid-template-rows: subgrid;
+  }
 }
 
 .spinner {
