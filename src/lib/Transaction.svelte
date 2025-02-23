@@ -5,7 +5,7 @@
   const transactionID = transaction.transactionID;
   const canDelete = transaction.transactionDescription == "Starting Balance" ? false : true;
   let amountStr = $state(currencyFormat(transaction.amount));
-  let showModal = $state(false);
+  let showDeleteTransactionModal = $state(false);
 
   let dayOfMonth = transaction.date.split("-")[2];
   if (dayOfMonth == "01") {
@@ -43,7 +43,7 @@
   <input class="description" type="text" value={transaction.transactionDescription} onblur={updateDescription}>
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   {#if canDelete}
-    <i class="fa-solid fa-trash delete-transaction" title="delete transaction" onclick={() => (showModal = true)}></i>
+    <i class="fa-solid fa-trash delete-transaction" title="delete transaction" onclick={() => (showDeleteTransactionModal = true)}></i>
   {:else}
     <div></div>
   {/if}
@@ -56,13 +56,13 @@
   {#if accountTitle == 'budget'}
     <span>{dayOfMonth}</span>
   {:else}
-    <input class="date" type="date" value={transaction.date} oninput={updateDate}>
+    <input class="date" type="date" value={transaction.date} onchange={updateDate}>
   {/if}
   <input class="amount" type="text" size="8" value={amountStr} onblur={updateAmount}>
 </div>
 
-{#if showModal}
-  <Modal bind:showModal>
+{#if showDeleteTransactionModal}
+  <Modal bind:showModal={showDeleteTransactionModal}>
     {#snippet modalBody()}
       <p>Are you sure you want to delete this transaction?</p>
       <div class="row">
@@ -73,7 +73,7 @@
     {/snippet}
     {#snippet modalButtons()}
       <button onclick={() => deleteTransaction(accountTitle, envelopeID, transactionID)}>Delete</button>
-      <button onclick={() => showModal = false}>Cancel</button>
+      <button onclick={() => showDeleteTransactionModal = false}>Cancel</button>
     {/snippet}
   </Modal>
 {/if}
@@ -116,8 +116,5 @@
       color: var(--grey-100);
       opacity: 1;
     }
-  }
-  span[aria-label=Month] {
-    display: none;
   }
 </style>

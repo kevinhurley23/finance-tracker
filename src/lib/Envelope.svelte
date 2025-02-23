@@ -20,12 +20,11 @@
 
   let thisEnvelopeBudget = $derived(budgetEnvelopeTotals[envelope.envelopeTitle]);
 
-  let showModal = $state(false);
+  let showNewTransactionModal = $state(false);
 
   // svelte-ignore non_reactive_update
   let [newTransactionDescription, newTransactionAmount] = '';
-  // svelte-ignore non_reactive_update
-  let newTransactionDate = todayStr;
+  let newTransactionDate = $derived(todayStr >= dateRange[0] && todayStr <= dateRange[1] ? todayStr : dateRange[0]);
   // svelte-ignore non_reactive_update
   let newTransactionRepeating = false;
 
@@ -41,7 +40,7 @@
       newTransactionDescription = '';
       newTransactionAmount = '';
       newTransactionRepeating = false;
-      showModal = false;
+      showNewTransactionModal = false;
     }
   }
 </script>
@@ -90,21 +89,22 @@
             <p style="text-align: center; font-style: italic;">There are no transactions in this envelope</p>
           {/if}
         </div>
-        <button class="add-transaction" transition:scale onclick={() => (showModal = true)}>+ Add Transaction</button>
+        <button class="add-transaction" transition:scale onclick={() => (showNewTransactionModal = true)}>+ Add Transaction</button>
       {/if}
     </div>
   {/snippet}
 </Card>
 
-{#if showModal}
-  <Modal bind:showModal>
+{#if showNewTransactionModal}
+  <Modal bind:showModal={showNewTransactionModal}>
     {#snippet modalBody()}
+      <p style="text-align: center;"><strong>{envelope.envelopeTitle}</strong></p>
       <p style="text-align: center;">New Transaction</p>
       <div class="new-transaction-form">
         <p>Description:</p>
         <input type="text" bind:value={newTransactionDescription}>
         <p>Date:</p>
-        <input type="date" bind:value={newTransactionDate}>
+        <input type="date" min={dateRange[0]} max={dateRange[1]} value={newTransactionDate}>
         <p>Amount:</p>
         <input type="number" bind:value={newTransactionAmount}>
         {#if accountTitle != 'budget'}
@@ -115,7 +115,7 @@
     {/snippet}
     {#snippet modalButtons()}
       <button onclick={newTransaction}>Create Transaction</button>
-      <button onclick={() => showModal = false}>Cancel</button>
+      <button onclick={() => showNewTransactionModal = false}>Cancel</button>
     {/snippet}
   </Modal>
 {/if}

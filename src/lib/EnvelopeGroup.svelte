@@ -33,14 +33,16 @@
   // let dateRangeStart = $state(firstTransactionDate.toISOString().slice(0, 10));
   // let dateRangeEnd = $state(getLastDayOfMonth(todayStr));
   let dateRange = $derived.by(() => {
-    if (accountTitle === "checking") {
+    if (accountTitle === "budget") {
+      return ["2025-01-01", "2025-01-31"];
+    } else if (accountTitle === "checking") {
       return [`${selectedMonth}-01`, getLastDayOfMonth(selectedMonth)];
-    } 
+    }
     // else if (accountTitle === "savings") {
     //   return [dateRangeStart, dateRangeEnd];
     // }
     else {
-      return null;
+      return [firstTransactionDate, getLastDayOfMonth(todayStr)];
     }
   });
 
@@ -155,13 +157,13 @@
         border-radius: 5px;
       }
     }
-    .date-range-selector {
+    /* .date-range-selector {
       input {
         width: 140px;
         font-size: 1.1rem;
         margin-top: 5px;
       }
-    }
+    } */
     .buttons {
       display: flex;
       gap: 20px;
