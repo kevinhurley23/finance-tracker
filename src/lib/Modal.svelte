@@ -26,7 +26,7 @@
 <style>
 	dialog {
     background-color: #fff;
-    border: 2px solid var(--accent);
+		border: 2px solid var(--accent, var(--checking-accent));
     border-radius: 10px;
 	}
 	dialog::backdrop {

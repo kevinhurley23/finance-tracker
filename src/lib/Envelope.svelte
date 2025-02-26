@@ -24,7 +24,9 @@
 
   // svelte-ignore non_reactive_update
   let [newTransactionDescription, newTransactionAmount] = '';
-  let newTransactionDate = $derived(todayStr >= dateRange[0] && todayStr <= dateRange[1] ? todayStr : dateRange[0]);
+  // svelte-ignore non_reactive_update
+  let newTransactionDate = todayStr;
+  // let newTransactionDate = $derived(todayStr >= dateRange[0] && todayStr <= dateRange[1] ? todayStr : dateRange[0]);
   // svelte-ignore non_reactive_update
   let newTransactionRepeating = false;
 
@@ -83,6 +85,7 @@
                 {numberFormat}
                 {updateTransaction}
                 {deleteTransaction}
+                {dateRange}
               />
             {/each}
           {:else}
@@ -104,7 +107,8 @@
         <p>Description:</p>
         <input type="text" bind:value={newTransactionDescription}>
         <p>Date:</p>
-        <input type="date" min={dateRange[0]} max={dateRange[1]} value={newTransactionDate}>
+        <input type="date" bind:value={newTransactionDate}>
+        <!-- <input type="date" min={dateRange[0]} max={dateRange[1]} value={newTransactionDate}> -->
         <p>Amount:</p>
         <input type="number" bind:value={newTransactionAmount}>
         {#if accountTitle != 'budget'}

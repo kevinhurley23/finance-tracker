@@ -37,11 +37,8 @@
       return ["2025-01-01", "2025-01-31"];
     } else if (accountTitle === "checking") {
       return [`${selectedMonth}-01`, getLastDayOfMonth(selectedMonth)];
-    }
-    // else if (accountTitle === "savings") {
-    //   return [dateRangeStart, dateRangeEnd];
-    // }
-    else {
+    } else if (accountTitle === "savings") {
+      // return [dateRangeStart, dateRangeEnd];
       return [firstTransactionDate, getLastDayOfMonth(todayStr)];
     }
   });
@@ -58,7 +55,7 @@
       let envelopeExpensesTotal = 0;
       let envelopeTransactionCount = 0;
       envelope.transactions.forEach(transaction => {
-        if (dateRange) {
+        if (accountTitle === "checking") {
           if (transaction.date >= dateRange[0] && transaction.date <= dateRange[1]) {
             envelopeExpensesTotal += transaction.amount;
             envelopeTransactionCount++;
@@ -77,68 +74,70 @@
   })
 </script>
 
-<!-- <div class="envelope-group"> -->
-  {#if transactionCount === 0}
-    <div class="copy-transactions-dialog">
-      <p>There are no transactions this month. Would you like to copy all of the repeating transactions from the previous month?</p>
-      <div class="row">
-        <button onclick={() => copyTransactions(selectedMonth)}>Copy Transactions</button>
-      </div>
+{#if transactionCount === 0}
+  <div class="copy-transactions-dialog">
+    <p>There are no transactions this month. Would you like to copy all of the repeating transactions from the previous month?</p>
+    <div class="row">
+      <button onclick={() => copyTransactions(selectedMonth)}>Copy Transactions</button>
     </div>
-  {:else}
-    <IncomeCard
+  </div>
+{:else}
+  <IncomeCard
+    {accountTitle}
+    {assets}
+    {dateRange}
+    {totalExpenses}
+    {currencyFormat}
+    {numberFormat}
+    {updateTransaction}
+  />
+{/if}
+<div class="heading-button-row">
+  <h2>Transactions</h2>
+  {#if accountTitle === "checking"}
+    <div class="month-selector">
+      <label for="month">Select Month:</label>
+      <select id="month" bind:value={selectedMonth}>
+        {#each months as month}
+          <option value={month}>{formatMonthYear(month)}</option>
+        {/each}
+      </select>
+    </div>
+  <!-- {:else if accountTitle === "savings"}
+    <div class="date-range-selector">
+      <div>Select Date Range:</div>
+      <input type="date" id="date-range-start" bind:value={dateRangeStart}>
+      <input type="date" id="date-range-end" bind:value={dateRangeEnd}>
+    </div> -->
+  {/if}
+  <div class="buttons">
+    <button class="open-envelopes" onclick={expandAll}>Open All</button>
+    <button class="close-envelopes" onclick={closeAll}>Close All</button>
+  </div>
+</div>
+<div class="transaction-envelopes">
+  {#each expenses as envelope (envelope.envelopeID)}
+    <Envelope
+      {envelope}
+      {budgetEnvelopeTotals}
       {accountTitle}
-      {assets}
+      {todayStr}
       {dateRange}
-      {totalExpenses}
+      {toggleExpanded}
       {currencyFormat}
       {numberFormat}
+      {addTransaction}
       {updateTransaction}
+      {deleteTransaction}
     />
-  {/if}
-  <div class="heading-button-row">
-    <h2>Transactions</h2>
-    {#if accountTitle === "checking"}
-      <div class="month-selector">
-        <label for="month">Select Month:</label>
-        <select id="month" bind:value={selectedMonth}>
-          {#each months as month}
-            <option value={month}>{formatMonthYear(month)}</option>
-          {/each}
-        </select>
-      </div>
-    <!-- {:else if accountTitle === "savings"}
-      <div class="date-range-selector">
-        <div>Select Date Range:</div>
-        <input type="date" id="date-range-start" bind:value={dateRangeStart}>
-        <input type="date" id="date-range-end" bind:value={dateRangeEnd}>
-      </div> -->
-    {/if}
-    <div class="buttons">
-      <button class="open-envelopes" onclick={expandAll}>Open All</button>
-      <button class="close-envelopes" onclick={closeAll}>Close All</button>
-    </div>
-  </div>
-  <div class="transaction-envelopes">
-    {#each expenses as envelope (envelope.envelopeID)}
-      <Envelope
-        {envelope}
-        {budgetEnvelopeTotals}
-        {accountTitle}
-        {todayStr}
-        {dateRange}
-        {toggleExpanded}
-        {currencyFormat}
-        {numberFormat}
-        {addTransaction}
-        {updateTransaction}
-        {deleteTransaction}
-      />
-    {/each}
-  </div>
-<!-- </div> -->
+  {/each}
+</div>
 
 <style>
+  .copy-transactions-dialog {
+    max-width: 750px;
+    margin-inline: auto;
+  }
   .heading-button-row {
     display: flex;
     justify-content: space-between;

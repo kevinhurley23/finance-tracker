@@ -1,9 +1,9 @@
 <script>
   import Modal from "./Modal.svelte";
   import { slide } from "svelte/transition";
-  let { accountTitle, envelopeID, transaction, currencyFormat, numberFormat, updateTransaction, deleteTransaction } = $props()
+  let { accountTitle, envelopeID, transaction, currencyFormat, numberFormat, updateTransaction, deleteTransaction, dateRange } = $props()
   const transactionID = transaction.transactionID;
-  const canDelete = transaction.transactionDescription == "Starting Balance" ? false : true;
+  const canModify = transaction.transactionDescription == "Starting Balance" ? false : true;
   let amountStr = $state(currencyFormat(transaction.amount));
   let showDeleteTransactionModal = $state(false);
 
@@ -42,13 +42,13 @@
 <div id={transaction.transactionID} class="transaction {transaction.repeating ? 'repeating' : ''}" transition:slide={{duration: 50}}>
   <input class="description" type="text" value={transaction.transactionDescription} onblur={updateDescription}>
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-  {#if canDelete}
+  {#if canModify}
     <i class="fa-solid fa-trash delete-transaction" title="delete transaction" onclick={() => (showDeleteTransactionModal = true)}></i>
   {:else}
     <div></div>
   {/if}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-  {#if accountTitle != 'budget'}
+  {#if accountTitle != 'budget' && canModify}
     <i class="fa-solid fa-repeat toggle-repeating" title="turn repeat on or off for this transaction" onclick={toggleRepeat}></i>
   {:else}
     <div></div>
@@ -56,7 +56,7 @@
   {#if accountTitle == 'budget'}
     <span>{dayOfMonth}</span>
   {:else}
-    <input class="date" type="date" value={transaction.date} onchange={updateDate}>
+    <input class="date" type="date" min={dateRange[0]} max={dateRange[1]} value={transaction.date} onblur={updateDate}>
   {/if}
   <input class="amount" type="text" size="8" value={amountStr} onblur={updateAmount}>
 </div>
@@ -81,7 +81,7 @@
 <style>
   .transaction {
     display: grid;
-    grid-template-columns: 1fr 40px 40px 140px 125px;
+    grid-template-columns: 1fr 25px 25px 140px 110px;
     align-items: center;
     gap: 10px;
     padding: 4px 0;

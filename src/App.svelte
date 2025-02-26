@@ -1,5 +1,4 @@
 <script>
-  // import viteLogo from '/vite.svg' // assets in 'public' folder can be imported like this
   import EnvelopeGroup from './lib/EnvelopeGroup.svelte';
   import Switch from './lib/Switch.svelte';
   import Modal from './lib/Modal.svelte';
@@ -37,11 +36,13 @@
     dataReady = true;
     maxEnvelopes = data.checking.length;
     populateMonths();
+    // console.log(data)
   }
   fetchData();
 
   function populateMonths() {
     let dateIterator = new Date(data.firstTransactionDate);
+    dateIterator.setDate(dateIterator.getDate() + 1);
     while (dateIterator <= todayObj) {
       months.push(dateIterator.toISOString().slice(0, 7));
       dateIterator.setMonth(dateIterator.getMonth() + 1);
@@ -317,6 +318,7 @@
       flex-direction: column;
       align-items: center;
       gap: 10px;
+      position: relative;
       p {
         margin: 0;
       }

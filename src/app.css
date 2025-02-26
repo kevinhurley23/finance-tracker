@@ -54,7 +54,7 @@ input {
   border: 1px solid var(--grey-500);
   border-radius: 5px;
   padding: 4px;
-  &:focus {
+  &:focus-within {
     outline-color: var(--accent);
     background-color: var(--grey-600);
   }
