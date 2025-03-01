@@ -1,5 +1,7 @@
 <?php
 
+// To run, cd to the php directory and run: php backup.php
+
 include 'dbcon.php';
 
 $backupDir = '../db-backups/';

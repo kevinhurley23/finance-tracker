@@ -1,4 +1,5 @@
 export const todayObj = new Date();
+todayObj.setUTCHours(24, 0, 0, 0);
 
 let year = todayObj.getFullYear();
 let month = String(todayObj.getMonth() + 1).padStart(2, "0");

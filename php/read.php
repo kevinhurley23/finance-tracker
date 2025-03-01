@@ -72,6 +72,8 @@ $highestTransactionID = max(array_column($transactions, 'transactionID'));
 $data['highestTransactionID'] = $highestTransactionID;
 $firstTransactionDate = min(array_column($transactions, 'date'));
 $data['firstTransactionDate'] = $firstTransactionDate;
+$lastTransactionDate = max(array_column($transactions, 'date'));
+$data['lastTransactionDate'] = $lastTransactionDate;
 
 echo json_encode($data);
 
