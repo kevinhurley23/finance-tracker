@@ -2,8 +2,10 @@
   import Card from "./Card.svelte";
   import Modal from "./Modal.svelte";
   import Transaction from "./Transaction.svelte";
+  import { todayStr } from './dates.js'
+  import { currencyFormat, addTransaction } from "./functions.js";
   import { scale, slide } from "svelte/transition";
-  let { envelope, budgetEnvelopeTotals, accountTitle, todayStr, dateRange, toggleExpanded, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } = $props();
+  let { envelope, budgetEnvelopeTotals, accountTitle, dateRange, toggleExpanded } = $props();
 
   let envelopeID = envelope.envelopeID;
   let totalAmount = $derived(envelope.totalAmount);
@@ -81,10 +83,6 @@
                 {accountTitle} 
                 {envelopeID}
                 {transaction}
-                {currencyFormat}
-                {numberFormat}
-                {updateTransaction}
-                {deleteTransaction}
                 {dateRange}
               />
             {/each}

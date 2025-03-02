@@ -1,6 +1,7 @@
 <script>
   import Card from "./Card.svelte";
-  let { accountTitle, assets, dateRange, totalExpenses, currencyFormat, numberFormat, updateTransaction } = $props();
+  import { currencyFormat, numberFormat, updateTransaction } from "./functions.js";
+  let { accountTitle, assets, dateRange, totalExpenses } = $props();
   let envelopeID = assets.envelopeID;
 
   let transactions = $derived.by(() => {

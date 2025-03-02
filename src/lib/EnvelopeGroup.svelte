@@ -1,7 +1,10 @@
 <script>
   import IncomeCard from './IncomeCard.svelte';
   import Envelope from './Envelope.svelte';
-  let { accountTitle, envelopes, budgetEnvelopeTotals, firstTransactionDate, todayStr, currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction, copyTransactions, months } = $props();
+  import { months } from './data.svelte.js'
+  import { todayStr } from './dates.js'
+  import { copyTransactions } from './functions.js';
+  let { accountTitle, envelopes, budgetEnvelopeTotals, firstTransactionDate } = $props();
 
   function getLastDayOfMonth(dateStr) {
     const parts = dateStr.split('-');
@@ -87,9 +90,6 @@
     {assets}
     {dateRange}
     {totalExpenses}
-    {currencyFormat}
-    {numberFormat}
-    {updateTransaction}
   />
 {/if}
 <div class="heading-button-row">
@@ -121,14 +121,8 @@
       {envelope}
       {budgetEnvelopeTotals}
       {accountTitle}
-      {todayStr}
       {dateRange}
       {toggleExpanded}
-      {currencyFormat}
-      {numberFormat}
-      {addTransaction}
-      {updateTransaction}
-      {deleteTransaction}
     />
   {/each}
 </div>

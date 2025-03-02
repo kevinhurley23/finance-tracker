@@ -1,13 +1,15 @@
 <script>
   import Modal from "./Modal.svelte";
   import { slide } from "svelte/transition";
-  let { accountTitle, envelopeID, transaction, currencyFormat, numberFormat, updateTransaction, deleteTransaction, dateRange } = $props()
+  import { currencyFormat, numberFormat, updateTransaction, deleteTransaction } from "./functions.js";
+  let { accountTitle, envelopeID, transaction, dateRange } = $props()
   const transactionID = transaction.transactionID;
   const canModify = transaction.transactionDescription == "Starting Balance" ? false : true;
   let amountStr = $state(currencyFormat(transaction.amount));
   let showDeleteTransactionModal = $state(false);
 
-  let dayOfMonth = transaction.date.split("-")[2];
+  // svelte-ignore non_reactive_update
+    let dayOfMonth = transaction.date.split("-")[2];
   if (dayOfMonth == "01") {
     dayOfMonth = "1st";
   } else if (dayOfMonth == "02") {
