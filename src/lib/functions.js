@@ -1,4 +1,4 @@
-import { data, UIstate } from "./data.svelte.js";
+import { data, accountNames, UIstate } from "./data.svelte.js";
 
 export function currencyFormat(amount) {
   if (amount == undefined) {
@@ -152,6 +152,7 @@ export async function copyTransactions(selectedMonth) {
   previousMonthEnd.setDate(previousMonthEnd.getDate() - 1);
   const startStr = previousMonthStart.toISOString().slice(0, 10);
   const endStr = previousMonthEnd.toISOString().slice(0, 10);
+  let matchingTransactionCounter = 0;
   for (const account of accountNames) {
     for (const envelope of data[account]) {
       for (const transaction of envelope.transactions) {
@@ -160,6 +161,7 @@ export async function copyTransactions(selectedMonth) {
           transaction.date <= endStr &&
           transaction.repeating
         ) {
+          matchingTransactionCounter++;
           const parts = transaction.date.split("-");
           let year = parseInt(parts[0], 10);
           let month = parseInt(parts[1], 10);
@@ -187,6 +189,11 @@ export async function copyTransactions(selectedMonth) {
         }
       }
     }
+  }
+  if (matchingTransactionCounter === 0) {
+    alert(
+      "No repeating transactions were found in the previous month to copy."
+    );
   }
   UIstate.showCopyingTransactionsModal = false;
 }
