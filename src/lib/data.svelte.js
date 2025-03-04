@@ -39,9 +39,21 @@ export async function fetchData() {
   data.ready = true;
   data.maxEnvelopes = data.checking.length;
   populateMonths();
+  populateEnvelopeIDs();
 }
 
 export const accountNames = ["budget", "checking", "savings"];
+export const accountsAndEnvelopes = $state({});
+function populateEnvelopeIDs() {
+  accountNames.forEach((account) => {
+    accountsAndEnvelopes[account] = {};
+    data[account].forEach((envelope) => {
+      accountsAndEnvelopes[account][envelope.envelopeID] =
+        envelope.envelopeTitle;
+    });
+  });
+  // console.log(accountsAndEnvelopes);
+}
 
 export let months = $state([]);
 function populateMonths() {

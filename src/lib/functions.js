@@ -67,10 +67,14 @@ export async function addTransaction(
 
   if (UIstate.testingMode) {
     updateFrontEnd();
+    return true;
   } else {
     const result = await fetchRequest("../php/create.php", newTransaction);
     if (result) {
       updateFrontEnd();
+      return true;
+    } else {
+      return false;
     }
   }
 }

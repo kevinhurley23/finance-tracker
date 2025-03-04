@@ -8,7 +8,9 @@
   let { envelope, budgetEnvelopeTotals, accountTitle, dateRange, toggleExpanded } = $props();
 
   let envelopeID = envelope.envelopeID;
+  let envelopeTitle = envelope.envelopeTitle;
   let totalAmount = $derived(envelope.totalAmount);
+  let addTransactionError = $state("");
 
   let transactionsInRange = $derived.by(() => {
     if (accountTitle === "checking") {
@@ -20,7 +22,7 @@
 
   let transactions = $derived(transactionsInRange.toSorted((a, b) =>  new Date(a.date).getTime() - new Date(b.date).getTime()));
 
-  let thisEnvelopeBudget = $derived(budgetEnvelopeTotals[envelope.envelopeTitle]);
+  let thisEnvelopeBudget = $derived(budgetEnvelopeTotals[envelopeTitle]);
 
   let showNewTransactionModal = $state(false);
 
@@ -33,12 +35,13 @@
   let newTransactionRepeating = false;
 
   function newTransaction() {
+    addTransactionError = "";
     if (newTransactionDescription == undefined) {
-      alert("Description cannot be empty")
+      addTransactionError = "Description cannot be empty";
     } else if (newTransactionDate == '') {
-      alert("Date cannot be empty")
+      addTransactionError = "Date cannot be empty";
     } else if (newTransactionAmount == undefined) {
-      alert("Amount cannot be empty")
+      addTransactionError = "Amount cannot be empty";
     } else {
       addTransaction(accountTitle, envelopeID, newTransactionDescription, newTransactionDate, newTransactionAmount, newTransactionRepeating)
       newTransactionDescription = '';
@@ -55,7 +58,7 @@
       <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
       <div class="heading" onclick={() => toggleExpanded(envelopeID)}>
         <h3>
-          {envelope.envelopeTitle}
+          {envelopeTitle}
           <i class="fa-solid fa-chevron-right"></i>
         </h3>
         {#if accountTitle==='budget'}
@@ -82,6 +85,7 @@
               <Transaction
                 {accountTitle} 
                 {envelopeID}
+                {envelopeTitle}
                 {transaction}
                 {dateRange}
               />
@@ -99,8 +103,8 @@
 {#if showNewTransactionModal}
   <Modal bind:showModal={showNewTransactionModal}>
     {#snippet modalBody()}
-      <p style="text-align: center;"><strong>{envelope.envelopeTitle}</strong></p>
-      <p style="text-align: center;">New Transaction</p>
+      <p class="text-center"><strong>{envelopeTitle}</strong></p>
+      <p class="text-center">New Transaction</p>
       <div class="new-transaction-form">
         <p>Description:</p>
         <input type="text" bind:value={newTransactionDescription}>
@@ -114,6 +118,9 @@
           <input type="checkbox" bind:checked={newTransactionRepeating}>
         {/if}
       </div>
+      {#if addTransactionError}
+        <p class="error">{addTransactionError}</p>
+      {/if}
     {/snippet}
     {#snippet modalButtons()}
       <button onclick={newTransaction}>Create Transaction</button>

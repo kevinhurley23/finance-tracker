@@ -47,7 +47,8 @@ button {
   }
 }
 
-input {
+input,
+select {
   display: inline;
   font-size: inherit;
   font-family: inherit;
@@ -62,11 +63,22 @@ input {
 .amount {
   text-align: right;
 }
+dialog input,
+select {
+  text-transform: capitalize;
+}
+.error {
+  color: var(--red);
+  max-width: 500px;
+}
 
 .row {
   display: flex;
   justify-content: center;
   gap: 30px;
+}
+.text-center {
+  text-align: center;
 }
 
 main.multiple-accounts {
