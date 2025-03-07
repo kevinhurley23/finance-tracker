@@ -1,5 +1,5 @@
 <script>
-  import EnvelopeGroup from './lib/EnvelopeGroup.svelte';
+  import Account from './lib/Account.svelte';
   import Switch from './lib/Switch.svelte';
   import Modal from './lib/Modal.svelte';
   import { UIstate, data, fetchData, accountNames } from './lib/data.svelte.js';
@@ -58,7 +58,7 @@
       {#each accountNames as account}
         <section id={account} class="account-section" style={`--accent: var(--${account}-accent); ${UIstate.sectionDisplayed.includes(account) ? "" : "display: none;"}`}>
           <h1>{account}</h1>
-          <EnvelopeGroup
+          <Account
             accountTitle={account}
             envelopes={data[account]}
             {budgetEnvelopeTotals}
@@ -160,6 +160,5 @@
   }
   h1 {
     text-transform: capitalize;
-    margin: 0;
   }
 </style>

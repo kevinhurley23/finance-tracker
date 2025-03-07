@@ -1,5 +1,5 @@
 <script>
-  import IncomeCard from './IncomeCard.svelte';
+  import IncomeSection from './IncomeSection.svelte';
   import Envelope from './Envelope.svelte';
   import { months } from './data.svelte.js'
   import { todayStr } from './dates.js'
@@ -101,11 +101,12 @@
     </div>
   </div>
 {:else}
-  <IncomeCard
+  <IncomeSection
     {accountTitle}
     {assets}
     {dateRange}
     {totalExpenses}
+    {toggleExpanded}
   />
 {/if}
 <div class="heading-button-row">
@@ -159,9 +160,6 @@
     align-items: end;
     gap: 25px;
     margin-inline: auto;
-    h2 {
-      margin: 0;
-    }
     .month-selector {
       text-align: center;
       select {

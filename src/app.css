@@ -10,6 +10,7 @@
   --checking-accent: #0173b9;
   --savings-accent: #cf7a0b;
   --testing-accent: #590e8b;
+  --envelope-width: 750px;
 }
 
 *,
@@ -27,6 +28,12 @@ body {
 h1 {
   font-size: 2em;
   text-align: center;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
 }
 
 button {
@@ -62,10 +69,6 @@ select {
 }
 .amount {
   text-align: right;
-}
-dialog input,
-select {
-  text-transform: capitalize;
 }
 .error {
   color: var(--red);

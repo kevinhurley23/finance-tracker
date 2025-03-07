@@ -5,11 +5,12 @@
   import { todayStr } from './dates.js'
   import { currencyFormat, addTransaction } from "./functions.js";
   import { scale, slide } from "svelte/transition";
-  let { envelope, budgetEnvelopeTotals, accountTitle, dateRange, toggleExpanded } = $props();
+  let { envelope, budgetEnvelopeTotals = "", accountTitle, dateRange, toggleExpanded } = $props();
 
   let envelopeID = envelope.envelopeID;
   let envelopeTitle = envelope.envelopeTitle;
   let totalAmount = $derived(envelope.totalAmount);
+  let showAddTransactionButton = accountTitle === "savings" && envelopeTitle === "Income" ? false : true;
   let addTransactionError = $state("");
 
   let transactionsInRange = $derived.by(() => {
@@ -56,25 +57,29 @@
   {#snippet cardBody()}
     <div class="envelope {envelope.expanded ? 'expanded' : ''}">
       <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-      <div class="heading" onclick={() => toggleExpanded(envelopeID)}>
-        <h3>
-          {envelopeTitle}
-          <i class="fa-solid fa-chevron-right"></i>
-        </h3>
-        {#if accountTitle==='budget'}
-          <span>Day of month:</span>
-        {:else if accountTitle==='checking'}
-          <span class="amount">Budget: {currencyFormat(thisEnvelopeBudget)}</span>
-        {:else}
-          <span></span>
-        {/if}
-        <span
-          class="amount amount-total"
-          style={accountTitle === "checking" ? `color: var(--${totalAmount > thisEnvelopeBudget ? 'red' : 'green'});` : ""}
-        >
-          {currencyFormat(totalAmount)}
-        </span>
-      </div>
+      {#if envelopeTitle == "Income"}
+        <h3 class="income-heading text-center">{envelopeTitle}</h3>
+      {:else}
+        <div class="heading" onclick={() => toggleExpanded(envelopeID)}>
+          <h3>
+            {envelopeTitle}
+            <i class="fa-solid fa-chevron-right"></i>
+          </h3>
+          {#if accountTitle==='budget'}
+            <span>Day of month:</span>
+          {:else if accountTitle==='checking' && envelopeTitle != 'Income'}
+            <span class="amount">Budget: {currencyFormat(thisEnvelopeBudget)}</span>
+          {:else}
+            <span></span>
+          {/if}
+          <span
+            class="amount amount-total"
+            style={accountTitle === "checking" ? `color: var(--${totalAmount > thisEnvelopeBudget ? 'red' : 'green'});` : ""}
+          >
+            {currencyFormat(totalAmount)}
+          </span>
+        </div>
+      {/if}
       {#if envelope.expanded}
         <div class="envelope-body" transition:slide>
           {#if envelope.envelopeDescription}
@@ -94,7 +99,9 @@
             <p style="text-align: center; font-style: italic;">There are no transactions in this envelope</p>
           {/if}
         </div>
-        <button class="add-transaction" transition:scale onclick={() => (showNewTransactionModal = true)}>+ Add Transaction</button>
+        {#if showAddTransactionButton}
+          <button class="add-transaction" transition:scale onclick={() => (showNewTransactionModal = true)}>+ Add Transaction</button>
+        {/if}
       {/if}
     </div>
   {/snippet}
@@ -133,6 +140,9 @@
 <style>
   .envelope {
     position: relative;
+    .income-heading {
+      margin: 10px 0;
+    }
     .heading {
       display: grid;
       grid-template-columns: 1fr 170px 125px;
@@ -140,12 +150,9 @@
       padding: 20px;
       border-radius: 10px;
       cursor: pointer;
-      h3 {
-        margin: 0;
-        i {
-          margin-left: 5px;
-          transition: 200ms;
-        }
+      i {
+        margin-left: 5px;
+        transition: 200ms;
       }
       .amount-total {
         padding-right: 4px;

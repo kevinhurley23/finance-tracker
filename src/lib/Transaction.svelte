@@ -5,7 +5,7 @@
   import { currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } from "./functions.js";
   let { accountTitle, envelopeID, envelopeTitle, transaction, dateRange } = $props()
   const transactionID = transaction.transactionID;
-  const canModify = transaction.transactionDescription == "Starting Balance" ? false : true;
+  const canModify = transaction.transactionDescription == "Starting Balance" || transaction.transactionDescription == "Balance" ? false : true;
   let amountStr = $state(currencyFormat(transaction.amount));
   let showMoveTransactionModal = $state(false);
   let showDeleteTransactionModal = $state(false);
@@ -14,7 +14,7 @@
   let moveTransactionError = $state("");
 
   // svelte-ignore non_reactive_update
-    let dayOfMonth = transaction.date.split("-")[2];
+  let dayOfMonth = transaction.date.split("-")[2];
   if (dayOfMonth == "01") {
     dayOfMonth = "1st";
   } else if (dayOfMonth == "02") {
@@ -26,6 +26,15 @@
     dayOfMonth = dayOfMonth + "th";
   }
 
+  function dateFormat(dateStr) {
+    const date = new Date(dateStr);
+    date.setDate(date.getDate() + 1);
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  }
+  
   function updateDescription() {
     updateTransaction(accountTitle, envelopeID, transactionID, 'transactionDescription', this.value)
   }
@@ -67,31 +76,40 @@
 </script>
 
 <div id={transaction.transactionID} class="transaction {transaction.repeating ? 'repeating' : ''}" transition:slide={{duration: 50}}>
-  <input class="description" type="text" value={transaction.transactionDescription} onblur={updateDescription}>
+  <!-- Description -->
+  {#if canModify}
+    <input class="description" type="text" value={transaction.transactionDescription} onblur={updateDescription}>
+  {:else}
+    <p class="description">{transaction.transactionDescription}</p>
+  {/if}
+
+  <!-- Icons -->
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   {#if accountTitle != 'budget' && canModify}
     <i class="fa-solid fa-repeat toggle-repeating" title="Turn repeat on or off for this transaction" onclick={toggleRepeat}></i>
-  {:else}
-    <div></div>
   {/if}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
-  {#if canModify}
+  {#if canModify && envelopeTitle != 'Income'}
     <i class="fa-solid fa-arrows-up-down" title="Move transaction" onclick={() => (showMoveTransactionModal = true)}></i>
-  {:else}
-    <div></div>
   {/if}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   {#if canModify}
     <i class="fa-solid fa-trash delete-transaction" title="Delete transaction" onclick={() => (showDeleteTransactionModal = true)}></i>
-  {:else}
-    <div></div>
   {/if}
+
+  <!-- Date -->
   {#if accountTitle == 'budget'}
-    <span>{dayOfMonth}</span>
+    <p class="date day-of-month">{dayOfMonth}</p>
+  {:else if accountTitle === "savings" && transaction.transactionDescription === "Balance"}
+    <div></div>
+  {:else if !canModify}
+    <p class="date plain-text-date">{dateFormat(transaction.date)}</p>
   {:else}
     <input class="date" type="date" min={dateRange[0]} max={dateRange[1]} value={transaction.date} onblur={updateDate}>
   {/if}
-  <input class="amount" type="text" size="8" value={amountStr} onblur={updateAmount}>
+
+  <!-- Amount -->
+  <input class="amount" type="text" size="9" value={amountStr} onblur={updateAmount}>
 </div>
 
 {#if showMoveTransactionModal}
@@ -100,13 +118,13 @@
       <p class="text-center">Move <strong>{transaction.transactionDescription}</strong> to new account or envelope</p>
       <div class="move-transaction-form">
         <label for="account-select">Choose Account:</label>
-        <select id="account-select" bind:value={newAccount}>
+        <select id="account-select" bind:value={newAccount} style="text-transform: capitalize;">
           {#each accountNames as account}
             <option value={account}>{account}</option>
           {/each}
         </select>
         <label for="envelope-select">Choose Envelope:</label>
-        <select id="envelope-select" bind:value={newEnvelopeID}>
+        <select id="envelope-select" bind:value={newEnvelopeID} style="text-transform: capitalize;">
           {#each Object.entries(accountsAndEnvelopes[newAccount]) as [id, title]}
             {#if title != 'Income'}
               <option value={id}>{title}</option>
@@ -143,12 +161,27 @@
 
 <style>
   .transaction {
-    display: grid;
-    grid-template-columns: 1fr 25px 25px 25px 140px 110px;
+    display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
     padding: 4px 0;
     border-bottom: 2px solid var(--accent);
+    p {
+      margin: 0.3em 4px;
+    }
+    .description {
+      flex-grow: 1;
+    }
+    .date {
+      width: 155px;
+      &.day-of-month {
+        width: 42px;
+      }
+    }
+    .plain-text-date {
+      letter-spacing: 0.5px;
+      padding-left: 10px;
+    }
     i {
       text-align: center;
       cursor: pointer;
