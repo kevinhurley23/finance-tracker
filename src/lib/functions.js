@@ -1,4 +1,9 @@
-import { data, accountNames, UIstate } from "./data.svelte.js";
+import {
+  data,
+  accountNames,
+  UIstate,
+  transactionsToCopy,
+} from "./data.svelte.js";
 
 export function currencyFormat(amount) {
   if (amount == undefined) {
@@ -23,6 +28,15 @@ export function numberFormat(string) {
   }
 }
 
+export function dateFormat(dateStr) {
+  const date = new Date(dateStr);
+  date.setDate(date.getDate() + 1);
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  const year = date.getFullYear();
+  return `${month}/${day}/${year}`;
+}
+
 async function fetchRequest(url, body) {
   try {
     const response = await fetch(url, {
@@ -38,8 +52,9 @@ async function fetchRequest(url, body) {
   }
 }
 
-function findEnvelopeIndex(account, envelopeID) {
-  return account.indexOf(account.find((item) => item.envelopeID == envelopeID));
+export function findEnvelopeIndex(accountTitle, envelopeID) {
+  const account = data[accountTitle];
+  return account.indexOf(account.find(item => item.envelopeID == envelopeID));
 }
 
 export async function addTransaction(
@@ -50,8 +65,7 @@ export async function addTransaction(
   amount,
   repeating
 ) {
-  const account = data[accountTitle];
-  const envelopeIndex = findEnvelopeIndex(account, envelopeID);
+  const envelopeIndex = findEnvelopeIndex(accountTitle, envelopeID);
   const newTransaction = {
     transactionID: data.highestTransactionID + 1,
     transactionDescription: description,
@@ -86,11 +100,12 @@ export async function updateTransaction(
   property,
   value
 ) {
-  const account = data[accountTitle];
-  const envelopeIndex = findEnvelopeIndex(account, envelopeID);
-  const transactionIndex = account[envelopeIndex].transactions.indexOf(
-    account[envelopeIndex].transactions.find(
-      (item) => item.transactionID == transactionID
+  const envelopeIndex = findEnvelopeIndex(accountTitle, envelopeID);
+  const transactionIndex = data[accountTitle][
+    envelopeIndex
+  ].transactions.indexOf(
+    data[accountTitle][envelopeIndex].transactions.find(
+      item => item.transactionID == transactionID
     )
   );
   const updatedTransaction = {
@@ -118,11 +133,12 @@ export async function deleteTransaction(
   envelopeID,
   transactionID
 ) {
-  const account = data[accountTitle];
-  const envelopeIndex = findEnvelopeIndex(account, envelopeID);
-  const transactionIndex = account[envelopeIndex].transactions.indexOf(
-    account[envelopeIndex].transactions.find(
-      (item) => item.transactionID == transactionID
+  const envelopeIndex = findEnvelopeIndex(accountTitle, envelopeID);
+  const transactionIndex = data[accountTitle][
+    envelopeIndex
+  ].transactions.indexOf(
+    data[accountTitle][envelopeIndex].transactions.find(
+      item => item.transactionID == transactionID
     )
   );
   function updateFrontEnd() {
@@ -142,56 +158,4 @@ export async function deleteTransaction(
       updateFrontEnd();
     }
   }
-}
-
-export async function copyTransactions(account, selectedMonth) {
-  UIstate.showCopyingTransactionsModal = true;
-  const previousMonthEnd = new Date(selectedMonth);
-  const previousMonthStart = new Date(previousMonthEnd);
-  previousMonthStart.setDate(0);
-  previousMonthEnd.setDate(previousMonthEnd.getDate() - 1);
-  const startStr = previousMonthStart.toISOString().slice(0, 10);
-  const endStr = previousMonthEnd.toISOString().slice(0, 10);
-  let matchingTransactionCounter = 0;
-  for (const envelope of data[account]) {
-    for (const transaction of envelope.transactions) {
-      if (
-        transaction.date >= startStr &&
-        transaction.date <= endStr &&
-        transaction.repeating
-      ) {
-        matchingTransactionCounter++;
-        const parts = transaction.date.split("-");
-        let year = parseInt(parts[0], 10);
-        let month = parseInt(parts[1], 10);
-        let day = parseInt(parts[2], 10);
-        if (month === 12) {
-          month = 1;
-          year++;
-        } else {
-          month++;
-        }
-        day = day > 28 ? 28 : day;
-        const newDate = `${String(year)}-${String(month).padStart(
-          2,
-          "0"
-        )}-${String(day).padStart(2, "0")}`;
-
-        await addTransaction(
-          account,
-          envelope.envelopeID,
-          transaction.transactionDescription,
-          newDate,
-          transaction.amount,
-          true
-        );
-      }
-    }
-  }
-  if (matchingTransactionCounter === 0) {
-    alert(
-      "No repeating transactions were found in the previous month to copy."
-    );
-  }
-  UIstate.showCopyingTransactionsModal = false;
 }

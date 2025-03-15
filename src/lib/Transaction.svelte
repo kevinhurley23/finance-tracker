@@ -9,7 +9,6 @@
   const description = transaction.transactionDescription;
   const date = transaction.date;
   const amount = transaction.amount;
-  const repeating = transaction.repeating;
   const canModify = description == "Starting Balance" || description == "Balance" ? false : true;
   let amountStr = $state(currencyFormat(amount));
   let showMoveTransactionModal = $state(false);
@@ -44,7 +43,7 @@
     updateTransaction(accountTitle, envelopeID, transactionID, 'transactionDescription', this.value)
   }
 
-  const toggleRepeat = () => updateTransaction(accountTitle, envelopeID, transactionID, 'repeating', !repeating)
+  const toggleRepeat = () => updateTransaction(accountTitle, envelopeID, transactionID, 'repeating', !transaction.repeating)
 
   function updateDate() {
     updateTransaction(accountTitle, envelopeID, transactionID, 'date', this.value)
@@ -70,7 +69,7 @@
       return;
     }
 
-    const success = await addTransaction(newAccount, newEnvelopeID, description, date, amount, repeating);
+    const success = await addTransaction(newAccount, newEnvelopeID, description, date, amount, transaction.repeating);
     if (success) {
       deleteTransaction(accountTitle, envelopeID, transactionID);
       showMoveTransactionModal = false;
@@ -80,7 +79,7 @@
   }
 </script>
 
-<div id={transaction.transactionID} class="transaction {repeating ? 'repeating' : ''}" transition:slide={{duration: 50}}>
+<div id={transaction.transactionID} class="transaction {transaction.repeating ? 'repeating' : ''}" transition:slide={{duration: 50}}>
   <!-- Description -->
   {#if canModify}
     <input class="description" type="text" value={description} onblur={updateDescription}>
@@ -95,7 +94,7 @@
   {/if}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   {#if canModify}
-    <i class="fa-solid fa-clone" title="Copy transaction" onclick={() => copyTransaction(description, amount, todayStr, repeating)}></i>
+    <i class="fa-solid fa-clone" title="Copy transaction" onclick={() => copyTransaction(description, amount, todayStr, transaction.repeating)}></i>
   {/if}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   {#if canModify && envelopeTitle != 'Income'}

@@ -1,10 +1,36 @@
 <script>
   import IncomeSection from './IncomeSection.svelte';
   import Envelope from './Envelope.svelte';
+  import Modal from './Modal.svelte';
   import { months } from './data.svelte.js'
   import { todayStr } from './dates.js'
-  import { copyTransactions } from './functions.js';
+  import { data, transactionsToCopy } from './data.svelte.js';
+  import { dateFormat, addTransaction, findEnvelopeIndex } from './functions.js';
   let { accountTitle, envelopes, budgetEnvelopeTotals, firstTransactionDate } = $props();
+
+  envelopes.forEach(item => item.expanded = true)
+  
+  let selectedMonth = $state(todayStr.slice(0, 7));
+  // let dateRangeStart = $state(firstTransactionDate.toISOString().slice(0, 10));
+  // let dateRangeEnd = $state(getLastDayOfMonth(todayStr));
+  let dateRange = $derived.by(() => {
+    if (accountTitle === "budget") {
+      return ["2025-01-01", "2025-01-31"];
+    } else if (accountTitle === "checking") {
+      return [`${selectedMonth}-01`, getLastDayOfMonth(selectedMonth)];
+    } else if (accountTitle === "savings") {
+      // return [dateRangeStart, dateRangeEnd];
+      return [firstTransactionDate, getLastDayOfMonth(todayStr)];
+    }
+  });
+
+  let showCopyingTransactionsModal = $state(false);
+  let copyingTransactionsInProgress = $state(false);
+  
+  let transactionCount = $state(0);
+  let totalExpenses = $state(0);
+  let assets = $derived.by(() => envelopes.find(item => item.envelopeTitle === "Income"));
+  let expenses = $derived.by(() => envelopes.filter(item => item.envelopeTitle !== "Income"));
 
   function getLastDayOfMonth(dateStr) {
     const parts = dateStr.split('-');
@@ -18,7 +44,6 @@
     date.setMonth(date.getMonth() + 1);
     return date.toLocaleString('default', { month: 'long', year: 'numeric' });
   }
-
   function changeSelectedMonth(e) {
     if (e.target.value === "add-month") {
       addMonth();
@@ -46,26 +71,75 @@
     envelope.expanded = !envelope.expanded;
   }
 
-  envelopes.forEach(item => item.expanded = true)
-  
-  let selectedMonth = $state(todayStr.slice(0, 7));
-  // let dateRangeStart = $state(firstTransactionDate.toISOString().slice(0, 10));
-  // let dateRangeEnd = $state(getLastDayOfMonth(todayStr));
-  let dateRange = $derived.by(() => {
-    if (accountTitle === "budget") {
-      return ["2025-01-01", "2025-01-31"];
-    } else if (accountTitle === "checking") {
-      return [`${selectedMonth}-01`, getLastDayOfMonth(selectedMonth)];
-    } else if (accountTitle === "savings") {
-      // return [dateRangeStart, dateRangeEnd];
-      return [firstTransactionDate, getLastDayOfMonth(todayStr)];
-    }
-  });
+  function prepareToCopyTransactions() {
+    const previousMonthEnd = new Date(selectedMonth);
+    const previousMonthStart = new Date(previousMonthEnd);
+    previousMonthStart.setDate(0);
+    previousMonthEnd.setDate(previousMonthEnd.getDate() - 1);
+    const startStr = previousMonthStart.toISOString().slice(0, 10);
+    const endStr = previousMonthEnd.toISOString().slice(0, 10);
+    for (const envelope of data[accountTitle]) {
+      for (const transaction of envelope.transactions) {
+        if (
+          transaction.date >= startStr &&
+          transaction.date <= endStr &&
+          transaction.repeating
+        ) {
+          const parts = transaction.date.split("-");
+          let year = parseInt(parts[0], 10);
+          let month = parseInt(parts[1], 10);
+          let day = parseInt(parts[2], 10);
+          if (month === 12) {
+            month = 1;
+            year++;
+          } else {
+            month++;
+          }
+          day = day > 28 ? 28 : day;
+          const newDate = `${String(year)}-${String(month).padStart(
+            2,
+            "0"
+          )}-${String(day).padStart(2, "0")}`;
 
-  let transactionCount = $state(0);
-  let totalExpenses = $state(0);
-  let assets = $derived.by(() => envelopes.find(item => item.envelopeTitle === "Income"));
-  let expenses = $derived.by(() => envelopes.filter(item => item.envelopeTitle !== "Income"));
+          const envelopeIndex = findEnvelopeIndex(accountTitle, envelope.envelopeID);
+          const duplicateTransaction = data[accountTitle][envelopeIndex].transactions.find(
+            (item) => item.date === newDate && item.transactionDescription === transaction.transactionDescription
+          );
+
+          if (!duplicateTransaction) {
+            transactionsToCopy.push({
+              envelopeID: envelope.envelopeID,
+              envelopeTitle: envelope.envelopeTitle,
+              description: transaction.transactionDescription,
+              oldDate: transaction.date,
+              newDate: newDate,
+              amount: transaction.amount,
+            });
+          }
+        }
+      }
+    }
+    showCopyingTransactionsModal = true;
+  }
+
+  async function copyTransactions() {
+    for (const transaction of transactionsToCopy) {
+      await addTransaction(
+        accountTitle,
+        transaction.envelopeID,
+        transaction.description,
+        transaction.newDate,
+        transaction.amount,
+        true
+      );
+    }
+    resetCopyingTransactionsModal()
+  }
+
+  function resetCopyingTransactionsModal() {
+    transactionsToCopy.length = 0;
+    showCopyingTransactionsModal = false;
+  }
 
   $effect(() => {
     let accountExpensesTotal = 0;
@@ -97,7 +171,7 @@
   <div class="copy-transactions-dialog">
     <p>There are no transactions this month. Would you like to copy all of the repeating transactions from the previous month?</p>
     <div class="row">
-      <button onclick={() => copyTransactions(accountTitle, selectedMonth)}>Copy Transactions</button>
+      <button onclick={prepareToCopyTransactions}>Copy Transactions</button>
     </div>
   </div>
 {:else}
@@ -121,8 +195,9 @@
         <option value="add-month">Add Month</option>
       </select>
     </div>
-  <!-- {:else if accountTitle === "savings"}
-    <div class="date-range-selector">
+  {:else if accountTitle === "savings"}
+    <button onclick={prepareToCopyTransactions}>Copy Transactions</button>
+    <!-- <div class="date-range-selector">
       <div>Select Date Range:</div>
       <input type="date" id="date-range-start" bind:value={dateRangeStart}>
       <input type="date" id="date-range-end" bind:value={dateRangeEnd}>
@@ -147,6 +222,44 @@
       />
     {/each}
   </div>
+{/if}
+
+{#if showCopyingTransactionsModal}
+  <Modal bind:showModal={showCopyingTransactionsModal}>
+    {#snippet modalBody()}
+      {#if copyingTransactionsInProgress}
+        <p>Transactions copying, please wait...</p>
+        <div class="row">
+          <div class="spinner"></div>
+        </div>
+      {:else}
+        {#if transactionsToCopy.length > 0}
+          <h3>The following transactions will be copied:</h3>
+          <div class="transactions-to-copy">
+            {#each transactionsToCopy as transaction}
+              <p>
+                <span>{transaction.envelopeTitle}: {transaction.description}</span>
+                <span>{dateFormat(transaction.oldDate)} <i class="fa-solid fa-arrow-right"></i> {dateFormat(transaction.newDate)}</span>
+              </p>
+            {/each}
+          </div>
+          <p class="text-center">Would you like to proceed?</p>
+        {:else}
+          <p>No transactions to copy</p>
+        {/if}
+      {/if}
+    {/snippet}
+    {#snippet modalButtons()}
+      {#if !copyingTransactionsInProgress}
+        {#if transactionsToCopy.length > 0}
+          <button onclick={copyTransactions}>Copy</button>
+          <button onclick={resetCopyingTransactionsModal}>Cancel</button>
+        {:else}
+          <button onclick={resetCopyingTransactionsModal}>Ok</button>
+        {/if}
+      {/if}
+    {/snippet}
+  </Modal>
 {/if}
 
 <style>
@@ -189,4 +302,16 @@
     justify-content: center;
     gap: 30px;
   }
+  .transactions-to-copy {
+    max-height: 500px;
+    overflow-y: auto;
+    margin-block: 10px;
+    padding-inline: 20px;
+		p {
+			margin: 0.25em 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+		}
+	}
 </style>

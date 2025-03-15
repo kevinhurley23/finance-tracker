@@ -11,6 +11,7 @@
   --savings-accent: #cf7a0b;
   --testing-accent: #590e8b;
   --envelope-width: 750px;
+  --accent: var(--checking-accent);
 }
 
 *,

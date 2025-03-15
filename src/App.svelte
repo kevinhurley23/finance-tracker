@@ -77,16 +77,6 @@
         {/snippet}
       </Modal>
     {/if}
-    {#if UIstate.showCopyingTransactionsModal}
-      <Modal bind:showModal={UIstate.showCopyingTransactionsModal}>
-        {#snippet modalBody()}
-          <p>Transactions copying, please wait...</p>
-          <div class="row">
-            <div class="spinner"></div>
-          </div>
-        {/snippet}
-      </Modal>
-    {/if}
   </main>
 </div>
 

@@ -6,7 +6,6 @@ export const UIstate = $state({
   testingMode: false,
   canToggleTestingMode: true,
   showConnectErrorModal: false,
-  showCopyingTransactionsModal: false,
 });
 
 export const data = $state({
@@ -45,15 +44,17 @@ export async function fetchData() {
 export const accountNames = ["budget", "checking", "savings"];
 export const accountsAndEnvelopes = $state({});
 function populateEnvelopeIDs() {
-  accountNames.forEach((account) => {
+  accountNames.forEach(account => {
     accountsAndEnvelopes[account] = {};
-    data[account].forEach((envelope) => {
+    data[account].forEach(envelope => {
       accountsAndEnvelopes[account][envelope.envelopeID] =
         envelope.envelopeTitle;
     });
   });
   // console.log(accountsAndEnvelopes);
 }
+
+export const transactionsToCopy = $state([]);
 
 export let months = $state([]);
 function populateMonths() {
