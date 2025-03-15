@@ -37,7 +37,7 @@
 
   function newTransaction() {
     addTransactionError = "";
-    if (newTransactionDescription == undefined) {
+    if (newTransactionDescription == '' || newTransactionDescription == undefined) {
       addTransactionError = "Description cannot be empty";
     } else if (newTransactionDate == '') {
       addTransactionError = "Date cannot be empty";
@@ -50,6 +50,19 @@
       newTransactionRepeating = false;
       showNewTransactionModal = false;
     }
+  }
+
+  function copyTransaction(description, amount, date, repeating) {
+    newTransactionDescription = description;
+    newTransactionAmount = amount;
+    newTransactionDate = date;
+    newTransactionRepeating = repeating;
+    showNewTransactionModal = true;
+  }
+
+  function resetNewTransactionModal() {
+    showNewTransactionModal = false;
+    addTransactionError = '';
   }
 </script>
 
@@ -93,6 +106,7 @@
                 {envelopeTitle}
                 {transaction}
                 {dateRange}
+                {copyTransaction}
               />
             {/each}
           {:else}
@@ -131,7 +145,7 @@
     {/snippet}
     {#snippet modalButtons()}
       <button onclick={newTransaction}>Create Transaction</button>
-      <button onclick={() => showNewTransactionModal = false}>Cancel</button>
+      <button onclick={resetNewTransactionModal}>Cancel</button>
     {/snippet}
   </Modal>
 {/if}

@@ -31,10 +31,10 @@ export async function fetchData() {
   } catch (error) {
     console.error("Fetch error:", error);
     Object.assign(data, placeholderData);
-    showConnectErrorModal = true;
-    testingMode = true;
-    canToggleTestingMode = false;
-    setTimeout(() => (showConnectErrorModal = false), 2000);
+    UIstate.showConnectErrorModal = true;
+    UIstate.testingMode = true;
+    UIstate.canToggleTestingMode = false;
+    setTimeout(() => (UIstate.showConnectErrorModal = false), 2000);
   }
   data.ready = true;
   data.maxEnvelopes = data.checking.length;

@@ -97,7 +97,7 @@
   <div class="copy-transactions-dialog">
     <p>There are no transactions this month. Would you like to copy all of the repeating transactions from the previous month?</p>
     <div class="row">
-      <button onclick={() => copyTransactions(selectedMonth)}>Copy Transactions</button>
+      <button onclick={() => copyTransactions(accountTitle, selectedMonth)}>Copy Transactions</button>
     </div>
   </div>
 {:else}

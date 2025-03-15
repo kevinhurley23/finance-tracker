@@ -1,12 +1,17 @@
 <script>
   import Modal from "./Modal.svelte";
   import { slide } from "svelte/transition";
+  import { todayStr } from "./dates";
   import { accountNames, accountsAndEnvelopes } from "./data.svelte.js";
   import { currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } from "./functions.js";
-  let { accountTitle, envelopeID, envelopeTitle, transaction, dateRange } = $props()
+  let { accountTitle, envelopeID, envelopeTitle, transaction, dateRange, copyTransaction } = $props()
   const transactionID = transaction.transactionID;
-  const canModify = transaction.transactionDescription == "Starting Balance" || transaction.transactionDescription == "Balance" ? false : true;
-  let amountStr = $state(currencyFormat(transaction.amount));
+  const description = transaction.transactionDescription;
+  const date = transaction.date;
+  const amount = transaction.amount;
+  const repeating = transaction.repeating;
+  const canModify = description == "Starting Balance" || description == "Balance" ? false : true;
+  let amountStr = $state(currencyFormat(amount));
   let showMoveTransactionModal = $state(false);
   let showDeleteTransactionModal = $state(false);
   let newAccount = $state(accountTitle);
@@ -14,7 +19,7 @@
   let moveTransactionError = $state("");
 
   // svelte-ignore non_reactive_update
-  let dayOfMonth = transaction.date.split("-")[2];
+  let dayOfMonth = date.split("-")[2];
   if (dayOfMonth == "01") {
     dayOfMonth = "1st";
   } else if (dayOfMonth == "02") {
@@ -39,7 +44,7 @@
     updateTransaction(accountTitle, envelopeID, transactionID, 'transactionDescription', this.value)
   }
 
-  const toggleRepeat = () => updateTransaction(accountTitle, envelopeID, transactionID, 'repeating', !transaction.repeating)
+  const toggleRepeat = () => updateTransaction(accountTitle, envelopeID, transactionID, 'repeating', !repeating)
 
   function updateDate() {
     updateTransaction(accountTitle, envelopeID, transactionID, 'date', this.value)
@@ -65,7 +70,7 @@
       return;
     }
 
-    const success = await addTransaction(newAccount, newEnvelopeID, transaction.transactionDescription, transaction.date, transaction.amount, transaction.repeating);
+    const success = await addTransaction(newAccount, newEnvelopeID, description, date, amount, repeating);
     if (success) {
       deleteTransaction(accountTitle, envelopeID, transactionID);
       showMoveTransactionModal = false;
@@ -75,18 +80,22 @@
   }
 </script>
 
-<div id={transaction.transactionID} class="transaction {transaction.repeating ? 'repeating' : ''}" transition:slide={{duration: 50}}>
+<div id={transaction.transactionID} class="transaction {repeating ? 'repeating' : ''}" transition:slide={{duration: 50}}>
   <!-- Description -->
   {#if canModify}
-    <input class="description" type="text" value={transaction.transactionDescription} onblur={updateDescription}>
+    <input class="description" type="text" value={description} onblur={updateDescription}>
   {:else}
-    <p class="description">{transaction.transactionDescription}</p>
+    <p class="description">{description}</p>
   {/if}
 
   <!-- Icons -->
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   {#if accountTitle != 'budget' && canModify}
     <i class="fa-solid fa-repeat toggle-repeating" title="Turn repeat on or off for this transaction" onclick={toggleRepeat}></i>
+  {/if}
+  <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
+  {#if canModify}
+    <i class="fa-solid fa-clone" title="Copy transaction" onclick={() => copyTransaction(description, amount, todayStr, repeating)}></i>
   {/if}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   {#if canModify && envelopeTitle != 'Income'}
@@ -100,12 +109,12 @@
   <!-- Date -->
   {#if accountTitle == 'budget'}
     <p class="date day-of-month">{dayOfMonth}</p>
-  {:else if accountTitle === "savings" && transaction.transactionDescription === "Balance"}
+  {:else if accountTitle === "savings" && description === "Balance"}
     <div></div>
   {:else if !canModify}
-    <p class="date plain-text-date">{dateFormat(transaction.date)}</p>
+    <p class="date plain-text-date">{dateFormat(date)}</p>
   {:else}
-    <input class="date" type="date" min={dateRange[0]} max={dateRange[1]} value={transaction.date} onblur={updateDate}>
+    <input class="date" type="date" min={dateRange[0]} max={dateRange[1]} value={date} onblur={updateDate}>
   {/if}
 
   <!-- Amount -->
@@ -115,7 +124,7 @@
 {#if showMoveTransactionModal}
   <Modal bind:showModal={showMoveTransactionModal}>
     {#snippet modalBody()}
-      <p class="text-center">Move <strong>{transaction.transactionDescription}</strong> to new account or envelope</p>
+      <p class="text-center">Move <strong>{description}</strong> to new account or envelope</p>
       <div class="move-transaction-form">
         <label for="account-select">Choose Account:</label>
         <select id="account-select" bind:value={newAccount} style="text-transform: capitalize;">
@@ -147,8 +156,8 @@
     {#snippet modalBody()}
       <p>Are you sure you want to delete this transaction?</p>
       <div class="row">
-        <span>{transaction.transactionDescription}</span>
-        <span>{transaction.date}</span>
+        <span>{description}</span>
+        <span>{date}</span>
         <span>{amountStr}</span>
       </div>
     {/snippet}
@@ -163,7 +172,7 @@
   .transaction {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 15px;
     padding: 4px 0;
     border-bottom: 2px solid var(--accent);
     p {

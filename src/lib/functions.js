@@ -144,7 +144,7 @@ export async function deleteTransaction(
   }
 }
 
-export async function copyTransactions(selectedMonth) {
+export async function copyTransactions(account, selectedMonth) {
   UIstate.showCopyingTransactionsModal = true;
   const previousMonthEnd = new Date(selectedMonth);
   const previousMonthStart = new Date(previousMonthEnd);
@@ -153,40 +153,38 @@ export async function copyTransactions(selectedMonth) {
   const startStr = previousMonthStart.toISOString().slice(0, 10);
   const endStr = previousMonthEnd.toISOString().slice(0, 10);
   let matchingTransactionCounter = 0;
-  for (const account of accountNames) {
-    for (const envelope of data[account]) {
-      for (const transaction of envelope.transactions) {
-        if (
-          transaction.date >= startStr &&
-          transaction.date <= endStr &&
-          transaction.repeating
-        ) {
-          matchingTransactionCounter++;
-          const parts = transaction.date.split("-");
-          let year = parseInt(parts[0], 10);
-          let month = parseInt(parts[1], 10);
-          let day = parseInt(parts[2], 10);
-          if (month === 12) {
-            month = 1;
-            year++;
-          } else {
-            month++;
-          }
-          day = day > 28 ? 28 : day;
-          const newDate = `${String(year)}-${String(month).padStart(
-            2,
-            "0"
-          )}-${String(day).padStart(2, "0")}`;
-
-          await addTransaction(
-            account,
-            envelope.envelopeID,
-            transaction.transactionDescription,
-            newDate,
-            transaction.amount,
-            true
-          );
+  for (const envelope of data[account]) {
+    for (const transaction of envelope.transactions) {
+      if (
+        transaction.date >= startStr &&
+        transaction.date <= endStr &&
+        transaction.repeating
+      ) {
+        matchingTransactionCounter++;
+        const parts = transaction.date.split("-");
+        let year = parseInt(parts[0], 10);
+        let month = parseInt(parts[1], 10);
+        let day = parseInt(parts[2], 10);
+        if (month === 12) {
+          month = 1;
+          year++;
+        } else {
+          month++;
         }
+        day = day > 28 ? 28 : day;
+        const newDate = `${String(year)}-${String(month).padStart(
+          2,
+          "0"
+        )}-${String(day).padStart(2, "0")}`;
+
+        await addTransaction(
+          account,
+          envelope.envelopeID,
+          transaction.transactionDescription,
+          newDate,
+          transaction.amount,
+          true
+        );
       }
     }
   }
