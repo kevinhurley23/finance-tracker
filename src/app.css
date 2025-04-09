@@ -1,9 +1,17 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 
 :root {
-  --lgray: #dadcdd;
-  --dgray: #020202;
-  --accent: #0173b9;
+  --grey-100: #020202;
+  --grey-500: #c8cccf;
+  --grey-600: #e1e9ed;
+  --green: #138813;
+  --red: #b11111;
+  --budget-accent: #ac940d;
+  --checking-accent: #0173b9;
+  --savings-accent: #cf7a0b;
+  --testing-accent: #590e8b;
+  --envelope-width: 750px;
+  --accent: var(--checking-accent);
 }
 
 *,
@@ -13,14 +21,92 @@
 }
 
 body {
-  background-color: var(--lgray);
-  color: var(--dgray);
   margin: 0;
-  padding-block: 50px;
-  font-family: "open sans";
+  background-color: var(--grey-600);
+  overflow: hidden;
 }
 
-main {
-  max-width: 800px;
-  margin-inline: auto;
+h1 {
+  font-size: 2em;
+  text-align: center;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+button {
+  background-color: #fff;
+  padding: 10px;
+  font-size: 1.2rem;
+  border: 2px solid var(--accent);
+  border-radius: 10px;
+  transition: 200ms;
+  cursor: pointer;
+  &:hover {
+    color: var(--accent);
+    transform: scale(1.1);
+  }
+  &:active {
+    transition: 100ms;
+    transform: scale(0.9);
+  }
+}
+
+input,
+select {
+  display: inline;
+  font-size: inherit;
+  font-family: inherit;
+  border: 1px solid var(--grey-500);
+  border-radius: 5px;
+  padding: 4px;
+  &:focus-within {
+    outline-color: var(--accent);
+    background-color: var(--grey-600);
+  }
+}
+.amount {
+  text-align: right;
+}
+.error {
+  color: var(--red);
+  max-width: 500px;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+}
+.text-center {
+  text-align: center;
+}
+
+main.multiple-accounts {
+  width: fit-content;
+  justify-content: center;
+  .transaction-envelopes {
+    grid-template-rows: subgrid;
+  }
+}
+
+.spinner {
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  vertical-align: text-bottom;
+  border: 0.25em solid var(--accent);
+  border-right-color: transparent;
+  border-radius: 50%;
+  -webkit-animation: spinner 0.75s linear infinite;
+  animation: spinner 0.75s linear infinite;
+}
+
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
 }

@@ -3,14 +3,19 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://kevinhurley23.github.io/finance-tracker",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && gh-pages -d dist",
     "preview": "vite preview"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "fs-extra": "^11.1.0",
     "svelte": "^5.1.3",
     "vite": "^5.4.10"
+  },
+  "dependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
