@@ -31,6 +31,18 @@
   let totalExpenses = $state(0);
   let assets = $derived.by(() => envelopes.find(item => item.envelopeTitle === "Income"));
   let expenses = $derived.by(() => envelopes.filter(item => item.envelopeTitle !== "Income"));
+  let latestTransaction = $derived.by(() => {
+    let latest = new Date(0);
+    for (const envelope of envelopes) {
+      for (const transaction of envelope.transactions) {
+        const transactionDate = new Date(transaction.date);
+        if (transactionDate > latest) {
+          latest = transactionDate;
+        }
+      }
+    }
+    return dateFormat(latest.toISOString().slice(0, 10));
+  });
 
   function getLastDayOfMonth(dateStr) {
     const parts = dateStr.split('-');
@@ -179,6 +191,7 @@
     {accountTitle}
     {assets}
     {dateRange}
+    {latestTransaction}
     {totalExpenses}
     {toggleExpanded}
   />
