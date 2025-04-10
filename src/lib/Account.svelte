@@ -73,10 +73,18 @@
   }
 
   function expandAll() {
-    envelopes.forEach(item => item.expanded = true)
+    envelopes.forEach(item => {
+      if (item.envelopeTitle !== "Income") {
+        item.expanded = true;
+      }
+    })
   }
   function closeAll() {
-    envelopes.forEach(item => item.expanded = false)
+    envelopes.forEach(item => {
+      if (item.envelopeTitle !== "Income") {
+        item.expanded = false;
+      }
+    })
   }
   function toggleExpanded(envelopeID) {
     let envelope = envelopes.find(item => item.envelopeID === envelopeID);
