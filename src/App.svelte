@@ -1,83 +1,89 @@
 <script>
-  import Account from './lib/Account.svelte';
-  import Switch from './lib/Switch.svelte';
-  import Modal from './lib/Modal.svelte';
-  import { UIstate, data, fetchData, accountNames } from './lib/data.svelte.js';
+  import Activity from './lib/Activity.svelte';
+  import { UIstate, data, fetchData, accountNames, analyzers } from './lib/data.svelte.js';
+  import { fly } from 'svelte/transition';
 
   fetchData();
 
-  let budgetEnvelopeTotals = $state({});
-  $effect(() => {
-		if (data.ready) {
-      data.budget.forEach((envelope) => {
-        let envelopeAccumulator = 0;
-        envelope.transactions.forEach(transaction => {
-          envelopeAccumulator += transaction.amount;
-        })
-        budgetEnvelopeTotals[envelope.envelopeTitle] = envelopeAccumulator;
-      })
-    };
-	});
-
-  function toggleSection(section) {
-    if (UIstate.oneSectionAtATime) {
-      UIstate.sectionDisplayed = [section];
+  function changeSection(subsection, exclusive = true) {
+    if (accountNames.includes(subsection)) {
+      UIstate.sectionDisplayed = "activity";
     } else {
-      if (UIstate.sectionDisplayed.includes(section)) {
-        UIstate.sectionDisplayed = UIstate.sectionDisplayed.filter(s => s !== section);
+      UIstate.sectionDisplayed = "analysis";
+    }
+
+    if (exclusive) {
+      UIstate.subsectionDisplayed = [subsection];
+      showNav = false;
+    } else {
+      if (UIstate.subsectionDisplayed.includes(subsection)) {
+        UIstate.subsectionDisplayed = UIstate.subsectionDisplayed.filter(s => s !== subsection);
       } else {
-        UIstate.sectionDisplayed = [...UIstate.sectionDisplayed, section];
+        UIstate.subsectionDisplayed = [...UIstate.subsectionDisplayed, subsection];
       }
     }
   }
+
+  let showNav = $state(false);
 </script>
 
-<div id="app-body" class={UIstate.testingMode ? "testing-mode" : ""}>
-  <header>
-    <div id="testing-mode-toggle" class="toggle" title="When testing mode is on, no changes will be written to the database">
-      <p>Testing Mode</p>
-      <Switch bind:state={UIstate.testingMode} color={'testing-accent'} />
-      {#if !UIstate.canToggleTestingMode}
-        <div class="overlay" title="When using placeholder data, testing mode cannot be disabled"></div>
-      {/if}
-    </div>
-    <div class="section-buttons">
-      {#each accountNames as account}
-        <button class={`account-selector ${UIstate.sectionDisplayed.includes(account) ? "" : "inactive"}`} style={`--accent: var(--${account}-accent)`} onclick={() => toggleSection(account)}>{account}</button>
-      {/each}
-    </div>
-    <div id="one-section" class="toggle" title="When enabled, only one section will be displayed at a time">
-      <p>One At A Time</p>
-      <Switch bind:state={UIstate.oneSectionAtATime} color={`${UIstate.sectionDisplayed[0]}-accent`} />
-    </div>
-  </header>
-  <main class={UIstate.sectionDisplayed.length > 1 ? 'multiple-accounts' : ''} style={`--grid-rows: ${data.maxEnvelopes + 2}`}>
-    {#if !data.ready}
-      <p>Data is loading</p>
+<div id="app-body" class:testing-mode={UIstate.testingMode}>
+  <!-- Hamburger Menu Button -->
+  <button 
+    class="hamburger" 
+    onclick={() => showNav = !showNav}
+    aria-label="Toggle navigation menu"
+  >
+    <i class="fa-solid fa-bars"></i>
+  </button>
+
+  <!-- Navigation Menu -->
+  {#if showNav}
+    <nav transition:fly={{duration: 300, x: -250, y: -150, opacity: 0}} >
+      <section>
+        <h2>Activity</h2>
+        {#each accountNames as account}
+          <div class="nav-item-container">
+            <input 
+              type="checkbox" 
+              checked={UIstate.subsectionDisplayed.includes(account)}
+              onclick={() => changeSection(account, false)}
+            />
+            <button 
+              class={`nav-item ${UIstate.subsectionDisplayed.includes(account) ? "active" : ""}`} 
+              onclick={() => changeSection(account)}
+            >
+              {account}
+            </button>
+          </div>
+        {/each}
+      </section>
+      
+      <section>
+        <h2>Analysis</h2>
+        {#each analyzers as analyzer}
+          <div class="nav-item-container">
+            <button
+              class={`nav-item ${UIstate.subsectionDisplayed.includes(analyzer) ? "active" : ""}`}
+              onclick={() => changeSection(analyzer)}
+            >
+              {analyzer}
+            </button>
+          </div>
+        {/each}
+      </section>
+    </nav>
+  {/if}
+
+  {#if !data.ready}
+    <p>Data is loading</p>
+  {:else}
+    {#if UIstate.sectionDisplayed === "activity"}
+      <Activity />
     {:else}
-      {#each accountNames as account}
-        <section id={account} class="account-section" style={`--accent: var(--${account}-accent); ${UIstate.sectionDisplayed.includes(account) ? "" : "display: none;"}`}>
-          <h1>{account}</h1>
-          <Account
-            accountTitle={account}
-            envelopes={data[account]}
-            {budgetEnvelopeTotals}
-            firstTransactionDate={data.firstTransactionDate}
-          />
-        </section>
-      {/each}
+      <p class="text-center">Analysis tools coming soon!</p>
     {/if}
-    {#if UIstate.showConnectErrorModal}
-      <Modal bind:showModal={UIstate.showConnectErrorModal}>
-        {#snippet modalBody()}
-          <p>Could not connect to database. Placeholder Data loaded instead.</p>
-        {/snippet}
-        {#snippet modalButtons()}
-          <button onclick={() => UIstate.showConnectErrorModal = false}>OK</button>
-        {/snippet}
-      </Modal>
-    {/if}
-  </main>
+  {/if}
 </div>
 
 <style>
@@ -96,59 +102,76 @@
       border-right-width: 5px;
     }
   }
-  header {
-    position: sticky;
-    top: 0;
-    left: 0;
-    z-index: 10;
-    display: flex;
-    justify-content: space-between;
-    gap: 15px 30px;
-    background-color: var(--grey-600);
-    padding: 10px;
-    box-shadow: 0 0 15px 0 var(--grey-500);
-    .toggle {
+
+  .hamburger {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: var(--grey-100);
+    &:hover {
+      color: var(--accent);
+    }
+  }
+
+  nav {
+    position: fixed;
+    top: 5px;
+    left: 5px;
+    width: fit-content;
+    background-color: white;
+    padding: 4rem 1rem 1rem;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+    border-radius: 10px;
+
+    section {
+      margin-bottom: 2rem;
+
+      h2 {
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent);
+      }
+    }
+
+    .nav-item-container {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 10px;
-      position: relative;
-      p {
+      gap: 15px;
+      margin-bottom: 0.5rem;
+
+      input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
         margin: 0;
+        cursor: pointer;
       }
-      .overlay {
-        position: absolute;
-        inset: 0;
+    }
+
+    .nav-item {
+      flex: 1;
+      text-align: left;
+      padding: 0.5rem;
+      background: none;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-transform: capitalize;
+
+      &:hover {
         background-color: var(--grey-600);
-        opacity: 0.7;
+      }
+
+      &.active {
+        background-color: var(--accent);
+        color: white;
       }
     }
-    .section-buttons {
-      display: flex;
-      align-items: center;
-      gap: 15px 30px;
-      flex-wrap: wrap;
-      .account-selector {
-        text-transform: capitalize;
-        &.inactive {
-          opacity: 0.5;
-        }
-      }
-    }
-  }
-  main {
-    margin-inline: auto;
-    padding: 10px 25px 40px;
-    display: grid;
-    grid-auto-flow: column;
-    gap: 30px 50px;
-  }
-  .account-section {
-    display: grid;
-    grid-template-rows: subgrid;
-    grid-row: span var(--grid-rows);
-  }
-  h1 {
-    text-transform: capitalize;
   }
 </style>

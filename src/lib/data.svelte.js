@@ -1,8 +1,8 @@
 import { todayObj } from "./dates.js";
 
 export const UIstate = $state({
-  sectionDisplayed: ["checking"],
-  oneSectionAtATime: true,
+  sectionDisplayed: "activity",
+  subsectionDisplayed: ["checking"],
   testingMode: false,
   canToggleTestingMode: true,
   showConnectErrorModal: false,
@@ -44,15 +44,22 @@ export async function fetchData() {
 export const accountNames = ["budget", "checking", "savings"];
 export const accountsAndEnvelopes = $state({});
 function populateEnvelopeIDs() {
-  accountNames.forEach(account => {
+  accountNames.forEach((account) => {
     accountsAndEnvelopes[account] = {};
-    data[account].forEach(envelope => {
+    data[account].forEach((envelope) => {
       accountsAndEnvelopes[account][envelope.envelopeID] =
         envelope.envelopeTitle;
     });
   });
   // console.log(accountsAndEnvelopes);
 }
+
+export const analyzers = [
+  "One Envelope Over Time",
+  "Compare Envelopes",
+  "Income vs Expenses",
+  "Search Transactions",
+];
 
 export const transactionsToCopy = $state([]);
 
