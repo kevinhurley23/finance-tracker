@@ -1,5 +1,7 @@
 <script>
   import Activity from './lib/Activity.svelte';
+  import Analysis from './lib/Analysis.svelte';
+  import Switch from './lib/Switch.svelte';
   import { UIstate, data, fetchData, accountNames, analyzers } from './lib/data.svelte.js';
   import { fly } from 'svelte/transition';
 
@@ -40,6 +42,10 @@
   <!-- Navigation Menu -->
   {#if showNav}
     <nav transition:fly={{duration: 300, x: -250, y: -150, opacity: 0}} >
+      <div class="row testing-mode-toggle">
+        <Switch bind:state={UIstate.testingMode} color={'testing-accent'} />
+        <p>Testing Mode</p>
+      </div>
       <section>
         <h2>Activity</h2>
         {#each accountNames as account}
@@ -60,7 +66,7 @@
       </section>
       
       <section>
-        <h2>Analysis</h2>
+        <h2>Analysis & Tools</h2>
         {#each analyzers as analyzer}
           <div class="nav-item-container">
             <button
@@ -81,7 +87,7 @@
     {#if UIstate.sectionDisplayed === "activity"}
       <Activity />
     {:else}
-      <p class="text-center">Analysis tools coming soon!</p>
+      <Analysis />
     {/if}
   {/if}
 </div>
@@ -130,6 +136,12 @@
     z-index: 999;
     border-radius: 10px;
 
+    .testing-mode-toggle {
+      align-items: center;
+      justify-content: start;
+      gap: 10px;
+    }
+
     section {
       margin-bottom: 2rem;
 
@@ -137,6 +149,7 @@
         margin-bottom: 1rem;
         padding-bottom: 0.5rem;
         border-bottom: 2px solid var(--accent);
+        font-size: 1.6rem;
       }
     }
 

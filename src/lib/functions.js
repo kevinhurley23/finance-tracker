@@ -37,6 +37,13 @@ export function dateFormat(dateStr) {
   return `${month}/${day}/${year}`;
 }
 
+export function formatMonthYear(dateStr) {
+  const date = new Date(dateStr);
+  date.setDate(1);
+  date.setMonth(date.getMonth() + 1);
+  return date.toLocaleString("default", { month: "long", year: "numeric" });
+}
+
 async function fetchRequest(url, body) {
   try {
     const response = await fetch(url, {
@@ -116,6 +123,9 @@ export async function updateTransaction(
   function updateFrontEnd() {
     data[accountTitle][envelopeIndex].transactions[transactionIndex][property] =
       value;
+    console.log(
+      `Updated ${property} of transaction ${transactionID} to ${value}`
+    );
   }
 
   if (UIstate.testingMode) {

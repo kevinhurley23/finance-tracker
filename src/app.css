@@ -75,6 +75,9 @@ select {
   color: var(--red);
   max-width: 500px;
 }
+.capitalize {
+  text-transform: capitalize;
+}
 
 .row {
   display: flex;
