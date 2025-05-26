@@ -61,7 +61,7 @@ async function fetchRequest(url, body) {
 
 export function findEnvelopeIndex(accountTitle, envelopeID) {
   const account = data[accountTitle];
-  return account.indexOf(account.find(item => item.envelopeID == envelopeID));
+  return account.indexOf(account.find((item) => item.envelopeID == envelopeID));
 }
 
 export async function addTransaction(
@@ -112,7 +112,7 @@ export async function updateTransaction(
     envelopeIndex
   ].transactions.indexOf(
     data[accountTitle][envelopeIndex].transactions.find(
-      item => item.transactionID == transactionID
+      (item) => item.transactionID == transactionID
     )
   );
   const updatedTransaction = {
@@ -148,7 +148,7 @@ export async function deleteTransaction(
     envelopeIndex
   ].transactions.indexOf(
     data[accountTitle][envelopeIndex].transactions.find(
-      item => item.transactionID == transactionID
+      (item) => item.transactionID == transactionID
     )
   );
   function updateFrontEnd() {

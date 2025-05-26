@@ -1,7 +1,7 @@
 <script>
   import Account from './Account.svelte';
-  import Modal from './Modal.svelte';
-  import { UIstate, data, accountNames } from './data.svelte.js';
+  import Modal from '../ui-components/Modal.svelte';
+  import { UIstate, data, accountNames } from '../data.svelte.js';
 
   let budgetEnvelopeTotals = $state({});
   $effect(() => {

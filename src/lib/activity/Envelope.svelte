@@ -1,9 +1,9 @@
 <script>
-  import Card from "./Card.svelte";
-  import Modal from "./Modal.svelte";
+  import Card from "../ui-components/Card.svelte";
+  import Modal from "../ui-components/Modal.svelte";
   import Transaction from "./Transaction.svelte";
-  import { todayStr } from './dates.js'
-  import { currencyFormat, addTransaction } from "./functions.js";
+  import { todayStr } from '../dates.js'
+  import { currencyFormat, addTransaction } from "../functions.js";
   import { scale, slide } from "svelte/transition";
   let { envelope, budgetEnvelopeTotals = "", accountTitle, dateRange, toggleExpanded } = $props();
 

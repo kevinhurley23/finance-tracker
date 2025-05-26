@@ -1,11 +1,13 @@
 <script>
-  import Activity from './lib/Activity.svelte';
-  import Analysis from './lib/Analysis.svelte';
-  import Switch from './lib/Switch.svelte';
+  import Activity from './lib/activity/Activity.svelte';
+  import Analysis from './lib/analysis/Analysis.svelte';
+  import Switch from './lib/ui-components/Switch.svelte';
   import { UIstate, data, fetchData, accountNames, analyzers } from './lib/data.svelte.js';
   import { fly } from 'svelte/transition';
 
   fetchData();
+
+  console.log(data.savings)
 
   function changeSection(subsection, exclusive = true) {
     if (accountNames.includes(subsection)) {
