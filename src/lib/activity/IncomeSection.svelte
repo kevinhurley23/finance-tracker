@@ -1,7 +1,7 @@
 <script>
-  import Card from "./Card.svelte";
+  import Card from "../ui-components/Card.svelte";
   import Envelope from "./Envelope.svelte";
-  import { currencyFormat, numberFormat, updateTransaction } from "./functions.js";
+  import { currencyFormat, numberFormat, updateTransaction } from "../functions.js";
   let { accountTitle, assets, dateRange, latestTransaction, totalExpenses, toggleExpanded } = $props();
   let envelopeID = assets.envelopeID;
 

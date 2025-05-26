@@ -1,9 +1,9 @@
 <script>
-  import Modal from "./Modal.svelte";
+  import Modal from "../ui-components/Modal.svelte";
   import { slide } from "svelte/transition";
-  import { todayStr } from "./dates";
-  import { accountNames, accountsAndEnvelopes } from "./data.svelte.js";
-  import { currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } from "./functions.js";
+  import { todayStr } from "../dates";
+  import { accountNames, accountsAndEnvelopes } from "../data.svelte.js";
+  import { currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } from "../functions.js";
   let { accountTitle, envelopeID, envelopeTitle, transaction, dateRange, copyTransaction } = $props()
   const transactionID = transaction.transactionID;
   const description = transaction.transactionDescription;

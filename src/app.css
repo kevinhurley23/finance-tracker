@@ -75,6 +75,9 @@ select {
   color: var(--red);
   max-width: 500px;
 }
+.capitalize {
+  text-transform: capitalize;
+}
 
 .row {
   display: flex;
@@ -108,5 +111,141 @@ main.multiple-accounts {
 @keyframes spinner {
   to {
     transform: rotate(360deg);
+  }
+}
+
+/* Analysis sections */
+.analysis-container {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  .analysis-section {
+    margin-bottom: 40px;
+  }
+
+  .controls {
+    margin: 20px 0;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .chart-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .stats-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .stat-item {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .stat-item h4 {
+    margin: 0 0 10px 0;
+    color: var(--accent);
+  }
+
+  .stat-item p {
+    margin: 5px 0;
+  }
+
+  .search-results {
+    margin-top: 20px;
+  }
+
+  .search-group {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+  }
+
+  th,
+  td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  th {
+    background-color: var(--grey-600);
+  }
+
+  .average {
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: right;
+  }
+
+  select,
+  input {
+    padding: 8px;
+    border: 1px solid var(--grey-500);
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  h2 {
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  h3 {
+    margin: 0 0 15px 0;
+    color: var(--grey-100);
+  }
+
+  .replace-button {
+    padding: 8px 16px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    align-self: flex-end;
+  }
+
+  .replace-button:disabled {
+    background: var(--grey-500);
+    cursor: not-allowed;
+  }
+
+  .new-description {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .checkbox-label {
+    gap: 12px;
+    input {
+      width: 25px;
+      height: 25px;
+      margin: 0;
+    }
   }
 }

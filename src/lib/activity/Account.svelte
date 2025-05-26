@@ -1,11 +1,11 @@
 <script>
   import IncomeSection from './IncomeSection.svelte';
   import Envelope from './Envelope.svelte';
-  import Modal from './Modal.svelte';
-  import { months } from './data.svelte.js'
-  import { todayStr } from './dates.js'
-  import { data, transactionsToCopy } from './data.svelte.js';
-  import { dateFormat, addTransaction, findEnvelopeIndex } from './functions.js';
+  import Modal from '../ui-components/Modal.svelte';
+  import { months } from '../data.svelte.js'
+  import { todayStr } from '../dates.js'
+  import { data, transactionsToCopy } from '../data.svelte.js';
+  import { dateFormat, formatMonthYear, addTransaction, findEnvelopeIndex } from '../functions.js';
   let { accountTitle, envelopes, budgetEnvelopeTotals, firstTransactionDate } = $props();
 
   envelopes.forEach(item => item.expanded = true)
@@ -50,12 +50,12 @@
     let month = parseInt(parts[1], 10);
     return new Date(year, month, 0).toISOString().slice(0, 10);
   }
-  function formatMonthYear(dateStr) {
-    const date = new Date(dateStr);
-    date.setDate(1);
-    date.setMonth(date.getMonth() + 1);
-    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
-  }
+  // function formatMonthYear(dateStr) {
+  //   const date = new Date(dateStr);
+  //   date.setDate(1);
+  //   date.setMonth(date.getMonth() + 1);
+  //   return date.toLocaleString('default', { month: 'long', year: 'numeric' });
+  // }
   function changeSelectedMonth(e) {
     if (e.target.value === "add-month") {
       addMonth();

@@ -6,6 +6,8 @@ export const UIstate = $state({
   testingMode: false,
   canToggleTestingMode: true,
   showConnectErrorModal: false,
+  exactMatch: false,
+  groupByEnvelope: false,
 });
 
 export const data = $state({
@@ -59,6 +61,7 @@ export const analyzers = [
   "Compare Envelopes",
   "Income vs Expenses",
   "Search Transactions",
+  "Find and Replace",
 ];
 
 export const transactionsToCopy = $state([]);
