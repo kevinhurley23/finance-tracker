@@ -36,7 +36,7 @@
     for (const envelope of envelopes) {
       for (const transaction of envelope.transactions) {
         const transactionDate = new Date(transaction.date);
-        if (transactionDate > latest) {
+        if (transactionDate > latest && !transaction.repeating) {
           latest = transactionDate;
         }
       }

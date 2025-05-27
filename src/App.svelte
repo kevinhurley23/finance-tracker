@@ -7,7 +7,9 @@
 
   fetchData();
 
-  console.log(data.savings)
+  $effect(() => {
+    localStorage.setItem("UIstate", JSON.stringify(UIstate));
+  });
 
   function changeSection(subsection, exclusive = true) {
     if (accountNames.includes(subsection)) {
