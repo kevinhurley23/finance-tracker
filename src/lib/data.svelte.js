@@ -1,6 +1,7 @@
 import { todayObj } from "./dates.js";
 
-export const UIstate = $state({
+// Load saved state from localStorage or use default values
+const savedState = JSON.parse(localStorage.getItem("UIstate")) || {
   sectionDisplayed: "activity",
   subsectionDisplayed: ["checking"],
   testingMode: false,
@@ -8,7 +9,9 @@ export const UIstate = $state({
   showConnectErrorModal: false,
   exactMatch: false,
   groupByEnvelope: false,
-});
+};
+
+export const UIstate = $state(savedState);
 
 export const data = $state({
   // Initialize object with empty values so VS Code doesn't complain about nonexistent keys
