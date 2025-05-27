@@ -63,6 +63,13 @@ export function findEnvelopeIndex(accountTitle, envelopeID) {
   const account = data[accountTitle];
   return account.indexOf(account.find((item) => item.envelopeID == envelopeID));
 }
+function findTransactionIndex(accountTitle, envelopeIndex, transactionID) {
+  return data[accountTitle][envelopeIndex].transactions.indexOf(
+    data[accountTitle][envelopeIndex].transactions.find(
+      (item) => item.transactionID == transactionID
+    )
+  );
+}
 
 export async function addTransaction(
   accountTitle,
@@ -108,12 +115,10 @@ export async function updateTransaction(
   value
 ) {
   const envelopeIndex = findEnvelopeIndex(accountTitle, envelopeID);
-  const transactionIndex = data[accountTitle][
-    envelopeIndex
-  ].transactions.indexOf(
-    data[accountTitle][envelopeIndex].transactions.find(
-      (item) => item.transactionID == transactionID
-    )
+  const transactionIndex = findTransactionIndex(
+    accountTitle,
+    envelopeIndex,
+    transactionID
   );
   const updatedTransaction = {
     transactionID: transactionID,
@@ -144,12 +149,10 @@ export async function deleteTransaction(
   transactionID
 ) {
   const envelopeIndex = findEnvelopeIndex(accountTitle, envelopeID);
-  const transactionIndex = data[accountTitle][
-    envelopeIndex
-  ].transactions.indexOf(
-    data[accountTitle][envelopeIndex].transactions.find(
-      (item) => item.transactionID == transactionID
-    )
+  const transactionIndex = findTransactionIndex(
+    accountTitle,
+    envelopeIndex,
+    transactionID
   );
   function updateFrontEnd() {
     data[accountTitle][envelopeIndex].transactions.splice(transactionIndex, 1);
