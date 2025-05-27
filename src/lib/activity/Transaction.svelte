@@ -174,11 +174,16 @@
     gap: 15px;
     padding: 4px 0;
     border-bottom: 2px solid var(--accent);
+    position: relative;
     p {
       margin: 0.3em 4px;
     }
     .description {
       flex-grow: 1;
+      &:focus-within {
+        position: absolute;
+        width: 100%;
+      }
     }
     .date {
       width: 155px;
