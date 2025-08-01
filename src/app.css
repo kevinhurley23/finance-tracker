@@ -75,8 +75,8 @@ select {
 input[type=checkbox] {
   accent-color: var(--accent);
 }
-.pika-button:hover {
-  background: var(--testing-accent);
+input.date {
+  anchor-name: --picker;
 }
 .amount {
   text-align: right;
@@ -266,6 +266,9 @@ body {
     background: var(--surface-strong);
     border-color: var(--text-weak);
     color: var(--text-strong);
+    position: absolute;
+    top: anchor(--picker bottom);
+    left: anchor(--picker left);
   }
 
   .pika-label {
@@ -310,7 +313,7 @@ body {
 
   .pika-single .pika-button {
     background-color: var(--surface-strong);
-    color: var(--text-strong);
+    color: var(--text-strong) !important;
   }
 
   .pika-single .pika-button:hover {

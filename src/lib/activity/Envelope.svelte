@@ -3,8 +3,10 @@
   import Modal from "../ui-components/Modal.svelte";
   import Transaction from "./Transaction.svelte";
   import { todayStr } from '../dates.js'
-  import { currencyFormat, addTransaction } from "../functions.js";
+  import { currencyFormat, dateObjToISO, dateISOToDisplay, addTransaction } from "../functions.js";
   import { scale, slide } from "svelte/transition";
+  import { initializePikaday } from "../datepicker.js";
+  import '../../../node_modules/pikaday/css/pikaday.css';
   let { envelope, budgetEnvelopeTotals = "", accountTitle, dateRange, toggleExpanded } = $props();
 
   let envelopeID = envelope.envelopeID;
@@ -64,6 +66,25 @@
     showNewTransactionModal = false;
     addTransactionError = '';
   }
+
+  let dateInput;
+  let pikadayInstance;
+  let modalContent;
+
+  function initDatePicker() {
+    if (dateInput && !pikadayInstance) {
+      pikadayInstance = initializePikaday(dateInput, dateRange, (date) => {
+        newTransactionDate = dateObjToISO(date);
+      }, modalContent);
+    }
+  }
+
+  $effect(() => {
+    if (showNewTransactionModal) {
+      // Wait for modal to be rendered
+      setTimeout(initDatePicker, 0);
+    }
+  });
 </script>
 
 <Card cardClass={'envelope'}>
@@ -124,24 +145,25 @@
 {#if showNewTransactionModal}
   <Modal bind:showModal={showNewTransactionModal}>
     {#snippet modalBody()}
-      <p class="text-center"><strong>{envelopeTitle}</strong></p>
-      <p class="text-center">New Transaction</p>
-      <div class="new-transaction-form">
-        <p>Description:</p>
-        <input type="text" bind:value={newTransactionDescription}>
-        <p>Date:</p>
-        <input type="date" bind:value={newTransactionDate}>
-        <!-- <input type="date" min={dateRange[0]} max={dateRange[1]} value={newTransactionDate}> -->
-        <p>Amount:</p>
-        <input type="number" bind:value={newTransactionAmount}>
-        {#if accountTitle != 'budget'}
-          <p>Repeating:</p>
-          <input type="checkbox" bind:checked={newTransactionRepeating}>
+      <div bind:this={modalContent}>
+        <p class="text-center"><strong>{envelopeTitle}</strong></p>
+        <p class="text-center">New Transaction</p>
+        <div class="new-transaction-form">
+          <p>Date:</p>
+          <input type="text" class="date" bind:this={dateInput} value={dateISOToDisplay(newTransactionDate)} readonly>
+          <p>Description:</p>
+          <input type="text" bind:value={newTransactionDescription}>
+          <p>Amount:</p>
+          <input type="number" bind:value={newTransactionAmount}>
+          {#if accountTitle != 'budget'}
+            <p>Repeating:</p>
+            <input type="checkbox" bind:checked={newTransactionRepeating}>
+          {/if}
+        </div>
+        {#if addTransactionError}
+          <p class="error">{addTransactionError}</p>
         {/if}
       </div>
-      {#if addTransactionError}
-        <p class="error">{addTransactionError}</p>
-      {/if}
     {/snippet}
     {#snippet modalButtons()}
       <button onclick={newTransaction}>Create Transaction</button>
@@ -204,7 +226,7 @@
     display: grid;
     grid-template-columns: 150px 250px;
     align-items: center;
-    gap: 10px 15px;
+    gap: 20px 15px;
     p {
       margin: 0;
     }

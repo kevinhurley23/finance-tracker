@@ -5,7 +5,7 @@
   import { todayStr } from "../dates";
   import { accountNames, accountsAndEnvelopes } from "../data.svelte.js";
   import { currencyFormat, numberFormat, dateObjToISO, dateISOToObj, dateISOToDisplay, addTransaction, updateTransaction, deleteTransaction } from "../functions.js";
-  import Pikaday from "pikaday";
+  import { initializePikaday } from "../datepicker.js";
   import '../../../node_modules/pikaday/css/pikaday.css';
   let { accountTitle, envelopeID, envelopeTitle, transaction, dateRange, copyTransaction } = $props()
   const transactionID = transaction.transactionID;
@@ -21,6 +21,7 @@
   let moveTransactionError = $state("");
   let dateInput;
   let pikadayInstance;
+  let transactionDiv;
 
   // svelte-ignore non_reactive_update
   let dayOfMonth = date.split("-")[2];
@@ -72,19 +73,10 @@
 
   onMount(() => {
     if (canModify && accountTitle !== "budget") {
-      pikadayInstance = new Pikaday({
-        field: dateInput,
-        toString(date) {
-          const ISO = dateObjToISO(date)
-          return dateISOToDisplay(ISO);
-        },
-        minDate: dateISOToObj(dateRange[0]),
-        maxDate: dateISOToObj(dateRange[1]),
-        onSelect: function(date) {
-          const formattedDate = dateObjToISO(date);
-          updateTransaction(accountTitle, envelopeID, transactionID, 'date', formattedDate);
-        }
-      });
+      pikadayInstance = initializePikaday(dateInput, dateRange, (date) => {
+        const formattedDate = dateObjToISO(date);
+        updateTransaction(accountTitle, envelopeID, transactionID, 'date', formattedDate);
+      }, transactionDiv);
     }
 
     return () => {
@@ -95,7 +87,7 @@
   });
 </script>
 
-<div id={transaction.transactionID} class="transaction {transaction.repeating ? 'repeating' : ''}" transition:slide={{duration: 50}}>
+<div bind:this={transactionDiv} id={transaction.transactionID} class="transaction {transaction.repeating ? 'repeating' : ''}" transition:slide={{duration: 50}}>
   <!-- Description -->
   {#if canModify}
     <input class="description" type="text" value={description} onblur={updateDescription}>
