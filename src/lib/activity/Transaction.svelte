@@ -1,9 +1,12 @@
 <script>
   import Modal from "../ui-components/Modal.svelte";
   import { slide } from "svelte/transition";
+  import { onMount } from "svelte";
   import { todayStr } from "../dates";
   import { accountNames, accountsAndEnvelopes } from "../data.svelte.js";
-  import { currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } from "../functions.js";
+  import { currencyFormat, numberFormat, dateObjToISO, dateISOToObj, dateISOToDisplay, addTransaction, updateTransaction, deleteTransaction } from "../functions.js";
+  import Pikaday from "pikaday";
+  import '../../../node_modules/pikaday/css/pikaday.css';
   let { accountTitle, envelopeID, envelopeTitle, transaction, dateRange, copyTransaction } = $props()
   const transactionID = transaction.transactionID;
   const description = transaction.transactionDescription;
@@ -16,6 +19,8 @@
   let newAccount = $state(accountTitle);
   let newEnvelopeID = $state(envelopeID);
   let moveTransactionError = $state("");
+  let dateInput;
+  let pikadayInstance;
 
   // svelte-ignore non_reactive_update
   let dayOfMonth = date.split("-")[2];
@@ -30,24 +35,11 @@
     dayOfMonth = dayOfMonth + "th";
   }
 
-  function dateFormat(dateStr) {
-    const date = new Date(dateStr);
-    date.setDate(date.getDate() + 1);
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  }
-  
   function updateDescription() {
     updateTransaction(accountTitle, envelopeID, transactionID, 'transactionDescription', this.value)
   }
 
   const toggleRepeat = () => updateTransaction(accountTitle, envelopeID, transactionID, 'repeating', !transaction.repeating)
-
-  function updateDate() {
-    updateTransaction(accountTitle, envelopeID, transactionID, 'date', this.value)
-  }
   
   function updateAmount() {
     const num = numberFormat(this.value)
@@ -77,6 +69,30 @@
       moveTransactionError = "Failed to move transaction. Please try again.";
     }
   }
+
+  onMount(() => {
+    if (canModify && accountTitle !== "budget") {
+      pikadayInstance = new Pikaday({
+        field: dateInput,
+        toString(date) {
+          const ISO = dateObjToISO(date)
+          return dateISOToDisplay(ISO);
+        },
+        minDate: dateISOToObj(dateRange[0]),
+        maxDate: dateISOToObj(dateRange[1]),
+        onSelect: function(date) {
+          const formattedDate = dateObjToISO(date);
+          updateTransaction(accountTitle, envelopeID, transactionID, 'date', formattedDate);
+        }
+      });
+    }
+
+    return () => {
+      if (pikadayInstance) {
+        pikadayInstance.destroy();
+      }
+    };
+  });
 </script>
 
 <div id={transaction.transactionID} class="transaction {transaction.repeating ? 'repeating' : ''}" transition:slide={{duration: 50}}>
@@ -111,9 +127,15 @@
   {:else if accountTitle === "savings" && description === "Balance"}
     <div></div>
   {:else if !canModify}
-    <p class="date plain-text-date">{dateFormat(date)}</p>
+    <p class="date plain-text-date">{dateISOToDisplay(date)}</p>
   {:else}
-    <input class="date" type="date" min={dateRange[0]} max={dateRange[1]} value={date} onblur={updateDate}>
+    <input 
+      bind:this={dateInput}
+      class="date" 
+      type="text" 
+      value={dateISOToObj(date)}
+      readonly
+    >
   {/if}
 
   <!-- Amount -->
@@ -173,10 +195,19 @@
     align-items: center;
     gap: 15px;
     padding: 4px 0;
-    border-bottom: 2px solid var(--accent);
+    border-bottom: 2px solid var(--text-strong);
     position: relative;
     p {
       margin: 0.3em 4px;
+    }
+    input {
+      background-color: transparent;
+      &:hover {
+        background-color: color-mix(in srgb, var(--surface-strong), transparent 50%);
+      }
+      &:focus-within {
+        background-color: var(--surface-strong);
+      }
     }
     .description {
       flex-grow: 1;
@@ -186,7 +217,7 @@
       }
     }
     .date {
-      width: 155px;
+      width: 165px;
       &.day-of-month {
         width: 42px;
       }
@@ -198,7 +229,7 @@
     i {
       text-align: center;
       cursor: pointer;
-      color: var(--grey-500);
+      color: var(--text-weak);
       opacity: 0;
       transition: 200ms;
       &:hover {
@@ -208,8 +239,11 @@
       &:active {
         transition: 100ms;
         transform: scale(0.8);
-        color: var(--grey-100);
+        color: var(--text-strong);
       }
+    }
+    &:has(.description:focus-within) i {
+      display: none;
     }
     .amount {
       justify-self: end;
@@ -222,7 +256,7 @@
   }
   .repeating {
     .toggle-repeating {
-      color: var(--grey-100);
+      color: var(--text-strong);
       opacity: 1;
     }
   }

@@ -9,8 +9,9 @@
 
 <style>
   .card {
-    background-color: #fff;
-    border: 2px solid var(--accent);
+    background-color: var(--surface-weak);
+    /* background-color: transparent; */
+    /* border: 2px solid var(--text-weak); */
     border-radius: 10px;
     height: fit-content;
     &.summary-card {

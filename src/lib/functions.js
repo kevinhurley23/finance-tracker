@@ -28,16 +28,35 @@ export function numberFormat(string) {
   }
 }
 
-export function dateFormat(dateStr) {
+// Convert JS date object to string in "YYYY-MM-DD" format
+export function dateObjToISO(dateObj) {
+  // dateObj.setUTCHours(24, 0, 0, 0);
+  
+  let year = dateObj.getFullYear();
+  let month = String(dateObj.getMonth() + 1).padStart(2, "0");
+  let day = String(dateObj.getDate()).padStart(2, "0");
+  
+  return `${year}-${month}-${day}`;
+}
+
+// Convert date string in "YYYY-MM-DD" format to JS date object
+export function dateISOToObj(dateStr) {
   const date = new Date(dateStr);
   date.setDate(date.getDate() + 1);
+  return date;
+}
+
+// Convert "YYYY-MM-DD" to "MM/DD/YYYY"
+export function dateISOToDisplay(dateStr) {
+  const date = dateISOToObj(dateStr);
   const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const day = date.getDate().toString().padStart(2, "0");
   const year = date.getFullYear();
   return `${month}/${day}/${year}`;
 }
 
-export function formatMonthYear(dateStr) {
+// Convert "2025-01-01" to "January 2025"
+export function dateISOToMonthAndYear(dateStr) {
   const date = new Date(dateStr);
   date.setDate(1);
   date.setMonth(date.getMonth() + 1);

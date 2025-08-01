@@ -1,13 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 
 :root {
-  --grey-100: #020202;
-  --grey-500: #c8cccf;
-  --grey-600: #e1e9ed;
-  --green: #138813;
-  --red: #b11111;
+  --text-strong: #fff;
+  --text-weak: #dce2e9;
+  --surface-weak: #313333;
+  --surface-strong: rgb(2, 2, 2);
+  --green: #13c513;
+  --red: #d81414;
   --budget-accent: #ac940d;
-  --checking-accent: #0173b9;
+  --checking-accent: #068de0;
   --savings-accent: #cf7a0b;
   --testing-accent: #590e8b;
   --envelope-width: 750px;
@@ -22,7 +23,8 @@
 
 body {
   margin: 0;
-  background-color: var(--grey-600);
+  background-color: var(--surface-strong);
+  color: var(--text-strong);
   overflow: hidden;
 }
 
@@ -38,7 +40,8 @@ h3 {
 }
 
 button {
-  background-color: #fff;
+  background-color: var(--accent);
+  color: var(--text-weak);
   padding: 10px;
   font-size: 1.2rem;
   border: 2px solid var(--accent);
@@ -46,7 +49,7 @@ button {
   transition: 200ms;
   cursor: pointer;
   &:hover {
-    color: var(--accent);
+    color: var(--text-strong);
     transform: scale(1.1);
   }
   &:active {
@@ -60,13 +63,20 @@ select {
   display: inline;
   font-size: inherit;
   font-family: inherit;
-  border: 1px solid var(--grey-500);
+  background-color: var(--surface-strong);
+  color: var(--text-weak);
+  border: none;
   border-radius: 5px;
   padding: 4px;
   &:focus-within {
-    outline-color: var(--accent);
-    background-color: var(--grey-600);
+    outline: none;
   }
+}
+input[type=checkbox] {
+  accent-color: var(--accent);
+}
+.pika-button:hover {
+  background: var(--testing-accent);
 }
 .amount {
   text-align: right;
@@ -132,7 +142,7 @@ main.multiple-accounts {
   }
 
   .chart-container {
-    background: white;
+    background: var(--surface-weak);
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 20px;
@@ -140,7 +150,7 @@ main.multiple-accounts {
   }
 
   .stats-container {
-    background: white;
+    background: var(--surface-weak);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -166,7 +176,7 @@ main.multiple-accounts {
   }
 
   .search-group {
-    background: white;
+    background: var(--surface-weak);
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 20px;
@@ -187,7 +197,7 @@ main.multiple-accounts {
   }
 
   th {
-    background-color: var(--grey-600);
+    background-color: var(--surface-weak);
   }
 
   .average {
@@ -199,7 +209,7 @@ main.multiple-accounts {
   select,
   input {
     padding: 8px;
-    border: 1px solid var(--grey-500);
+    border: 1px solid var(--text-weak);
     border-radius: 4px;
     font-size: 1rem;
   }
@@ -217,13 +227,13 @@ main.multiple-accounts {
 
   h3 {
     margin: 0 0 15px 0;
-    color: var(--grey-100);
+    color: var(--text-strong);
   }
 
   .replace-button {
     padding: 8px 16px;
     background: var(--accent);
-    color: white;
+    color: var(--surface-weak);
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -231,7 +241,7 @@ main.multiple-accounts {
   }
 
   .replace-button:disabled {
-    background: var(--grey-500);
+    background: var(--text-weak);
     cursor: not-allowed;
   }
 
@@ -249,3 +259,72 @@ main.multiple-accounts {
     }
   }
 }
+
+/* Pikaday customization */
+body {
+  .pika-single {
+    background: var(--surface-strong);
+    border-color: var(--text-weak);
+    color: var(--text-strong);
+  }
+
+  .pika-label {
+    background-color: transparent;
+  }
+
+  .pika-prev,
+  .pika-next {
+    text-indent: 0;
+    font-size: 0; /* Hide text content */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: var(--text-weak);
+    opacity: 1;
+    background-image: none;
+    text-align: center;
+    margin-inline: 5px;
+
+    &::before {
+      font-size: 20px;
+    }
+
+    &:hover {
+      color: var(--text-strong);
+    }
+  }
+
+  .pika-prev::before {
+    content: "\f104"; /* fa-angle-left */
+  }
+
+  .pika-next::before {
+    content: "\f105"; /* fa-angle-right */
+  }
+
+  .pika-table th {
+    color: var(--text-strong);
+    abbr {
+      text-decoration: none;
+    }
+  }
+
+  .pika-single .pika-button {
+    background-color: var(--surface-strong);
+    color: var(--text-strong);
+  }
+
+  .pika-single .pika-button:hover {
+    background-color: var(--testing-accent) !important;
+    color: var(--text-strong);
+  }
+
+  .pika-single .is-selected .pika-button {
+    background-color: var(--accent);
+    box-shadow: none;
+  }
+
+  .pika-single .is-today .pika-button {
+    color: var(--accent);
+  }
+}
+

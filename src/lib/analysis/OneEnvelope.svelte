@@ -1,7 +1,7 @@
 <script>
   import { UIstate, data, months } from "../data.svelte.js";
   import Chart from "chart.js/auto";
-  import { currencyFormat, formatMonthYear } from "../functions.js";
+  import { currencyFormat, dateISOToMonthAndYear } from "../functions.js";
   let { selectedAccount, selectedEnvelope, chartColors, tooltipStyles } = $props();
 
   let singleEnvelopeChart;
@@ -35,7 +35,7 @@
         singleEnvelopeChart = new Chart(ctx, {
           type: "line",
           data: {
-            labels: Object.keys(monthlyData).map(month => formatMonthYear(month)),
+            labels: Object.keys(monthlyData).map(month => dateISOToMonthAndYear(month)),
             datasets: [{
               label: "Amount",
               data: Object.values(monthlyData),

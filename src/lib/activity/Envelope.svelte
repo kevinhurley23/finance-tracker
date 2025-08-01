@@ -172,13 +172,14 @@
         padding-right: 4px;
       }
       &:hover {
-        background-color: var(--grey-600);
+        background-color: var(--surface-weak);
       }
     }
     .envelope-body {
       padding: 0 20px 30px;
       p {
         margin-top: 10px;
+        color: var(--text-weak);
       }
     }
     .add-transaction {

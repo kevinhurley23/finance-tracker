@@ -4,14 +4,14 @@
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="switch" data-active={state} onclick={() => {state = !state}} style="--accent: {state ? `var(--${color})` : '#fff'}">
+<div class="switch" data-active={state} onclick={() => {state = !state}} style="--accent: {state ? `var(--${color})` : 'var(--surface-weak)'}">
   <div class="handle"></div>
 </div>
 
 <style>
   .switch {
     width: 3em;
-    background-color: var(--grey-500);
+    background-color: var(--text-weak);
     border: 2px solid var(--accent);
     border-radius: 100vw;
     padding: 3px;

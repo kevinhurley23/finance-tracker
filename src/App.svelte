@@ -98,12 +98,12 @@
 
 <style>
   #app-body {
-    color: var(--grey-100);
+    color: var(--text-strong);
     margin: 0;
     font-family: "open sans";
     font-size: 1.2rem;
     position: relative;
-    border: 5px solid var(--grey-600);
+    border: 5px solid var(--surface-weak);
     border-right-width: 0;
     height: 100vh;
     overflow-y: auto;
@@ -123,7 +123,7 @@
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
-    color: var(--grey-100);
+    color: var(--text-strong);
     &:hover {
       color: var(--accent);
     }
@@ -134,7 +134,7 @@
     top: 5px;
     left: 5px;
     width: fit-content;
-    background-color: white;
+    background-color: var(--surface-weak);
     padding: 4rem 1rem 1rem;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     z-index: 999;
@@ -182,12 +182,12 @@
       text-transform: capitalize;
 
       &:hover {
-        background-color: var(--grey-600);
+        background-color: var(--surface-weak);
       }
 
       &.active {
         background-color: var(--accent);
-        color: white;
+        color: var(--surface-weak);
       }
     }
   }
