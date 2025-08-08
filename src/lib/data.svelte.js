@@ -9,6 +9,7 @@ const savedState = JSON.parse(localStorage.getItem("UIstate")) || {
   showConnectErrorModal: false,
   exactMatch: false,
   groupByEnvelope: false,
+  darkTheme: window.matchMedia('(prefers-color-scheme: dark)') ? true : false
 };
 
 export const UIstate = $state(savedState);

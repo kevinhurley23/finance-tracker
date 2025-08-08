@@ -172,7 +172,7 @@
         padding-right: 4px;
       }
       &:hover {
-        background-color: var(--grey-600);
+        background-color: var(--background-secondary);
       }
     }
     .envelope-body {

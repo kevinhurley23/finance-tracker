@@ -5,7 +5,7 @@
   import { months } from '../data.svelte.js'
   import { todayStr } from '../dates.js'
   import { data, transactionsToCopy } from '../data.svelte.js';
-  import { dateFormat, formatMonthYear, addTransaction, findEnvelopeIndex } from '../functions.js';
+  import { dateISOToDisplay, dateISOToMonthAndYear, addTransaction, findEnvelopeIndex } from '../functions.js';
   let { accountTitle, envelopes, budgetEnvelopeTotals, firstTransactionDate } = $props();
 
   envelopes.forEach(item => item.expanded = true)
@@ -41,7 +41,7 @@
         }
       }
     }
-    return dateFormat(latest.toISOString().slice(0, 10));
+    return dateISOToDisplay(latest.toISOString().slice(0, 10));
   });
 
   function getLastDayOfMonth(dateStr) {
@@ -50,12 +50,6 @@
     let month = parseInt(parts[1], 10);
     return new Date(year, month, 0).toISOString().slice(0, 10);
   }
-  // function formatMonthYear(dateStr) {
-  //   const date = new Date(dateStr);
-  //   date.setDate(1);
-  //   date.setMonth(date.getMonth() + 1);
-  //   return date.toLocaleString('default', { month: 'long', year: 'numeric' });
-  // }
   function changeSelectedMonth(e) {
     if (e.target.value === "add-month") {
       addMonth();
@@ -211,7 +205,7 @@
       <label for="month">Select Month:</label>
       <select id="month" value={selectedMonth} onchange={changeSelectedMonth}>
         {#each months as month}
-          <option value={month}>{formatMonthYear(month)}</option>
+          <option value={month}>{dateISOToMonthAndYear(month)}</option>
         {/each}
         <option value="add-month">Add Month</option>
       </select>
@@ -260,7 +254,7 @@
             {#each transactionsToCopy as transaction}
               <p>
                 <span>{transaction.envelopeTitle}: {transaction.description}</span>
-                <span>{dateFormat(transaction.oldDate)} <i class="fa-solid fa-arrow-right"></i> {dateFormat(transaction.newDate)}</span>
+                <span>{dateISOToDisplay(transaction.oldDate)} <i class="fa-solid fa-arrow-right"></i> {dateISOToDisplay(transaction.newDate)}</span>
               </p>
             {/each}
           </div>

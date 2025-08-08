@@ -25,12 +25,13 @@
 
 <style>
 	dialog {
-    background-color: #fff;
+    background-color: var(--background-secondary);
+		color: unset;
 		border: 2px solid var(--accent, var(--checking-accent));
     border-radius: 10px;
 	}
 	dialog::backdrop {
-		background: var(--grey-600);
+		background: var(--background-secondary);
     opacity: 0.5;
 		transition: 500ms;
 	}

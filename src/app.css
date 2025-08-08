@@ -1,17 +1,67 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 
 :root {
+  /* Color primitives */
   --grey-100: #020202;
-  --grey-500: #c8cccf;
-  --grey-600: #e1e9ed;
-  --green: #138813;
-  --red: #b11111;
-  --budget-accent: #ac940d;
-  --checking-accent: #0173b9;
-  --savings-accent: #cf7a0b;
-  --testing-accent: #590e8b;
-  --envelope-width: 750px;
+  --grey-200: #191a1a;
+  --grey-300: #313333;
+  --grey-700: #bec5ce;
+  --grey-800: #dce2e9;
+  --grey-900: #eef0f3;
+  --green-100: #138813;
+  --green-200: #13c513;
+  --red-100: #af0000;
+  --red-200: #e91818;
+  --gold-100: #8d790a;
+  --gold-200: #b69d0e;
+  --blue-100: #0173b9;
+  --blue-200: #068de0;
+  --orange-100: #bd700b;
+  --orange-200: #d37f11;
+  --purple-100: #7315b1;
+  --purple-200: #8e19dd;
+  
+  /* Light theme colors */
+  --text-primary: var(--grey-100);
+  --text-secondary: var(--grey-300);
+  --background-primary: var(--grey-800);
+  --background-secondary: #fff;
+  --background-tertiary: var(--grey-900);
+  --green: var(--green-100);
+  --red: var(--red-100);
+  --budget-accent: var(--gold-100);
+  --checking-accent: var(--blue-100);
+  --savings-accent: var(--orange-100);
+  --testing-accent: var(--purple-100);
+  --button-text: var(--grey-900);
+  --button-hover-text: #fff;
+  --select-background: #fff;
+  --switch-background: var(--grey-700);
+
   --accent: var(--checking-accent);
+  --envelope-width: 750px;
+}
+:root:has(#app-body.dark) {
+  /* Dark theme colors */
+  --text-primary: #fff;
+  --text-secondary: var(--grey-800);
+  --background-primary: var(--grey-100);
+  --background-secondary: var(--grey-300);
+  --background-tertiary: var(--grey-200);
+  --green: var(--green-200);
+  --red: var(--red-200);
+  --budget-accent: var(--gold-200);
+  --checking-accent: var(--blue-200);
+  --savings-accent: var(--orange-200);
+  --testing-accent: var(--purple-200);
+  --button-text: var(--grey-800);
+  --button-hover-text: #fff;
+  --select-background: var(--background-primary);
+  --switch-background: var(--grey-800);
+
+  input[type="date"] {
+    color-scheme: dark;
+  }
 }
 
 *,
@@ -22,7 +72,8 @@
 
 body {
   margin: 0;
-  background-color: var(--grey-600);
+  background-color: var(--background-primary);
+  color: var(--text-primary);
   overflow: hidden;
 }
 
@@ -38,7 +89,8 @@ h3 {
 }
 
 button {
-  background-color: #fff;
+  background-color: var(--accent);
+  color: var(--button-text);
   padding: 10px;
   font-size: 1.2rem;
   border: 2px solid var(--accent);
@@ -46,7 +98,7 @@ button {
   transition: 200ms;
   cursor: pointer;
   &:hover {
-    color: var(--accent);
+    color: var(--button-hover-text);
     transform: scale(1.1);
   }
   &:active {
@@ -60,13 +112,43 @@ select {
   display: inline;
   font-size: inherit;
   font-family: inherit;
-  border: 1px solid var(--grey-500);
+  color: var(--text-secondary);
+  border: none;
   border-radius: 5px;
   padding: 4px;
   &:focus-within {
-    outline-color: var(--accent);
-    background-color: var(--grey-600);
+    outline: none;
   }
+}
+.summary-card input,
+.transaction input {
+  background-color: transparent;
+  &:hover {
+    background-color: var(--background-tertiary);
+  }
+  &:focus-within {
+    background-color: var(--background-primary);
+  }
+}
+dialog input {
+  background-color: var(--background-tertiary);
+  border: 2px solid transparent;
+  &:hover {
+    border-color: var(--accent);
+  }
+  &:focus-within {
+    background-color: var(--background-primary);
+  }
+}
+input[type=checkbox] {
+  accent-color: var(--accent);
+  border-radius: 50%;
+}
+select {
+  background-color: var(--select-background);
+}
+.envelope p {
+  color: var(--text-secondary);
 }
 .amount {
   text-align: right;
@@ -132,7 +214,7 @@ main.multiple-accounts {
   }
 
   .chart-container {
-    background: white;
+    background: var(--background-secondary);
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 20px;
@@ -140,7 +222,7 @@ main.multiple-accounts {
   }
 
   .stats-container {
-    background: white;
+    background: var(--background-secondary);
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -166,7 +248,7 @@ main.multiple-accounts {
   }
 
   .search-group {
-    background: white;
+    background: var(--background-secondary);
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 20px;
@@ -187,7 +269,7 @@ main.multiple-accounts {
   }
 
   th {
-    background-color: var(--grey-600);
+    background-color: var(--background-secondary);
   }
 
   .average {
@@ -199,9 +281,16 @@ main.multiple-accounts {
   select,
   input {
     padding: 8px;
-    border: 1px solid var(--grey-500);
+    background-color: var(--background-secondary);
+    border: 2px solid transparent;
     border-radius: 4px;
     font-size: 1rem;
+    &:hover {
+      border-color: var(--accent);
+    }
+    &:focus-within {
+      background-color: var(--background-tertiary);
+    }
   }
 
   label {
@@ -217,13 +306,12 @@ main.multiple-accounts {
 
   h3 {
     margin: 0 0 15px 0;
-    color: var(--grey-100);
+    color: var(--text-primary);
   }
 
   .replace-button {
     padding: 8px 16px;
     background: var(--accent);
-    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -231,7 +319,7 @@ main.multiple-accounts {
   }
 
   .replace-button:disabled {
-    background: var(--grey-500);
+    background: var(--text-secondary);
     cursor: not-allowed;
   }
 

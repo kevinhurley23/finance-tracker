@@ -33,19 +33,23 @@
   let showNav = $state(false);
 </script>
 
-<div id="app-body" class:testing-mode={UIstate.testingMode}>
+<div id="app-body" class:testing-mode={UIstate.testingMode} class={UIstate.darkTheme ? 'dark' : 'light'}>
   <!-- Hamburger Menu Button -->
   <button 
     class="hamburger" 
     onclick={() => showNav = !showNav}
     aria-label="Toggle navigation menu"
   >
-    <i class="fa-solid fa-bars"></i>
+  <i class="fa-solid fa-bars"></i>
   </button>
 
   <!-- Navigation Menu -->
   {#if showNav}
     <nav transition:fly={{duration: 300, x: -250, y: -150, opacity: 0}} >
+      <div class="row dark-mode-toggle">
+        <Switch bind:state={UIstate.darkTheme} color={'background-primary'} />
+        <p>Dark Mode</p>
+      </div>
       <div class="row testing-mode-toggle">
         <Switch bind:state={UIstate.testingMode} color={'testing-accent'} />
         <p>Testing Mode</p>
@@ -98,12 +102,12 @@
 
 <style>
   #app-body {
-    color: var(--grey-100);
+    color: var(--text-primary);
     margin: 0;
     font-family: "open sans";
     font-size: 1.2rem;
     position: relative;
-    border: 5px solid var(--grey-600);
+    border: 5px solid var(--background-primary);
     border-right-width: 0;
     height: 100vh;
     overflow-y: auto;
@@ -123,7 +127,7 @@
     font-size: 1.5rem;
     cursor: pointer;
     padding: 0.5rem;
-    color: var(--grey-100);
+    color: var(--text-primary);
     &:hover {
       color: var(--accent);
     }
@@ -134,13 +138,13 @@
     top: 5px;
     left: 5px;
     width: fit-content;
-    background-color: white;
+    background-color: var(--background-secondary);
     padding: 4rem 1rem 1rem;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--text-secondary);
     z-index: 999;
     border-radius: 10px;
 
-    .testing-mode-toggle {
+    .row {
       align-items: center;
       justify-content: start;
       gap: 10px;
@@ -180,14 +184,19 @@
       border-radius: 5px;
       cursor: pointer;
       text-transform: capitalize;
+      color: var(--text-secondary);
 
       &:hover {
-        background-color: var(--grey-600);
+        background-color: var(--background-secondary);
+        color: var(--text-primary);
       }
 
       &.active {
         background-color: var(--accent);
-        color: white;
+        color: var(--button-text);
+        &:hover {
+          color: var(--button-hover-text);
+        }
       }
     }
   }

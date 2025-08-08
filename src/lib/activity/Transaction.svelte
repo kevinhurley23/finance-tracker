@@ -3,7 +3,8 @@
   import { slide } from "svelte/transition";
   import { todayStr } from "../dates";
   import { accountNames, accountsAndEnvelopes } from "../data.svelte.js";
-  import { currencyFormat, numberFormat, addTransaction, updateTransaction, deleteTransaction } from "../functions.js";
+  import { currencyFormat, numberFormat, dateObjToISO, dateISOToObj, dateISOToDisplay, addTransaction, updateTransaction, deleteTransaction } from "../functions.js";
+
   let { accountTitle, envelopeID, envelopeTitle, transaction, dateRange, copyTransaction } = $props()
   const transactionID = transaction.transactionID;
   const description = transaction.transactionDescription;
@@ -30,15 +31,6 @@
     dayOfMonth = dayOfMonth + "th";
   }
 
-  function dateFormat(dateStr) {
-    const date = new Date(dateStr);
-    date.setDate(date.getDate() + 1);
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  }
-  
   function updateDescription() {
     updateTransaction(accountTitle, envelopeID, transactionID, 'transactionDescription', this.value)
   }
@@ -77,6 +69,7 @@
       moveTransactionError = "Failed to move transaction. Please try again.";
     }
   }
+
 </script>
 
 <div id={transaction.transactionID} class="transaction {transaction.repeating ? 'repeating' : ''}" transition:slide={{duration: 50}}>
@@ -111,9 +104,9 @@
   {:else if accountTitle === "savings" && description === "Balance"}
     <div></div>
   {:else if !canModify}
-    <p class="date plain-text-date">{dateFormat(date)}</p>
+    <p class="date plain-text-date">{dateISOToDisplay(date)}</p>
   {:else}
-    <input class="date" type="date" min={dateRange[0]} max={dateRange[1]} value={date} onblur={updateDate}>
+    <input class="date" type="date" value={date} onblur={updateDate}>
   {/if}
 
   <!-- Amount -->
@@ -173,7 +166,7 @@
     align-items: center;
     gap: 15px;
     padding: 4px 0;
-    border-bottom: 2px solid var(--accent);
+    border-bottom: 2px solid var(--text-primary);
     position: relative;
     p {
       margin: 0.3em 4px;
@@ -186,7 +179,7 @@
       }
     }
     .date {
-      width: 155px;
+      width: 165px;
       &.day-of-month {
         width: 42px;
       }
@@ -198,7 +191,7 @@
     i {
       text-align: center;
       cursor: pointer;
-      color: var(--grey-500);
+      color: var(--text-secondary);
       opacity: 0;
       transition: 200ms;
       &:hover {
@@ -208,8 +201,11 @@
       &:active {
         transition: 100ms;
         transform: scale(0.8);
-        color: var(--grey-100);
+        color: var(--text-primary);
       }
+    }
+    &:has(.description:focus-within) i {
+      display: none;
     }
     .amount {
       justify-self: end;
@@ -222,7 +218,7 @@
   }
   .repeating {
     .toggle-repeating {
-      color: var(--grey-100);
+      color: var(--text-primary);
       opacity: 1;
     }
   }

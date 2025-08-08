@@ -1,5 +1,5 @@
 <script>
-  import { currencyFormat, dateFormat } from "../functions.js";
+  import { currencyFormat, dateISOToDisplay } from "../functions.js";
   let { selectedAccount = $bindable(), searchTransactions, exactMatch = $bindable(), groupByEnvelope = $bindable() } = $props();
 
   let searchQuery = $state("");
@@ -46,7 +46,7 @@
               {#each result.transactions as transaction}
                 <tr>
                   <td>{transaction.transactionDescription}</td>
-                  <td>{dateFormat(transaction.date)}</td>
+                  <td>{dateISOToDisplay(transaction.date)}</td>
                   <td>{currencyFormat(transaction.amount)}</td>
                 </tr>
               {/each}

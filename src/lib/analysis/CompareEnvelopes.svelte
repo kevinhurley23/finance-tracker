@@ -1,7 +1,7 @@
 <script>
   import { UIstate, data, months } from "../data.svelte.js";
   import Chart from "chart.js/auto";
-  import { currencyFormat, formatMonthYear } from "../functions.js";
+  import { currencyFormat, dateISOToMonthAndYear } from "../functions.js";
   let { selectedAccount, selectedEnvelope, chartColors, tooltipStyles } = $props();
 
   let selectedMonths = $state([]);
@@ -126,7 +126,7 @@
       stackedPercentChart = new Chart(stackedPercentCtx, {
         type: "bar",
         data: { 
-          labels: monthsInRange.map(month => formatMonthYear(month)), 
+          labels: monthsInRange.map(month => dateISOToMonthAndYear(month)), 
           datasets 
         },
         options: {
@@ -168,7 +168,7 @@
       stackedAmountChart = new Chart(stackedAmountCtx, {
         type: "bar",
         data: { 
-          labels: monthsInRange.map(month => formatMonthYear(month)), 
+          labels: monthsInRange.map(month => dateISOToMonthAndYear(month)), 
           datasets 
         },
         options: {
@@ -210,7 +210,7 @@
       From:
       <select bind:value={selectedMonths[0]}>
         {#each months as month}
-          <option value={month}>{formatMonthYear(month)}</option>
+          <option value={month}>{dateISOToMonthAndYear(month)}</option>
         {/each}
       </select>
     </label>
@@ -218,7 +218,7 @@
       To:
       <select bind:value={selectedMonths[1]}>
         {#each months as month}
-          <option value={month}>{formatMonthYear(month)}</option>
+          <option value={month}>{dateISOToMonthAndYear(month)}</option>
         {/each}
       </select>
     </label>

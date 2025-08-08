@@ -1,5 +1,5 @@
 <script>
-  import { currencyFormat, dateFormat, updateTransaction } from "../functions.js";
+  import { currencyFormat, dateISOToDisplay, updateTransaction } from "../functions.js";
   let { selectedAccount = $bindable(), searchTransactions, exactMatch = $bindable() } = $props();
 
   let findText = $state("");
@@ -64,7 +64,7 @@
                 <tr>
                   <td>{transaction.transactionDescription}</td>
                   <td class="new-description">{replaceText || '(no replacement text)'}</td>
-                  <td>{dateFormat(transaction.date)}</td>
+                  <td>{dateISOToDisplay(transaction.date)}</td>
                   <td>{currencyFormat(transaction.amount)}</td>
                 </tr>
               {/each}
