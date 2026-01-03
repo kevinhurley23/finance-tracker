@@ -138,7 +138,7 @@
       {/if}
     {/snippet}
     {#snippet modalButtons()}
-      <button onclick={newTransaction}>Create Transaction</button>
+      <button class="modal-submit-button" onclick={newTransaction}>Create Transaction</button>
       <button onclick={resetNewTransactionModal}>Cancel</button>
     {/snippet}
   </Modal>

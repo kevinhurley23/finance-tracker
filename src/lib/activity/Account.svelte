@@ -274,7 +274,7 @@
     {#snippet modalButtons()}
       {#if !copyingTransactionsInProgress}
         {#if transactionsToCopy.length > 0}
-          <button onclick={copyTransactions}>Copy</button>
+          <button class="modal-submit-button" onclick={copyTransactions}>Copy</button>
           <button onclick={resetCopyingTransactionsModal}>Cancel</button>
         {:else}
           <button onclick={resetCopyingTransactionsModal}>Ok</button>

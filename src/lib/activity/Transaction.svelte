@@ -137,7 +137,7 @@
       {/if}
     {/snippet}
     {#snippet modalButtons()}
-      <button onclick={moveTransaction}>Move</button>
+      <button class="modal-submit-button" onclick={moveTransaction}>Move</button>
       <button onclick={() => showMoveTransactionModal = false}>Cancel</button>
     {/snippet}
   </Modal>

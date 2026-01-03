@@ -7,12 +7,23 @@
 	$effect(() => {
 		if (showModal) dialog.showModal();
 	});
+
+	function handleKeydown(event) {
+		if (event.key === 'Enter') {
+			event.preventDefault(); // Prevent default Enter behavior (e.g., form submission)
+			const submitButton = dialog.querySelector('.modal-submit-button');
+			if (submitButton) {
+				submitButton.click(); // Programmatically click the designated button
+			}
+		}
+  }
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
 <dialog
 	bind:this={dialog}
 	onclose={() => (showModal = false)}
+	onkeydown={handleKeydown}
 	transition:scale={{duration: 200, easing: quartInOut}}
 >
   {@render modalBody?.()}
