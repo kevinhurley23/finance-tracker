@@ -2,10 +2,9 @@
   import Card from "../ui-components/Card.svelte";
   import Modal from "../ui-components/Modal.svelte";
   import Transaction from "./Transaction.svelte";
-  import { todayStr } from '../dates.js'
   import { currencyFormat, addTransaction } from "../functions.js";
   import { scale, slide } from "svelte/transition";
-  let { envelope, budgetEnvelopeTotals = "", accountTitle, dateRange, toggleExpanded } = $props();
+  let { envelope, budgetEnvelopeTotals = "", accountTitle, dateRange, newTransactionDate = $bindable(), toggleExpanded } = $props();
 
   let envelopeID = envelope.envelopeID;
   let envelopeTitle = envelope.envelopeTitle;
@@ -30,9 +29,6 @@
   // svelte-ignore non_reactive_update
   let [newTransactionDescription, newTransactionAmount] = '';
   // svelte-ignore non_reactive_update
-  let newTransactionDate = todayStr;
-  // let newTransactionDate = $derived(todayStr >= dateRange[0] && todayStr <= dateRange[1] ? todayStr : dateRange[0]);
-  // svelte-ignore non_reactive_update
   let newTransactionRepeating = false;
 
   function newTransaction() {
@@ -52,10 +48,9 @@
     }
   }
 
-  function copyTransaction(description, amount, date, repeating) {
+  function copyTransaction(description, amount, repeating) {
     newTransactionDescription = description;
     newTransactionAmount = amount;
-    newTransactionDate = date;
     newTransactionRepeating = repeating;
     showNewTransactionModal = true;
   }
@@ -105,7 +100,6 @@
                 {envelopeID}
                 {envelopeTitle}
                 {transaction}
-                {dateRange}
                 {copyTransaction}
               />
             {/each}

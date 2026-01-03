@@ -24,6 +24,12 @@
     }
   });
 
+  let newTransactionDate = $state(todayStr);
+  $effect(() => {
+    // Update newTransactionDate when navigating to a different month in checking account
+    newTransactionDate = todayStr >= dateRange[0] && todayStr <= dateRange[1] ? todayStr : dateRange[0];
+  });
+
   let showCopyingTransactionsModal = $state(false);
   let copyingTransactionsInProgress = $state(false);
   
@@ -233,6 +239,7 @@
         {budgetEnvelopeTotals}
         {accountTitle}
         {dateRange}
+        bind:newTransactionDate={newTransactionDate}
         {toggleExpanded}
       />
     {/each}

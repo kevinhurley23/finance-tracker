@@ -1,11 +1,10 @@
 <script>
   import Modal from "../ui-components/Modal.svelte";
   import { slide } from "svelte/transition";
-  import { todayStr } from "../dates";
   import { accountNames, accountsAndEnvelopes } from "../data.svelte.js";
-  import { currencyFormat, numberFormat, dateObjToISO, dateISOToObj, dateISOToDisplay, addTransaction, updateTransaction, deleteTransaction } from "../functions.js";
+  import { currencyFormat, numberFormat, dateISOToDisplay, addTransaction, updateTransaction, deleteTransaction } from "../functions.js";
 
-  let { accountTitle, envelopeID, envelopeTitle, transaction, dateRange, copyTransaction } = $props()
+  let { accountTitle, envelopeID, envelopeTitle, transaction, copyTransaction } = $props()
   const transactionID = transaction.transactionID;
   const description = transaction.transactionDescription;
   const date = transaction.date;
@@ -87,7 +86,7 @@
   {/if}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   {#if canModify}
-    <i class="fa-solid fa-clone" title="Copy transaction" onclick={() => copyTransaction(description, amount, todayStr, transaction.repeating)}></i>
+    <i class="fa-solid fa-clone" title="Copy transaction" onclick={() => copyTransaction(description, amount, transaction.repeating)}></i>
   {/if}
   <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
   {#if canModify && envelopeTitle != 'Income'}
