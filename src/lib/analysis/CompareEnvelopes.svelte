@@ -2,7 +2,7 @@
   import { UIstate, data, months } from "../data.svelte.js";
   import Chart from "chart.js/auto";
   import { currencyFormat, dateISOToMonthAndYear } from "../functions.js";
-  let { selectedAccount, selectedEnvelope, chartColors, tooltipStyles } = $props();
+  let { selectedAccount, selectedEnvelope, chartColors, tooltipStyles, labelColor } = $props();
 
   let selectedMonths = $state([]);
   let monthsInRange = $derived(months.filter(month => month >= selectedMonths[0] && month <= selectedMonths[1]));
@@ -95,6 +95,9 @@
                   return `${currencyFormat(context.raw)} (${percentage}%)`;
                 }
               }
+            },
+            legend: {
+              labels: { color: labelColor }
             }
           }
         }
@@ -141,14 +144,23 @@
                   return `${context.dataset.label}: ${percent}% (${amount})`;
                 }
               }
+            },
+            legend: {
+              labels: { color: labelColor }
             }
           },
           scales: {
-            x: { stacked: true },
+            x: { 
+              stacked: true,
+              ticks: { color: labelColor }
+            },
             y: {
               stacked: true,
               max: 100,
-              ticks: { callback: value => value + "%" }
+              ticks: { 
+                color: labelColor,
+                callback: value => value + "%" 
+              }
             }
           }
         }
@@ -174,13 +186,22 @@
         options: {
           responsive: true,
           plugins: {
-            tooltip: tooltipStyles
+            tooltip: tooltipStyles,
+            legend: {
+              labels: { color: labelColor }
+            }
           },
           scales: {
-            x: { stacked: true },
+            x: { 
+              stacked: true,
+              ticks: { color: labelColor }
+            },
             y: {
               stacked: true,
-              ticks: { callback: value => currencyFormat(value) }
+              ticks: { 
+                color: labelColor,
+                callback: value => currencyFormat(value) 
+              }
             }
           }
         }

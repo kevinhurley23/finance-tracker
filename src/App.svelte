@@ -8,7 +8,7 @@
   fetchData();
 
   $effect(() => {
-    localStorage.setItem("UIstate", JSON.stringify(UIstate));
+    localStorage.setItem("financeTrackerUIstate", JSON.stringify(UIstate));
   });
 
   function changeSection(subsection, exclusive = true) {

@@ -12,15 +12,9 @@
   let showAddTransactionButton = accountTitle === "savings" && envelopeTitle === "Income" ? false : true;
   let addTransactionError = $state("");
 
-  let transactionsInRange = $derived.by(() => {
-    if (accountTitle === "checking") {
-      return envelope.transactions.filter(item => item.date >= dateRange[0] && item.date <= dateRange[1]);
-    } else {
-      return envelope.transactions;
-    }
-  });
-
-  let transactions = $derived(transactionsInRange.toSorted((a, b) =>  new Date(a.date).getTime() - new Date(b.date).getTime()));
+  let transactionsInRange = $derived(envelope.transactions.filter(item => item.date >= dateRange[0] && item.date <= dateRange[1]));
+  let transactions = $derived(accountTitle === 'checking' ? transactionsInRange : envelope.transactions);
+  let sortedTransactions = $derived(transactions.toSorted((a, b) =>  new Date(a.date).getTime() - new Date(b.date).getTime()));
 
   let thisEnvelopeBudget = $derived(budgetEnvelopeTotals[envelopeTitle]);
 
@@ -94,12 +88,14 @@
             <p>{envelope.envelopeDescription}</p>
           {/if}
           {#if transactions.length}
-            {#each transactions as transaction (transaction.transactionID)}
+            {#each sortedTransactions as transaction (transaction.transactionID)}
+              {@const visible = transactionsInRange.includes(transaction)}
               <Transaction
                 {accountTitle} 
                 {envelopeID}
                 {envelopeTitle}
                 {transaction}
+                {visible}
                 {copyTransaction}
               />
             {/each}

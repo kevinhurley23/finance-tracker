@@ -2,7 +2,7 @@
   import { UIstate, data, months } from "../data.svelte.js";
   import Chart from "chart.js/auto";
   import { currencyFormat, dateISOToMonthAndYear } from "../functions.js";
-  let { selectedAccount, chartColors, tooltipStyles } = $props();
+  let { selectedAccount, chartColors, tooltipStyles, labelColor } = $props();
 
   let incomeExpensesChart;
 
@@ -85,11 +85,18 @@
         options: {
           responsive: true,
           plugins: {
-            tooltip: tooltipStyles
+            tooltip: tooltipStyles,
+            legend: {
+              labels: { color: labelColor }
+            }
           },
           scales: {
+            x: {
+              ticks: { color: labelColor }
+            },
             y: {
               ticks: {
+                color: labelColor,
                 callback: value => currencyFormat(value)
               }
             }

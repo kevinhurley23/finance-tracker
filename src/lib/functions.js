@@ -63,6 +63,13 @@ export function dateISOToMonthAndYear(dateStr) {
   return date.toLocaleString("default", { month: "long", year: "numeric" });
 }
 
+export function getLastDayOfMonth(dateStr) {
+  const parts = dateStr.split('-');
+  let year = parseInt(parts[0], 10);
+  let month = parseInt(parts[1], 10);
+  return new Date(year, month, 0).toISOString().slice(0, 10);
+}
+
 async function fetchRequest(url, body) {
   try {
     const response = await fetch(url, {

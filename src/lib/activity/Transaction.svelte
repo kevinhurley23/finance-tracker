@@ -4,7 +4,7 @@
   import { accountNames, accountsAndEnvelopes } from "../data.svelte.js";
   import { currencyFormat, numberFormat, dateISOToDisplay, addTransaction, updateTransaction, deleteTransaction } from "../functions.js";
 
-  let { accountTitle, envelopeID, envelopeTitle, transaction, copyTransaction } = $props()
+  let { accountTitle, envelopeID, envelopeTitle, transaction, visible, copyTransaction } = $props()
   const transactionID = transaction.transactionID;
   const description = transaction.transactionDescription;
   const date = transaction.date;
@@ -16,6 +16,8 @@
   let newAccount = $state(accountTitle);
   let newEnvelopeID = $state(envelopeID);
   let moveTransactionError = $state("");
+
+  let isVisible = $derived(description === "Starting Balance" ? true : visible);
 
   // svelte-ignore non_reactive_update
   let dayOfMonth = date.split("-")[2];
@@ -71,7 +73,11 @@
 
 </script>
 
-<div id={transaction.transactionID} class="transaction {transaction.repeating ? 'repeating' : ''}" transition:slide={{duration: 50}}>
+<div id={transaction.transactionID}
+class="transaction {transaction.repeating ? 'repeating' : ''}"
+style="{!isVisible && 'display: none;'}"
+transition:slide={{duration: 50}}
+>
   <!-- Description -->
   {#if canModify}
     <input class="description" type="text" value={description} onblur={updateDescription}>

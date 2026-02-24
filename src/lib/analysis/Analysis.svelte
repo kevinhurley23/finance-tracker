@@ -8,6 +8,7 @@
 
   let selectedAccount = $state("checking");
   let selectedEnvelope = $state("");
+  let labelColor = $derived(UIstate.darkTheme ? '#fff' : '#000');
 
   // Chart colors array
   const chartColors = [
@@ -85,6 +86,7 @@
       {selectedEnvelope}
       {chartColors}
       {tooltipStyles}
+      {labelColor}
     />
   {/if}
 
@@ -94,6 +96,7 @@
       {selectedEnvelope}
       {chartColors}
       {tooltipStyles}
+      {labelColor}
     />
   {/if}
 
@@ -102,6 +105,7 @@
       {selectedAccount}
       {chartColors}
       {tooltipStyles}
+      {labelColor}
     />
   {/if}
 

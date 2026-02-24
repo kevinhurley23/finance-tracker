@@ -2,31 +2,66 @@
   import IncomeSection from './IncomeSection.svelte';
   import Envelope from './Envelope.svelte';
   import Modal from '../ui-components/Modal.svelte';
-  import { months } from '../data.svelte.js'
+  import { months, data, transactionsToCopy, UIstate } from '../data.svelte.js'
   import { todayStr } from '../dates.js'
-  import { data, transactionsToCopy } from '../data.svelte.js';
-  import { dateISOToDisplay, dateISOToMonthAndYear, addTransaction, findEnvelopeIndex } from '../functions.js';
+  import { dateISOToDisplay, dateISOToMonthAndYear, getLastDayOfMonth, addTransaction, findEnvelopeIndex, dateObjToISO } from '../functions.js';
   let { accountTitle, envelopes, budgetEnvelopeTotals, firstTransactionDate } = $props();
 
   envelopes.forEach(item => item.expanded = true)
   
   let selectedMonth = $state(todayStr.slice(0, 7));
-  // let dateRangeStart = $state(firstTransactionDate.toISOString().slice(0, 10));
-  // let dateRangeEnd = $state(getLastDayOfMonth(todayStr));
+  const savingsDateRangeOptions = [
+    {
+      value: 'all',
+      label: 'All transactions'
+    },
+    {
+      value: 12,
+      label: "Last year"
+    },
+    {
+      value: 6,
+      label: "Last six months"
+    },
+    {
+      value: 'custom',
+      label: "Custom"
+    },
+  ];
+  if (accountTitle === 'savings') {}
+  let savingsDateRangeMode = $derived(UIstate.savingsDateRangeMode);
+  let savingsDateRangeStart = $derived.by(() => {
+    if (savingsDateRangeMode === 'all') {
+      return firstTransactionDate;
+    } else if (savingsDateRangeMode === 'custom') {
+      return UIstate.customDateRangeStart;
+    } else {
+      let today = new Date();
+      today.setMonth(today.getMonth() - parseInt(savingsDateRangeMode));
+      today.setDate(1);
+      return dateObjToISO(today);
+    }
+  });
+  let savingsDateRangeEnd = $derived.by(() => {
+    if (savingsDateRangeMode === 'custom') {
+      return UIstate.customDateRangeEnd;
+    } else {
+      return getLastDayOfMonth(todayStr);
+    }
+  });
   let dateRange = $derived.by(() => {
     if (accountTitle === "budget") {
       return ["2025-01-01", "2025-01-31"];
     } else if (accountTitle === "checking") {
       return [`${selectedMonth}-01`, getLastDayOfMonth(selectedMonth)];
     } else if (accountTitle === "savings") {
-      // return [dateRangeStart, dateRangeEnd];
-      return [firstTransactionDate, getLastDayOfMonth(todayStr)];
+      return [savingsDateRangeStart, savingsDateRangeEnd];
     }
   });
 
   let newTransactionDate = $state(todayStr);
+  // Update newTransactionDate when navigating to a different month in checking account
   $effect(() => {
-    // Update newTransactionDate when navigating to a different month in checking account
     newTransactionDate = todayStr >= dateRange[0] && todayStr <= dateRange[1] ? todayStr : dateRange[0];
   });
 
@@ -50,12 +85,6 @@
     return dateISOToDisplay(latest.toISOString().slice(0, 10));
   });
 
-  function getLastDayOfMonth(dateStr) {
-    const parts = dateStr.split('-');
-    let year = parseInt(parts[0], 10);
-    let month = parseInt(parts[1], 10);
-    return new Date(year, month, 0).toISOString().slice(0, 10);
-  }
   function changeSelectedMonth(e) {
     if (e.target.value === "add-month") {
       addMonth();
@@ -218,11 +247,6 @@
     </div>
   {:else if accountTitle === "savings"}
     <button onclick={prepareToCopyTransactions}>Copy Transactions</button>
-    <!-- <div class="date-range-selector">
-      <div>Select Date Range:</div>
-      <input type="date" id="date-range-start" bind:value={dateRangeStart}>
-      <input type="date" id="date-range-end" bind:value={dateRangeEnd}>
-    </div> -->
   {/if}
   {#if transactionCount !== 0}
     <div class="buttons">
@@ -231,6 +255,20 @@
     </div>
   {/if}
 </div>
+{#if accountTitle === 'savings'}
+  <div class="date-range-selector heading-button-row">
+    <label for="savings-date-range">Filter by date:</label>
+    <select id="date-range-selector" bind:value={UIstate.savingsDateRangeMode}>
+      {#each savingsDateRangeOptions as option}
+        <option value={option.value}>{option.label}</option>
+      {/each}
+    </select>
+    {#if savingsDateRangeMode === "custom"}
+      <input type="date" id="custom-date-range-start" bind:value={UIstate.customDateRangeStart}>
+      <input type="date" id="custom-date-range-end" bind:value={UIstate.customDateRangeEnd}>
+    {/if}
+  </div>
+{/if}
 {#if transactionCount !== 0}
   <div class="transaction-envelopes">
     {#each expenses as envelope (envelope.envelopeID)}
@@ -285,32 +323,36 @@
 {/if}
 
 <style>
+  :root{
+    --envelopes-width: 750px;
+  }
   .copy-transactions-dialog {
     max-width: 750px;
     margin-inline: auto;
   }
   .heading-button-row {
     display: flex;
-    justify-content: space-between;
     align-items: end;
     gap: 25px;
+    flex-wrap: wrap;
     margin-inline: auto;
+    width: min(var(--envelopes-width), 100%);
     .month-selector {
       text-align: center;
-      select {
-        font-size: 1.1rem;
-        padding: 5px;
-        border: 2px solid var(--accent);
-        border-radius: 5px;
-      }
     }
-    /* .date-range-selector {
+    select {
+      font-size: 1.1rem;
+      padding: 5px;
+      border: 2px solid var(--accent);
+      border-radius: 5px;
+    }
+    .date-range-selector {
       input {
         width: 140px;
         font-size: 1.1rem;
         margin-top: 5px;
       }
-    } */
+    }
     .buttons {
       display: flex;
       gap: 20px;
@@ -318,7 +360,7 @@
   }
   .transaction-envelopes {
     display: grid;
-    grid-template-columns: repeat(auto-fit, 750px);
+    grid-template-columns: repeat(auto-fit, var(--envelopes-width));
     grid-template-rows: masonry;
     grid-row: span 90;
     justify-content: center;

@@ -1,7 +1,8 @@
-import { todayObj } from "./dates.js";
+import { todayObj, todayStr } from "./dates.js";
+import { getLastDayOfMonth } from "./functions.js";
 
 // Load saved state from localStorage or use default values
-const savedState = JSON.parse(localStorage.getItem("UIstate")) || {
+const savedState = JSON.parse(localStorage.getItem("financeTrackerUIstate")) || {
   sectionDisplayed: "activity",
   subsectionDisplayed: ["checking"],
   testingMode: false,
@@ -9,7 +10,10 @@ const savedState = JSON.parse(localStorage.getItem("UIstate")) || {
   showConnectErrorModal: false,
   exactMatch: false,
   groupByEnvelope: false,
-  darkTheme: window.matchMedia('(prefers-color-scheme: dark)') ? true : false
+  darkTheme: window.matchMedia('(prefers-color-scheme: dark)') ? true : false,
+  savingsDateRangeMode: 'all',
+  customDateRangeStart: '2025-01-01',
+  customDateRangeEnd: getLastDayOfMonth(todayStr)
 };
 
 export const UIstate = $state(savedState);

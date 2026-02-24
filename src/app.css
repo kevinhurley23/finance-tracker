@@ -56,7 +56,7 @@
   --testing-accent: var(--purple-200);
   --button-text: var(--grey-800);
   --button-hover-text: #fff;
-  --select-background: var(--background-primary);
+  --select-background: var(--background-secondary);
   --switch-background: var(--grey-800);
 
   input[type="date"] {
