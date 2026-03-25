@@ -72,17 +72,16 @@
   let totalExpenses = $state(0);
   let assets = $derived.by(() => envelopes.find(item => item.envelopeTitle === "Income"));
   let expenses = $derived.by(() => envelopes.filter(item => item.envelopeTitle !== "Income"));
-  let latestTransaction = $derived.by(() => {
-    let latest = new Date(0);
+  let mostRecentTransactionDate = $derived.by(() => {
+    let latest = "2025-01-01";
     for (const envelope of envelopes) {
       for (const transaction of envelope.transactions) {
-        const transactionDate = new Date(transaction.date);
-        if (transactionDate > latest && !transaction.repeating) {
-          latest = transactionDate;
+        if (transaction.date > latest && transaction.date <= todayStr && !transaction.repeating) {
+          latest = transaction.date;
         }
       }
     }
-    return dateISOToDisplay(latest.toISOString().slice(0, 10));
+    return dateISOToDisplay(latest);
   });
 
   function changeSelectedMonth(e) {
@@ -228,7 +227,7 @@
     {accountTitle}
     {assets}
     {dateRange}
-    {latestTransaction}
+    {mostRecentTransactionDate}
     {totalExpenses}
     {toggleExpanded}
   />

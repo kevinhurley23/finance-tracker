@@ -2,7 +2,7 @@
   import Card from "../ui-components/Card.svelte";
   import Envelope from "./Envelope.svelte";
   import { currencyFormat, numberFormat, updateTransaction } from "../functions.js";
-  let { accountTitle, assets, dateRange, latestTransaction, totalExpenses, toggleExpanded } = $props();
+  let { accountTitle, assets, dateRange, mostRecentTransactionDate, totalExpenses, toggleExpanded } = $props();
   let envelopeID = assets.envelopeID;
 
   let transactions = $derived.by(() => {
@@ -100,7 +100,7 @@
           })}
         {/if}
         <p>Most Recent Transaction: </p>
-        <p class="amount">{latestTransaction}</p>
+        <p class="amount">{mostRecentTransactionDate}</p>
       </div>
     {/snippet}
   </Card>
