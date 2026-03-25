@@ -2,8 +2,9 @@
   import Card from "../ui-components/Card.svelte";
   import Modal from "../ui-components/Modal.svelte";
   import Transaction from "./Transaction.svelte";
-  import { currencyFormat, addTransaction } from "../functions.js";
+  import { currencyFormat, addTransaction, getLastDayOfMonth } from "../functions.js";
   import { scale, slide } from "svelte/transition";
+  import { data, months } from "../data.svelte";
   let { envelope, budgetEnvelopeTotals = "", accountTitle, dateRange, newTransactionDate = $bindable(), toggleExpanded } = $props();
 
   let envelopeID = envelope.envelopeID;
@@ -120,8 +121,7 @@
         <p>Description:</p>
         <input type="text" bind:value={newTransactionDescription}>
         <p>Date:</p>
-        <input type="date" bind:value={newTransactionDate}>
-        <!-- <input type="date" min={dateRange[0]} max={dateRange[1]} value={newTransactionDate}> -->
+        <input type="date" min={data.firstTransactionDate} max={getLastDayOfMonth(months.at(-1))} value={newTransactionDate}>
         <p>Amount:</p>
         <input type="number" bind:value={newTransactionAmount}>
         {#if accountTitle != 'budget'}

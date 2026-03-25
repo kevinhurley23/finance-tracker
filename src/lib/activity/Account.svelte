@@ -92,7 +92,7 @@
     }
   }
   function addMonth() {
-    let lastMonth = months[months.length - 1];
+    let lastMonth = months.at(-1);
     let newMonth = new Date(`${lastMonth}-02`);
     newMonth.setMonth(newMonth.getMonth() + 1);
     let newMonthStr = newMonth.toISOString().slice(0, 7);

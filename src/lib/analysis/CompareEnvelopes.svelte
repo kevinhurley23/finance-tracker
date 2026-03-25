@@ -13,7 +13,7 @@
   // Initialize selected months when data is ready
   $effect(() => {
     if (data.ready && months.length > 0) {
-      selectedMonths = [months[0], months[months.length - 1]];
+      selectedMonths = [months[0], months.at(-1)];
     }
   });
 
