@@ -121,7 +121,7 @@
         <p>Description:</p>
         <input type="text" bind:value={newTransactionDescription}>
         <p>Date:</p>
-        <input type="date" min={data.firstTransactionDate} max={getLastDayOfMonth(months.at(-1))} value={newTransactionDate}>
+        <input type="date" min={data.firstTransactionDate} max={getLastDayOfMonth(months.at(-1))} bind:value={newTransactionDate}>
         <p>Amount:</p>
         <input type="number" bind:value={newTransactionAmount}>
         {#if accountTitle != 'budget'}
