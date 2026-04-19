@@ -171,7 +171,10 @@
   }
 
   async function copyTransactions() {
-    for (const transaction of transactionsToCopy) {
+    copyingTransactionsInProgress = true;
+
+    for (let i = 0; i < transactionsToCopy.length; i++) {
+      const transaction = transactionsToCopy[i];
       await addTransaction(
         accountTitle,
         transaction.envelopeID,
@@ -180,13 +183,19 @@
         transaction.amount,
         true
       );
+      transactionsToCopy.splice(i, 1);
+      i--; // Adjust index after removal
+      // Uncomment to slow down copying for debugging
+      // const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+      // await sleep(100);
     }
-    resetCopyingTransactionsModal()
+    resetCopyingTransactionsModal();
   }
 
   function resetCopyingTransactionsModal() {
     transactionsToCopy.length = 0;
     showCopyingTransactionsModal = false;
+    copyingTransactionsInProgress = false;
   }
 
   $effect(() => {
@@ -286,30 +295,29 @@
 {#if showCopyingTransactionsModal}
   <Modal bind:showModal={showCopyingTransactionsModal}>
     {#snippet modalBody()}
-      {#if copyingTransactionsInProgress}
-        <p>Transactions copying, please wait...</p>
-        <div class="row">
-          <div class="spinner"></div>
+      {#if transactionsToCopy.length > 0}
+        <h3>{transactionsToCopy.length} transactions will be copied:</h3>
+        <div class="transactions-to-copy">
+          {#each transactionsToCopy as transaction}
+            <p>
+              <span>{transaction.envelopeTitle}: {transaction.description}</span>
+              <span>{dateISOToDisplay(transaction.oldDate)} <i class="fa-solid fa-arrow-right"></i> {dateISOToDisplay(transaction.newDate)}</span>
+            </p>
+          {/each}
         </div>
       {:else}
-        {#if transactionsToCopy.length > 0}
-          <h3>The following transactions will be copied:</h3>
-          <div class="transactions-to-copy">
-            {#each transactionsToCopy as transaction}
-              <p>
-                <span>{transaction.envelopeTitle}: {transaction.description}</span>
-                <span>{dateISOToDisplay(transaction.oldDate)} <i class="fa-solid fa-arrow-right"></i> {dateISOToDisplay(transaction.newDate)}</span>
-              </p>
-            {/each}
-          </div>
-          <p class="text-center">Would you like to proceed?</p>
-        {:else}
-          <p>No transactions to copy</p>
-        {/if}
+        <p>No transactions to copy</p>
+      {/if}
+      {#if !copyingTransactionsInProgress}
+        <p class="text-center">Would you like to proceed?</p>
+      {:else}
+        <p class="text-center">Transactions copying, please wait...</p>
       {/if}
     {/snippet}
     {#snippet modalButtons()}
-      {#if !copyingTransactionsInProgress}
+      {#if copyingTransactionsInProgress}
+        <div class="spinner"></div>
+      {:else}
         {#if transactionsToCopy.length > 0}
           <button class="modal-submit-button" onclick={copyTransactions}>Copy</button>
           <button onclick={resetCopyingTransactionsModal}>Cancel</button>
