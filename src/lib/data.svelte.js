@@ -75,10 +75,17 @@ export const analyzers = [
 export const transactionsToCopy = $state([]);
 
 export let months = $state([]);
+
 function populateMonths() {
   let dateIterator = new Date(data.firstTransactionDate);
   dateIterator.setDate(dateIterator.getDate() + 1);
-  while (dateIterator <= todayObj) {
+
+  let lastTransactionDate = new Date(data.lastTransactionDate);
+  lastTransactionDate.setDate(lastTransactionDate.getDate() + 1);
+
+  const maxDate = todayObj > lastTransactionDate ? todayObj : lastTransactionDate;
+
+  while (dateIterator <= maxDate) {
     months.push(dateIterator.toISOString().slice(0, 7));
     dateIterator.setMonth(dateIterator.getMonth() + 1);
   }
