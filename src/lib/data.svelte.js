@@ -104,6 +104,7 @@ const twoMonthsAgo = twoMonthsAgoObj.toISOString().slice(0, 7);
 const placeholderData = {
   highestTransactionID: 89,
   firstTransactionDate: `${twoMonthsAgo}-01`,
+  lastTransactionDate: `${lastMonth}-28`,
   budget: [
     {
       envelopeID: 1,
